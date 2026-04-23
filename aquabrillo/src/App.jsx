@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import heroImage from './assets/hero.png';
 import { 
   Menu, X, Phone, MapPin, Instagram, ChevronRight, 
   Shield, Sparkles, Clock, Home, Award, Droplets, 
@@ -214,19 +215,16 @@ const Hero = () => {
           </div>
         </ScrollReveal>
 
-        {/* Hero Visual Placeholder */}
+        {/* Hero Visual */}
         <ScrollReveal delay={400}>
           <div className="mt-16 relative">
-            <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 bg-gradient-to-b from-slate-900 to-slate-950 shadow-2xl shadow-cyan-500/5">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center">
-                  <Car className="w-20 h-20 text-slate-700 mx-auto mb-4" />
-                  <p className="text-slate-600 text-sm">Imagen cinematográfica de auto premium</p>
-                  <p className="text-slate-700 text-xs mt-1">Recomendación: Auto oscuro con reflejos de agua y luz</p>
-                </div>
-              </div>
-              {/* Shine Effect */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent" />
+            <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl shadow-cyan-500/5">
+              <img
+                src={heroImage}
+                alt="Auto premium con detalle"
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
             </div>
           </div>
         </ScrollReveal>
@@ -482,22 +480,32 @@ const BeforeAfter = () => {
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 mb-6">
                   {/* Before/After Split Visual */}
                   <div className="absolute inset-0 flex">
-                    <div className="w-1/2 relative border-r border-white/20 bg-slate-800 flex items-center justify-center">
-                      <div className="text-center p-4">
-                        <span className="text-xs font-bold text-red-400 uppercase tracking-wider mb-2 block">Antes</span>
-                        <div className="w-16 h-16 mx-auto rounded-full bg-slate-700 flex items-center justify-center mb-2">
-                          <Car className="w-8 h-8 text-slate-500" />
+                    <div className="w-1/2 relative border-r border-white/20 overflow-hidden">
+                      <img
+                        src={heroImage}
+                        alt={item.beforeAlt}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-slate-950/40" />
+                      <div className="relative flex items-center justify-center h-full p-4">
+                        <div className="text-center">
+                          <span className="text-xs font-bold text-red-400 uppercase tracking-wider mb-2 block">Antes</span>
+                          <p className="text-xs text-slate-200">{item.beforeAlt}</p>
                         </div>
-                        <p className="text-xs text-slate-500">{item.beforeAlt}</p>
                       </div>
                     </div>
-                    <div className="w-1/2 relative bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                      <div className="text-center p-4">
-                        <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Después</span>
-                        <div className="w-16 h-16 mx-auto rounded-full bg-cyan-500/20 flex items-center justify-center mb-2">
-                          <Sparkles className="w-8 h-8 text-cyan-400" />
+                    <div className="w-1/2 relative overflow-hidden">
+                      <img
+                        src={heroImage}
+                        alt={item.afterAlt}
+                        className="absolute inset-0 w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-slate-950/30" />
+                      <div className="relative flex items-center justify-center h-full p-4">
+                        <div className="text-center">
+                          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Después</span>
+                          <p className="text-xs text-slate-100">{item.afterAlt}</p>
                         </div>
-                        <p className="text-xs text-slate-400">{item.afterAlt}</p>
                       </div>
                     </div>
                   </div>
