@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "cd aquabrillo && npm run build",
+  "outputDirectory": "aquabrillo/dist",
+  "installCommand": "cd aquabrillo && npm install",
+  "framework": "vite"
+}
