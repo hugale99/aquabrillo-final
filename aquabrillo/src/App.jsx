@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from 'react';
-import heroImage from './assets/hero.png';
 import { 
   Menu, X, Phone, MapPin, Instagram, ChevronRight, 
   Shield, Sparkles, Clock, Home, Award, Droplets, 
@@ -10,6 +9,67 @@ import {
 const WHATSAPP_NUMBER = "7773887690";
 const WHATSAPP_LINK = (text) => `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 const INSTAGRAM_URL = "https://www.instagram.com/santafecarwashexpress?igsh=MW4ydm03c3Jxa2Jvbw==";
+
+// ============================================================
+// CONFIGURACIÓN DE IMÁGENES PROPIAS
+// Instrucciones:
+// 1. Crea la carpeta public/images/ en tu proyecto
+// 2. Dentro de public/images/ crea las subcarpetas: hero, servicios, resultados, ceramico, cobertura, testimonios
+// 3. Copia tus fotos con los nombres exactos de abajo
+// 4. Las imágenes se cargan automáticamente desde /images/... (ruta relativa a public/)
+// ============================================================
+
+const IMAGES = {
+  // HERO: Tu mejor foto de auto premium
+  // Recomendación: Auto oscuro, fondo oscuro, reflejos de agua o luz dramática
+  // Formato: JPG o PNG, preferiblemente 1920x1080 o mayor
+  hero: "/images/hero/hero-car.jpg",
+  
+  // SERVICIOS: 6 fotos de tus trabajos reales
+  servicios: {
+    lavado: "/images/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
+    interior: "/images/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
+    exterior: "/images/servicios/exterior.jpg",     // Llantas, carrocería, detalles
+    pulido: "/images/servicios/pulido.jpg",         // Máquina pulidora trabajando
+    ceramico: "/images/servicios/ceramico.jpg",     // Gotas repelidas en capó
+    paquetes: "/images/servicios/paquetes.jpg"      // Auto completo, toma amplia
+  },
+  
+  // RESULTADOS: Fotos antes/después de trabajos reales
+  // IMPORTANTE: Usa el MISMO ÁNGULO y MISMA ILUMINACIÓN para before y after
+  resultados: {
+    interior: {
+      before: "/images/resultados/interior-before.jpg",   // Asientos sucios/manchados
+      after: "/images/resultados/interior-after.jpg"      // Mismo ángulo, limpios
+    },
+    pintura: {
+      before: "/images/resultados/pintura-before.jpg",    // Pintura opaca/rayada
+      after: "/images/resultados/pintura-after.jpg"       // Mismo panel, brillante
+    },
+    ceramico: {
+      before: "/images/resultados/ceramico-before.jpg",   // Agua extendida en superficie
+      after: "/images/resultados/ceramico-after.jpg"      // Gotas formando esferas
+    }
+  },
+  
+  // CERÁMICO: Tu mejor foto de efecto hidrofóbico
+  ceramico: "/images/ceramico/coating-close.jpg",
+  
+  // COBERTURA: Mapa personalizado o screenshot de Google Maps estilizado
+  cobertura: "/images/cobertura/mapa.jpg",
+  
+  // TESTIMONIOS: Fotos de autos de clientes (con su permiso)
+  // Si no tienes fotos, deja null y se mostrará avatar con inicial
+  testimonios: {
+    cliente1: "/images/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
+    cliente2: "/images/testimonios/cliente-2.jpg",  // Auto del cliente 2
+    cliente3: "/images/testimonios/cliente-3.jpg"   // Auto del cliente 3
+  }
+};
+
+// ============================================================
+// COMPONENTES DEL SITIO
+// ============================================================
 
 const ScrollReveal = ({ children, delay = 0, className = "" }) => {
   const [isVisible, setIsVisible] = useState(false);
@@ -78,7 +138,6 @@ const Navbar = () => {
     }`}>
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Logo */}
           <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="flex items-center gap-3 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300">
               <Droplets className="w-5 h-5 text-white" />
@@ -88,7 +147,6 @@ const Navbar = () => {
             </span>
           </a>
 
-          {/* Desktop Nav */}
           <div className="hidden lg:flex items-center gap-8">
             {navLinks.map((link) => (
               <button
@@ -102,7 +160,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* CTA Desktop */}
           <a
             href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
             target="_blank"
@@ -113,17 +170,12 @@ const Navbar = () => {
             Agendar por WhatsApp
           </a>
 
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-white"
-          >
+          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden p-2 text-white">
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
       </div>
 
-      {/* Mobile Menu */}
       <div className={`lg:hidden transition-all duration-500 overflow-hidden ${
         isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
       }`}>
@@ -153,16 +205,15 @@ const Navbar = () => {
 };
 
 const Hero = () => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
-      {/* Background Effects */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)]" />
       </div>
-
-      {/* Grid Pattern */}
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 text-center">
@@ -215,16 +266,30 @@ const Hero = () => {
           </div>
         </ScrollReveal>
 
-        {/* Hero Visual */}
+        {/* HERO IMAGE - Tu foto principal */}
         <ScrollReveal delay={400}>
           <div className="mt-16 relative">
-            <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 bg-slate-900 shadow-2xl shadow-cyan-500/5">
-              <img
-                src={heroImage}
-                alt="Auto premium con detalle"
-                className="w-full h-full object-cover object-center"
-              />
-              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent" />
+            <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/5 group">
+              {!imgError ? (
+                <img 
+                  src={IMAGES.hero} 
+                  alt="Auto premium con acabado de espejo y reflejos cinematográficos"
+                  className="w-full h-full object-cover"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-b from-slate-900 to-slate-950 flex items-center justify-center">
+                  <div className="text-center">
+                    <Car className="w-20 h-20 text-slate-700 mx-auto mb-4" />
+                    <p className="text-slate-500 text-sm font-medium">Agrega tu imagen en:</p>
+                    <p className="text-cyan-400 text-xs mt-2 font-mono">public/images/hero/hero-car.jpg</p>
+                    <p className="text-slate-600 text-xs mt-1">Recomendado: Auto oscuro, fondo negro, reflejos</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-70" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/30 via-transparent to-slate-950/30" />
+              <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             </div>
           </div>
         </ScrollReveal>
@@ -272,7 +337,9 @@ const Services = () => {
       desc: "Limpieza profunda exterior con técnicas profesionales y productos de alta gama que respetan la pintura de tu vehículo.",
       benefit: "Brillo intenso sin rayar",
       tag: "Más solicitado",
-      price: "Desde $350"
+      price: "Desde $350",
+      image: IMAGES.servicios.lavado,
+      imageAlt: "Proceso de lavado premium con espuma y microfibra"
     },
     {
       icon: Car,
@@ -280,7 +347,9 @@ const Services = () => {
       desc: "Restauración completa del habitáculo. Limpieza de tapicería, paneles, alfombras y tratamiento de olores.",
       benefit: "Interior como nuevo",
       tag: "Premium",
-      price: "Desde $650"
+      price: "Desde $650",
+      image: IMAGES.servicios.interior,
+      imageAlt: "Interior de auto con tapicería de cuero limpia y brillante"
     },
     {
       icon: Paintbrush,
@@ -288,7 +357,9 @@ const Services = () => {
       desc: "Limpieza de llantas, salpicaderas, motor superficial y tratamiento de superficies exteriores con acabado profesional.",
       benefit: "Presentación impecable",
       tag: "Popular",
-      price: "Desde $450"
+      price: "Desde $450",
+      image: IMAGES.servicios.exterior,
+      imageAlt: "Auto con llantas brillantes y carrocería impecable"
     },
     {
       icon: Zap,
@@ -296,7 +367,9 @@ const Services = () => {
       desc: "Eliminación de swirl marks, hologramas y micro-rayones. Recuperación del brillo original de la pintura.",
       benefit: "Pintura restaurada",
       tag: "Especializado",
-      price: "Desde $1,200"
+      price: "Desde $1,200",
+      image: IMAGES.servicios.pulido,
+      imageAlt: "Proceso de pulido con máquina rotativa sobre pintura"
     },
     {
       icon: Shield,
@@ -304,7 +377,9 @@ const Services = () => {
       desc: "Protección de larga duración con acabado de espejo. Repelencia al agua, UV y contaminantes ambientales.",
       benefit: "Protección 12-24 meses",
       tag: "Flagship",
-      price: "Desde $2,500"
+      price: "Desde $2,500",
+      image: IMAGES.servicios.ceramico,
+      imageAlt: "Capó de auto con gotas de agua repelidas por cerámico"
     },
     {
       icon: Gem,
@@ -312,7 +387,9 @@ const Services = () => {
       desc: "Combinaciones personalizadas de servicios para autos premium, clásicos o para ocasiones especiales.",
       benefit: "Solución integral",
       tag: "Personalizado",
-      price: "Cotizar"
+      price: "Cotizar",
+      image: IMAGES.servicios.paquetes,
+      imageAlt: "Auto premium completamente detallado en entrada residencial"
     }
   ];
 
@@ -334,43 +411,71 @@ const Services = () => {
 
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
-            <ScrollReveal key={index} delay={index * 100}>
-              <div className="group relative p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.04] transition-all duration-500 h-full flex flex-col">
-                <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-medium">
-                    {service.tag}
-                  </span>
-                </div>
-                
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300">
-                  <service.icon className="w-7 h-7 text-cyan-400" />
-                </div>
-
-                <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
-                <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">{service.desc}</p>
-                
-                <div className="flex items-center gap-2 mb-6">
-                  <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-                  <span className="text-sm text-slate-300">{service.benefit}</span>
-                </div>
-
-                <div className="flex items-center justify-between pt-4 border-t border-white/10">
-                  <span className="text-lg font-bold text-white">{service.price}</span>
-                  <a
-                    href={WHATSAPP_LINK(`Hola, me interesa cotizar: ${service.title}`)}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
-                  >
-                    Cotizar <ChevronRight className="w-4 h-4" />
-                  </a>
-                </div>
-              </div>
-            </ScrollReveal>
+            <ServiceCard key={index} service={service} index={index} />
           ))}
         </div>
       </div>
     </section>
+  );
+};
+
+// Componente auxiliar para manejar error de imagen en servicios
+const ServiceCard = ({ service, index }) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <ScrollReveal delay={index * 100}>
+      <div className="group relative rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.04] transition-all duration-500 h-full flex flex-col overflow-hidden">
+        
+        {/* SERVICE IMAGE - Tu foto de servicio */}
+        <div className="relative h-48 overflow-hidden bg-slate-900">
+          {!imgError ? (
+            <img 
+              src={service.image} 
+              alt={service.imageAlt}
+              className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              onError={() => setImgError(true)}
+            />
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+              <div className="text-center">
+                <service.icon className="w-12 h-12 text-slate-600 mx-auto mb-2" />
+                <p className="text-slate-600 text-xs font-mono">{service.image.split('/').pop()}</p>
+              </div>
+            </div>
+          )}
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 to-transparent opacity-60" />
+          
+          <div className="absolute top-4 right-4">
+            <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-medium backdrop-blur-sm">
+              {service.tag}
+            </span>
+          </div>
+        </div>
+
+        <div className="p-6 flex flex-col flex-grow">
+          <h3 className="text-xl font-bold text-white mb-3">{service.title}</h3>
+          <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">{service.desc}</p>
+          
+          <div className="flex items-center gap-2 mb-6">
+            <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+            <span className="text-sm text-slate-300">{service.benefit}</span>
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-white/10">
+            <span className="text-lg font-bold text-white">{service.price}</span>
+            <a
+              href={WHATSAPP_LINK(`Hola, me interesa cotizar: ${service.title}`)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 text-sm font-medium text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              Cotizar <ChevronRight className="w-4 h-4" />
+            </a>
+          </div>
+        </div>
+      </div>
+    </ScrollReveal>
   );
 };
 
@@ -443,20 +548,26 @@ const BeforeAfter = () => {
     {
       title: "Detallado Interior",
       desc: "Eliminación de manchas, olores y restauración de tapicería",
-      beforeAlt: "Interior de auto sucio con manchas en asientos",
-      afterAlt: "Interior de auto limpio con asientos restaurados"
+      before: IMAGES.resultados.interior.before,
+      after: IMAGES.resultados.interior.after,
+      beforeAlt: "Interior de auto antes: asientos sucios con manchas",
+      afterAlt: "Interior de auto después: tapicería restaurada y limpia"
     },
     {
       title: "Corrección de Pintura",
       desc: "Eliminación de swirl marks y recuperación de brillo",
-      beforeAlt: "Pintura de auto opaca con micro-rayones",
-      afterAlt: "Pintura de auto con brillo de espejo"
+      before: IMAGES.resultados.pintura.before,
+      after: IMAGES.resultados.pintura.after,
+      beforeAlt: "Pintura de auto antes: opaca con micro-rayones",
+      afterAlt: "Pintura de auto después: brillo de espejo sin imperfecciones"
     },
     {
       title: "Recubrimiento Cerámico",
       desc: "Protección duradera con acabado hidrofóbico",
-      beforeAlt: "Superficie de auto sin protección",
-      afterAlt: "Superficie de auto con recubrimiento cerámico repelente"
+      before: IMAGES.resultados.ceramico.before,
+      after: IMAGES.resultados.ceramico.after,
+      beforeAlt: "Superficie antes: agua estancada sin protección",
+      afterAlt: "Superficie después: gotas repelidas formando esferas perfectas"
     }
   ];
 
@@ -475,47 +586,7 @@ const BeforeAfter = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {cases.map((item, index) => (
-            <ScrollReveal key={index} delay={index * 150}>
-              <div className="group">
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 mb-6">
-                  {/* Before/After Split Visual */}
-                  <div className="absolute inset-0 flex">
-                    <div className="w-1/2 relative border-r border-white/20 overflow-hidden">
-                      <img
-                        src={heroImage}
-                        alt={item.beforeAlt}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-slate-950/40" />
-                      <div className="relative flex items-center justify-center h-full p-4">
-                        <div className="text-center">
-                          <span className="text-xs font-bold text-red-400 uppercase tracking-wider mb-2 block">Antes</span>
-                          <p className="text-xs text-slate-200">{item.beforeAlt}</p>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="w-1/2 relative overflow-hidden">
-                      <img
-                        src={heroImage}
-                        alt={item.afterAlt}
-                        className="absolute inset-0 w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-slate-950/30" />
-                      <div className="relative flex items-center justify-center h-full p-4">
-                        <div className="text-center">
-                          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider mb-2 block">Después</span>
-                          <p className="text-xs text-slate-100">{item.afterAlt}</p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                  {/* Shine overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                </div>
-                <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-                <p className="text-slate-400 text-sm">{item.desc}</p>
-              </div>
-            </ScrollReveal>
+            <BeforeAfterCard key={index} item={item} index={index} />
           ))}
         </div>
       </div>
@@ -523,7 +594,72 @@ const BeforeAfter = () => {
   );
 };
 
+// Componente auxiliar para manejar errores en Before/After
+const BeforeAfterCard = ({ item, index }) => {
+  const [beforeError, setBeforeError] = useState(false);
+  const [afterError, setAfterError] = useState(false);
+
+  return (
+    <ScrollReveal delay={index * 150}>
+      <div className="group">
+        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 mb-6">
+          <div className="absolute inset-0 flex">
+            {/* BEFORE - Tu foto "antes" */}
+            <div className="w-1/2 relative border-r border-white/20 overflow-hidden">
+              {!beforeError ? (
+                <img 
+                  src={item.before} 
+                  alt={item.beforeAlt}
+                  className="w-full h-full object-cover"
+                  onError={() => setBeforeError(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                  <div className="text-center p-2">
+                    <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
+                    <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.before.split('/').pop()}</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute top-4 left-4 px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full">
+                <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
+              </div>
+            </div>
+            
+            {/* AFTER - Tu foto "después" */}
+            <div className="w-1/2 relative overflow-hidden">
+              {!afterError ? (
+                <img 
+                  src={item.after} 
+                  alt={item.afterAlt}
+                  className="w-full h-full object-cover"
+                  onError={() => setAfterError(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                  <div className="text-center p-2">
+                    <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
+                    <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.after.split('/').pop()}</p>
+                  </div>
+                </div>
+              )}
+              <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full">
+                <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
+              </div>
+            </div>
+          </div>
+          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+        </div>
+        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
+        <p className="text-slate-400 text-sm">{item.desc}</p>
+      </div>
+    </ScrollReveal>
+  );
+};
+
 const CeramicCoating = () => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <section className="py-24 bg-gradient-to-b from-slate-900 to-slate-950 relative overflow-hidden">
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_rgba(6,182,212,0.08)_0%,_transparent_50%)]" />
@@ -580,19 +716,28 @@ const CeramicCoating = () => {
 
           <ScrollReveal delay={200}>
             <div className="relative">
-              <div className="aspect-square rounded-3xl overflow-hidden border border-white/10 bg-gradient-to-br from-slate-800 to-slate-900 shadow-2xl shadow-cyan-500/10">
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <div className="w-32 h-32 mx-auto rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center mb-6 animate-pulse">
-                      <Shield className="w-16 h-16 text-cyan-400" />
+              {/* CERAMIC IMAGE - Tu mejor foto de efecto hidrofóbico */}
+              <div className="aspect-square rounded-3xl overflow-hidden border border-white/10 bg-slate-800 shadow-2xl shadow-cyan-500/10">
+                {!imgError ? (
+                  <img 
+                    src={IMAGES.ceramico} 
+                    alt="Capó negro con recubrimiento cerámico mostrando efecto hidrofóbico"
+                    className="w-full h-full object-cover"
+                    onError={() => setImgError(true)}
+                  />
+                ) : (
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <Shield className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                      <p className="text-slate-500 text-sm">Agrega tu imagen en:</p>
+                      <p className="text-cyan-400 text-xs mt-1 font-mono">public/images/ceramico/coating-close.jpg</p>
+                      <p className="text-slate-600 text-xs mt-2">Close-up gotas repelidas en capó</p>
                     </div>
-                    <p className="text-slate-500 text-sm">Imagen recomendada:</p>
-                    <p className="text-slate-400 text-sm mt-1">Close-up de capó con gotas de agua repelidas mostrando brillo intenso</p>
                   </div>
-                </div>
-                {/* Glow Effect */}
+                )}
                 <div className="absolute -inset-px rounded-3xl bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20 opacity-50" />
               </div>
+              
               {/* Floating Badge */}
               <div className="absolute -bottom-6 -right-6 bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl">
                 <div className="flex items-center gap-3">
@@ -677,21 +822,40 @@ const HowItWorks = () => {
 };
 
 const Coverage = () => {
+  const [imgError, setImgError] = useState(false);
+
   return (
     <section id="cobertura" className="py-24 bg-slate-900/50 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           <ScrollReveal>
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-slate-800">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="text-center p-8">
-                  <MapPin className="w-16 h-16 text-cyan-400 mx-auto mb-4" />
-                  <p className="text-slate-400 text-sm">Mapa estilizado de cobertura</p>
-                  <p className="text-slate-500 text-xs mt-2">Santa Fe Lifestyle, Xochitepec y alrededores</p>
+            {/* COVERAGE IMAGE - Tu mapa o foto aérea */}
+            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-slate-800 shadow-xl">
+              {!imgError ? (
+                <img 
+                  src={IMAGES.cobertura} 
+                  alt="Mapa de cobertura de servicio en Santa Fe Lifestyle y Xochitepec"
+                  className="w-full h-full object-cover opacity-80"
+                  onError={() => setImgError(true)}
+                />
+              ) : (
+                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                  <div className="text-center p-8">
+                    <MapPin className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                    <p className="text-slate-500 text-sm">Agrega tu imagen en:</p>
+                    <p className="text-cyan-400 text-xs mt-1 font-mono">public/images/cobertura/mapa.jpg</p>
+                    <p className="text-slate-600 text-xs mt-2">Mapa estilizado o foto aérea de zona</p>
+                  </div>
                 </div>
+              )}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/40 to-transparent" />
+              
+              {/* Punto de ubicación animado */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                <div className="w-4 h-4 bg-cyan-400 rounded-full animate-ping absolute" />
+                <div className="w-4 h-4 bg-cyan-400 rounded-full relative shadow-lg shadow-cyan-400/50" />
               </div>
-              {/* Map Glow */}
-              <div className="absolute inset-0 bg-gradient-to-t from-cyan-500/10 to-transparent" />
             </div>
           </ScrollReveal>
 
@@ -745,19 +909,22 @@ const Testimonials = () => {
       name: "Carlos M.",
       role: "BMW X5",
       text: "Increíble el nivel de detalle. Mi auto quedó mejor que cuando lo compré. El servicio a domicilio es un lujo que vale cada peso.",
-      rating: 5
+      rating: 5,
+      image: IMAGES.testimonios.cliente1
     },
     {
       name: "Mariana R.",
       role: "Mercedes C-Class",
       text: "Profesionalismo absoluto. Llegaron puntual, trabajaron con cuidado y el resultado superó mis expectativas. Totalmente recomendable.",
-      rating: 5
+      rating: 5,
+      image: IMAGES.testimonios.cliente2
     },
     {
       name: "Alejandro G.",
       role: "Porsche 911",
       text: "El recubrimiento cerámico cambió por completo la apariencia de mi auto. El brillo es espectacular y la protección se nota al instante.",
-      rating: 5
+      rating: 5,
+      image: IMAGES.testimonios.cliente3
     }
   ];
 
@@ -773,32 +940,52 @@ const Testimonials = () => {
 
         <div className="grid md:grid-cols-3 gap-8">
           {testimonials.map((item, index) => (
-            <ScrollReveal key={index} delay={index * 150}>
-              <div className="relative p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/20 transition-all duration-300 h-full flex flex-col">
-                <Quote className="w-10 h-10 text-cyan-500/20 mb-4" />
-                <p className="text-slate-300 leading-relaxed mb-6 flex-grow italic">
-                  "{item.text}"
-                </p>
-                <div className="flex items-center gap-1 mb-4">
-                  {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
-                  ))}
-                </div>
-                <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-500/30 to-blue-600/30 flex items-center justify-center">
-                    <span className="text-white font-bold text-sm">{item.name[0]}</span>
-                  </div>
-                  <div>
-                    <h4 className="text-white font-semibold">{item.name}</h4>
-                    <p className="text-slate-400 text-sm">{item.role}</p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
+            <TestimonialCard key={index} item={item} index={index} />
           ))}
         </div>
       </div>
     </section>
+  );
+};
+
+// Componente auxiliar para testimonios con foto opcional
+const TestimonialCard = ({ item, index }) => {
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <ScrollReveal delay={index * 150}>
+      <div className="relative p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/20 transition-all duration-300 h-full flex flex-col">
+        <Quote className="w-10 h-10 text-cyan-500/20 mb-4" />
+        <p className="text-slate-300 leading-relaxed mb-6 flex-grow italic">
+          "{item.text}"
+        </p>
+        <div className="flex items-center gap-1 mb-4">
+          {[...Array(item.rating)].map((_, i) => (
+            <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
+          ))}
+        </div>
+        <div className="flex items-center gap-4 pt-4 border-t border-white/10">
+          {/* Avatar: Foto del auto del cliente o inicial con gradiente */}
+          <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-cyan-500/30 to-blue-600/30 flex items-center justify-center flex-shrink-0">
+            {item.image && !imgError ? (
+              <img 
+                src={item.image} 
+                alt={`Auto de ${item.name}`}
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : null}
+            <span className={`text-white font-bold text-sm ${!imgError && item.image ? 'absolute' : ''}`}>
+              {item.name[0]}
+            </span>
+          </div>
+          <div>
+            <h4 className="text-white font-semibold">{item.name}</h4>
+            <p className="text-slate-400 text-sm">{item.role}</p>
+          </div>
+        </div>
+      </div>
+    </ScrollReveal>
   );
 };
 
