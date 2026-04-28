@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, Phone, MapPin, Instagram, ChevronRight, 
   Shield, Sparkles, Clock, Home, Award, Droplets, 
-  CheckCircle2, ArrowRight, Star, Quote, Car, 
+  CheckCircle2, ArrowRight, Star, Quote, Car,
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
 
@@ -120,6 +120,7 @@ const Navbar = () => {
     { name: 'Beneficios', href: '#beneficios' },
     { name: 'Resultados', href: '#resultados' },
     { name: 'Cobertura', href: '#cobertura' },
+    { name: 'Para Agencias', href: '#b2b' },    // ← AGREGAR ESTA LÍNEA
     { name: 'Testimonios', href: '#testimonios' },
     { name: 'Contacto', href: '#contacto' },
   ];
@@ -826,7 +827,7 @@ const CoverageMap = () => {
   const zonas = [
     {
       id: "santa-fe",
-      nombre: "Santa Fe Lifestyle",
+      nombre: "Santa Fe Lifestyle y alrededores",
       tipo: "Principal",
       descripcion: "Fraccionamiento residencial premium con acceso directo",
       tiempo: "15-20 min",
@@ -901,7 +902,7 @@ const CoverageMap = () => {
   const referencias = [
     { icon: "🛣️", text: "Autopista México-Cuernavaca" },
     { icon: "🎓", text: "Cerca de UAEM" },
-    { icon: "⛰️", text: "Cercano a Tepoztlán" },
+    { icon: "📍", text: "Cercano a Centro de Convnciones Morelos" },
     { icon: "📍", text: "Carretera Federal 95D" }
   ];
 
@@ -929,8 +930,7 @@ const CoverageMap = () => {
               </span>
             </h2>
             <p className="max-w-2xl mx-auto text-slate-400 text-lg">
-              Mapa interactivo de nuestras zonas de servicio. Selecciona una ubicación 
-              para ver detalles de tiempo y disponibilidad.
+              Mapa interactivo de nuestras zonas de servicio. escribenos para saber disponibilidad.
             </p>
           </div>
         </ScrollReveal>
@@ -1249,25 +1249,390 @@ const CoverageMap = () => {
   );
 };
 
+// ============================================================
+// SECCIÓN B2B — SERVICIOS PARA AGENCIAS Y EXPOSICIONES
+// Basado en Propuesta Técnica y Económica GT Detailing MX
+// Contacto: Hugo Franco — 777 388 7690
+// ============================================================
+
+const B2BServices = () => {
+  const [activeService, setActiveService] = useState(null);
+
+  const serviciosB2B = [
+    {
+      id: "unidades-nuevas",
+      icon: Sparkles,
+      titulo: "Preparación de Unidades Nuevas",
+      descripcion: "Limpieza profunda exterior e interior, descontaminación de pintura, aplicación de sellador cerámico o cera de alto brillo. Ideal para vehículos nuevos o de arribo a agencia.",
+      precio: "$850",
+      duracion: "2 hrs",
+      frecuencia: "Por lote / entrega",
+      color: "from-cyan-500 to-blue-600",
+      tag: "Más solicitado"
+    },
+    {
+      id: "exhibicion",
+      icon: Award,
+      titulo: "Mantenimiento de Unidades de Exhibición",
+      descripcion: "Limpieza exterior rápida, desempolvado interior, retoque de acabados plásticos y cromados. Conserva brillo y presentación en piso de venta diario.",
+      precio: "$300",
+      duracion: "45 min",
+      frecuencia: "Semanal / diario",
+      color: "from-emerald-500 to-teal-600",
+      tag: "Recurrente"
+    },
+    {
+      id: "pre-venta",
+      icon: Car,
+      titulo: "Detallado Pre-Venta (Seminuevos/Demo)",
+      descripcion: "Lavado detallado, pulido de pintura, restauración de faros, limpieza profunda de tapicería y motor. Mejora la percepción y valor del vehículo.",
+      precio: "$1,400",
+      duracion: "3 hrs",
+      frecuencia: "Según rotación",
+      color: "from-violet-500 to-purple-600",
+      tag: "Integral"
+    },
+    {
+      id: "ceramico",
+      icon: Shield,
+      titulo: "Protección de Superficies Cerámica",
+      descripcion: "Aplicación de recubrimientos cerámicos, selladores y protectores interiores (cuero, vinil, plásticos). Aumenta durabilidad de materiales y brillo.",
+      precio: "$2,800",
+      duracion: "4 hrs",
+      frecuencia: "Anual / semestral",
+      color: "from-amber-500 to-orange-600",
+      tag: "Premium"
+    },
+    {
+      id: "express-vip",
+      icon: Zap,
+      titulo: "Servicio Express VIP",
+      descripcion: "Atención inmediata de autos de clientes o eventos, limpieza premium rápida. Ideal para entregas especiales, lanzamientos o eventos de agencia.",
+      precio: "$450",
+      duracion: "1 hr",
+      frecuencia: "A solicitud",
+      color: "from-rose-500 to-pink-600",
+      tag: "Express"
+    }
+  ];
+
+  const metodologia = [
+    {
+      num: "01",
+      titulo: "Diagnóstico Inicial",
+      desc: "Evaluación del estado de la unidad por nuestro especialista certificado."
+    },
+    {
+      num: "02",
+      titulo: "Selección de Tratamiento",
+      desc: "Según tipo de superficie y objetivo: exhibición, entrega o reventa."
+    },
+    {
+      num: "03",
+      titulo: "Ejecución Profesional",
+      desc: "Procedimientos controlados con productos y herramientas profesionales."
+    },
+    {
+      num: "04",
+      titulo: "Inspección Final",
+      desc: "Validación visual y técnica por el especialista GT Detailing MX."
+    },
+    {
+      num: "05",
+      titulo: "Entrega con Garantía",
+      desc: "Certificado de trabajo realizado y recomendaciones de mantenimiento."
+    }
+  ];
+
+  const diferenciadores = [
+    { icon: Shield, titulo: "Productos de Grado Profesional", desc: "Chemical Guys®, Meguiar's®, Sonax®, Turtle Wax Pro" },
+    { icon: Award, titulo: "Personal Certificado", desc: "Protocolos de limpieza sin residuos ni micro-rayones" },
+    { icon: Home, titulo: "Servicio Móvil", desc: "A domicilio o directo en tu agencia" },
+    { icon: Clock, titulo: "Cumplimiento Garantizado", desc: "Tiempos de entrega estrictos y calidad visual" }
+  ];
+
+  const descuentosVolumen = [
+    { unidades: "5+ por semana", descuento: "10%", color: "text-cyan-400" },
+    { unidades: "20+ mensuales", descuento: "15%", color: "text-blue-400" },
+    { unidades: "Contrato anual", descuento: "Preferencial", color: "text-emerald-400" }
+  ];
+
+  return (
+    <section id="b2b" className="py-24 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-6">
+              <Award className="w-4 h-4 text-cyan-400" />
+              <span className="text-sm text-cyan-400 font-medium">Servicios Corporativos</span>
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Soluciones para <br />
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Agencias y Exposiciones
+              </span>
+            </h2>
+            <p className="max-w-3xl mx-auto text-slate-400 text-lg">
+              GT Detailing MX / AQUABRILLO es aliado estratégico de agencias automotrices 
+              que buscan elevar el estándar de presentación y satisfacción del cliente final. 
+              Servicios profesionales para piso de venta, entregas especiales y procesos de reventa.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        {/* Contacto rápido B2B */}
+        <ScrollReveal delay={100}>
+          <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 mb-16 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center">
+                <Phone className="w-7 h-7 text-cyan-400" />
+              </div>
+              <div>
+                <p className="text-white font-bold">Contacto directo para agencias</p>
+                <p className="text-slate-400 text-sm">Hugo Franco — Especialista en Detallado Automotriz</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-4">
+              <a
+                href={WHATSAPP_LINK("Hola, represento una agencia automotriz y me interesa cotizar servicios de detallado corporativo.")}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+              >
+                <MessageCircle className="w-5 h-5" />
+                Cotizar para agencia
+              </a>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Servicios B2B Grid */}
+        <ScrollReveal delay={150}>
+          <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+            <Sparkles className="w-6 h-6 text-cyan-400" />
+            Catálogo de Servicios Corporativos
+          </h3>
+        </ScrollReveal>
+
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+          {serviciosB2B.map((servicio, index) => (
+            <ScrollReveal key={servicio.id} delay={index * 100}>
+              <div 
+                className={`group relative rounded-2xl bg-white/[0.02] border transition-all duration-500 h-full flex flex-col overflow-hidden ${
+                  activeService === servicio.id 
+                    ? 'border-cyan-500/40 bg-white/[0.04]' 
+                    : 'border-white/10 hover:border-white/20'
+                }`}
+                onMouseEnter={() => setActiveService(servicio.id)}
+                onMouseLeave={() => setActiveService(null)}
+              >
+                {/* Header de tarjeta con gradiente */}
+                <div className={`h-2 bg-gradient-to-r ${servicio.color}`} />
+                
+                <div className="p-6 flex flex-col flex-grow">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${servicio.color} bg-opacity-20 flex items-center justify-center`}>
+                      <servicio.icon className="w-6 h-6 text-white" />
+                    </div>
+                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      servicio.tag === "Más solicitado" 
+                        ? "bg-cyan-500/10 text-cyan-400 border border-cyan-500/20" 
+                        : "bg-white/5 text-slate-400 border border-white/10"
+                    }`}>
+                      {servicio.tag}
+                    </span>
+                  </div>
+
+                  <h4 className="text-lg font-bold text-white mb-2">{servicio.titulo}</h4>
+                  <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">{servicio.descripcion}</p>
+
+                  {/* Detalles del servicio */}
+                  <div className="space-y-2 mb-6">
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-500">Precio unitario</span>
+                      <span className="text-white font-bold text-lg">{servicio.precio} <span className="text-slate-500 text-xs font-normal">MXN</span></span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-500">Duración</span>
+                      <span className="text-slate-300">{servicio.duracion}</span>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <span className="text-slate-500">Frecuencia</span>
+                      <span className="text-slate-300">{servicio.frecuencia}</span>
+                    </div>
+                  </div>
+
+                  <a
+                    href={WHATSAPP_LINK(`Hola, me interesa cotizar el servicio: ${servicio.titulo} para mi agencia.`)}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-white/5 border border-white/10 text-white font-medium rounded-xl hover:bg-gradient-to-r hover:from-cyan-500 hover:to-blue-600 hover:border-transparent transition-all duration-300"
+                  >
+                    Solicitar cotización
+                    <ArrowRight className="w-4 h-4" />
+                  </a>
+                </div>
+              </div>
+            </ScrollReveal>
+          ))}
+        </div>
+
+        {/* Metodología de trabajo */}
+        <ScrollReveal>
+          <div className="mb-16">
+            <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
+              <CheckCircle2 className="w-6 h-6 text-cyan-400" />
+              Nuestra Metodología
+            </h3>
+            <div className="grid md:grid-cols-5 gap-4">
+              {metodologia.map((paso, index) => (
+                <ScrollReveal key={index} delay={index * 100}>
+                  <div className="relative p-6 rounded-2xl bg-white/[0.02] border border-white/10 h-full text-center group hover:border-cyan-500/30 transition-all duration-300">
+                    <span className="text-4xl font-bold text-white/5 absolute top-2 right-4">
+                      {paso.num}
+                    </span>
+                    <div className="w-10 h-10 mx-auto mb-4 rounded-full bg-gradient-to-br from-cyan-500/20 to-blue-600/20 flex items-center justify-center">
+                      <span className="text-cyan-400 font-bold text-sm">{paso.num}</span>
+                    </div>
+                    <h4 className="text-white font-semibold text-sm mb-2">{paso.titulo}</h4>
+                    <p className="text-slate-400 text-xs leading-relaxed">{paso.desc}</p>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Diferenciadores */}
+        <ScrollReveal>
+          <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 mb-16">
+            <h3 className="text-2xl font-bold text-white mb-8 text-center">
+              ¿Por qué elegirnos como aliado?
+            </h3>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {diferenciadores.map((diff, index) => (
+                <div key={index} className="text-center group">
+                  <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-cyan-500/20 to-blue-600/20 border border-white/10 flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <diff.icon className="w-7 h-7 text-cyan-400" />
+                  </div>
+                  <h4 className="text-white font-semibold text-sm mb-2">{diff.titulo}</h4>
+                  <p className="text-slate-400 text-xs leading-relaxed">{diff.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Descuentos por volumen */}
+        <ScrollReveal>
+          <div className="bg-gradient-to-r from-cyan-500/10 to-blue-600/10 border border-cyan-500/20 rounded-2xl p-8 mb-16">
+            <div className="text-center mb-8">
+              <h3 className="text-2xl font-bold text-white mb-2">Descuentos por Volumen</h3>
+              <p className="text-slate-400">Mayor rotación, mejores precios</p>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              {descuentosVolumen.map((desc, index) => (
+                <div key={index} className="text-center p-6 rounded-xl bg-slate-950/50 border border-white/10">
+                  <p className="text-slate-400 text-sm mb-2">A partir de</p>
+                  <p className="text-white font-bold mb-3">{desc.unidades}</p>
+                  <div className={`text-3xl font-bold ${desc.color} mb-2`}>{desc.descuento}</div>
+                  <p className="text-slate-500 text-xs">de descuento</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* CTA Final B2B */}
+        <ScrollReveal>
+          <div className="text-center">
+            <div className="max-w-3xl mx-auto bg-white/[0.02] border border-white/10 rounded-3xl p-10">
+              <h3 className="text-3xl font-bold text-white mb-4">
+                Demostración sin costo
+              </h3>
+              <p className="text-slate-400 mb-8">
+                Agenda una demostración gratuita en tu agencia y descubre por qué 
+                confiar en GT Detailing MX / AQUABRILLO 
+                para la presentación de sus unidades.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a
+                  href={WHATSAPP_LINK("Hola, me gustaría agendar una demostración sin costo para mi agencia. Somos [nombre de agencia].")}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300 text-lg"
+                >
+                  <Sparkles className="w-5 h-5" />
+                  Agendar demostración gratuita
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </a>
+              </div>
+              <div className="mt-6 flex items-center justify-center gap-6 text-sm text-slate-500">
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  Sin compromiso
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  En tu agencia
+                </span>
+                <span className="flex items-center gap-2">
+                  <CheckCircle2 className="w-4 h-4 text-cyan-400" />
+                  Resultados visibles
+                </span>
+              </div>
+            </div>
+          </div>
+        </ScrollReveal>
+
+        {/* Condiciones comerciales */}
+        <ScrollReveal>
+          <div className="mt-16 grid md:grid-cols-4 gap-6 text-center">
+            {[
+              { icon: Clock, label: "Horario", valor: "Martes a Sábado 8am-6pm" },
+              { icon: Shield, label: "Garantía", valor: "15 días en cerámicos" },
+              { icon: Phone, label: "Pago", valor: "Transferencia, efectivo, terminal" },
+              { icon: Award, label: "Vigencia", valor: "Precios válidos 60 días" }
+            ].map((cond, i) => (
+              <div key={i} className="p-4">
+                <cond.icon className="w-5 h-5 text-slate-500 mx-auto mb-2" />
+                <p className="text-slate-500 text-xs uppercase tracking-wider mb-1">{cond.label}</p>
+                <p className="text-white text-sm font-medium">{cond.valor}</p>
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
+      </div>
+    </section>
+  );
+};
+
 function Testimonials() {
   const testimonials = [
     {
-      name: "Carlos M.",
-      role: "BMW X5",
-      text: "Increíble el nivel de detalle. Mi auto quedó mejor que cuando lo compré. El servicio a domicilio es un lujo que vale cada peso.",
+      name: "Juan Manuel",
+      role: "BYD King",
+      text: "Increíble el nivel de detalle. El servicio a domicilio es un lujo que vale cada peso.",
       rating: 5,
       image: IMAGES.testimonios.cliente1
     },
     {
-      name: "Mariana R.",
-      role: "Mercedes C-Class",
+      name: "Ivonne B",
+      role: "JEEP Renegade",
       text: "Profesionalismo absoluto. Llegaron puntual, trabajaron con cuidado y el resultado superó mis expectativas. Totalmente recomendable.",
       rating: 5,
       image: IMAGES.testimonios.cliente2
     },
     {
-      name: "Alejandro G.",
-      role: "Porsche 911",
+      name: "Luis Alonso",
+      role: "MG ONE",
       text: "El recubrimiento cerámico cambió por completo la apariencia de mi auto. El brillo es espectacular y la protección se nota al instante.",
       rating: 5,
       image: IMAGES.testimonios.cliente3
@@ -1396,11 +1761,11 @@ const Footer = () => {
                 <Droplets className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">
-                AQUA<span className="text-cyan-400">BRILLO</span>
+                AQUA<span className="text-cyan-400">BRILLO / GT DETAILING MX</span>
               </span>
             </div>
             <p className="text-slate-400 max-w-sm mb-6 leading-relaxed">
-              Detailing automotriz premium a domicilio. Transformamos tu vehículo 
+              Detallado automotriz premium a domicilio. Transformamos tu vehículo 
               con la precisión y el cuidado que solo los verdaderos apasionados 
               entienden.
             </p>
@@ -1505,6 +1870,7 @@ function App() {
       <CeramicCoating />
       <HowItWorks />
       <CoverageMap />
+      <B2BServices />      {/* ← AGREGAR ESTA LÍNEA */}
       <Testimonials />
       <FinalCTA />
       <Footer />
