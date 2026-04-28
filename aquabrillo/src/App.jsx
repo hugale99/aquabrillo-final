@@ -220,7 +220,7 @@ const Hero = () => {
         <ScrollReveal>
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
             <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-sm text-slate-300 font-medium">Detailing Premium a Domicilio</span>
+            <span className="text-sm text-slate-300 font-medium">Lavado y Detallado a Domicilio</span>
           </div>
         </ScrollReveal>
 
@@ -334,17 +334,17 @@ const Services = () => {
     {
       icon: Droplets,
       title: "Lavado Premium a Domicilio",
-      desc: "Limpieza profunda exterior con técnicas profesionales y productos de alta gama que respetan la pintura de tu vehículo.",
+      desc: "Limpieza profunda interior y exterior con productos de alta gama que respetan la pintura de tu vehículo y el sol extremo.",
       benefit: "Brillo intenso sin rayar",
       tag: "Más solicitado",
-      price: "Desde $350",
+      price: "Cotizar",
       image: IMAGES.servicios.lavado,
       imageAlt: "Proceso de lavado premium con espuma y microfibra"
     },
     {
       icon: Car,
       title: "Detallado Interior Premium",
-      desc: "Restauración completa del habitáculo. Limpieza de tapicería, paneles, alfombras y tratamiento de olores.",
+      desc: "Detallado interior completo. Limpieza de tapicería, paneles, alfombras y tratamiento de olores.",
       benefit: "Interior como nuevo",
       tag: "Premium",
       price: "Desde $650",
@@ -357,7 +357,7 @@ const Services = () => {
       desc: "Limpieza de llantas, salpicaderas, motor superficial y tratamiento de superficies exteriores con acabado profesional.",
       benefit: "Presentación impecable",
       tag: "Popular",
-      price: "Desde $450",
+      price: "Desde $850",
       image: IMAGES.servicios.exterior,
       imageAlt: "Auto con llantas brillantes y carrocería impecable"
     },
