@@ -23,47 +23,47 @@ const IMAGES = {
   // HERO: Tu mejor foto de auto premium
   // Recomendación: Auto oscuro, fondo oscuro, reflejos de agua o luz dramática
   // Formato: JPG o PNG, preferiblemente 1920x1080 o mayor
-  hero: "/images/hero/hero-car.jpg",
+  hero: "/hero/hero-car.jpg",
   
   // SERVICIOS: 6 fotos de tus trabajos reales
   servicios: {
-    lavado: "/images/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
-    interior: "/images/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
-    exterior: "/images/servicios/exterior.jpg",     // Llantas, carrocería, detalles
-    pulido: "/images/servicios/pulido.jpg",         // Máquina pulidora trabajando
-    ceramico: "/images/servicios/ceramico.jpg",     // Gotas repelidas en capó
-    paquetes: "/images/servicios/paquetes.jpg"      // Auto completo, toma amplia
+    lavado: "/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
+    interior: "/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
+    exterior: "/servicios/exterior.jpg",     // Llantas, carrocería, detalles
+    pulido: "/servicios/pulido.JPG",         // Máquina pulidora trabajando
+    ceramico: "/servicios/ceramico.jpg",     // Gotas repelidas en capó
+    paquetes: "/servicios/paquetes.png"      // Auto completo, toma amplia
   },
   
   // RESULTADOS: Fotos antes/después de trabajos reales
   // IMPORTANTE: Usa el MISMO ÁNGULO y MISMA ILUMINACIÓN para before y after
   resultados: {
     interior: {
-      before: "/images/resultados/interior-before.jpg",   // Asientos sucios/manchados
-      after: "/images/resultados/interior-after.jpg"      // Mismo ángulo, limpios
+      before: "/resultados/interior-before.jpg",   // Asientos sucios/manchados
+      after: "/resultados/interior-after.jpg"      // Mismo ángulo, limpios
     },
     pintura: {
-      before: "/images/resultados/pintura-before.jpg",    // Pintura opaca/rayada
-      after: "/images/resultados/pintura-after.jpg"       // Mismo panel, brillante
+      before: "/resultados/pintura-before.jpg",    // Pintura opaca/rayada
+      after: "/resultados/pintura-after.jpg"       // Mismo panel, brillante
     },
     ceramico: {
-      before: "/images/resultados/ceramico-before.jpg",   // Agua extendida en superficie
-      after: "/images/resultados/ceramico-after.jpg"      // Gotas formando esferas
+      before: "/resultados/ceramico-before.jpg",   // Agua extendida en superficie
+      after: "/resultados/ceramico-after.jpg"      // Gotas formando esferas
     }
   },
   
   // CERÁMICO: Tu mejor foto de efecto hidrofóbico
-  ceramico: "/images/ceramico/coating-close.jpg",
+  ceramico: "/ceramico/coating-close.jpg",
   
   // COBERTURA: Mapa personalizado o screenshot de Google Maps estilizado
-  cobertura: "/images/cobertura/mapa.jpg",
+  cobertura: "/cobertura/mapa.jpg",
   
   // TESTIMONIOS: Fotos de autos de clientes (con su permiso)
   // Si no tienes fotos, deja null y se mostrará avatar con inicial
   testimonios: {
-    cliente1: "/images/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
-    cliente2: "/images/testimonios/cliente-2.jpg",  // Auto del cliente 2
-    cliente3: "/images/testimonios/cliente-3.jpg"   // Auto del cliente 3
+    cliente1: "/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
+    cliente2: "/testimonios/cliente-2.jpg",  // Auto del cliente 2
+    cliente3: "/testimonios/cliente-3.jpg"   // Auto del cliente 3
   }
 };
 
@@ -604,7 +604,7 @@ const BeforeAfterCard = ({ item, index }) => {
       <div className="group">
         <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 mb-6">
           <div className="absolute inset-0 flex">
-            {/* BEFORE - Tu foto "antes" */}
+            {/* BEFORE - Tu foto "antes" o diseño alternativo */}
             <div className="w-1/2 relative border-r border-white/20 overflow-hidden">
               {!beforeError ? (
                 <img 
@@ -614,19 +614,17 @@ const BeforeAfterCard = ({ item, index }) => {
                   onError={() => setBeforeError(true)}
                 />
               ) : (
-                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
-                  <div className="text-center p-2">
-                    <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
-                    <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.before.split('/').pop()}</p>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
+                  <Car className="w-10 h-10 text-slate-700 mb-2" />
+                  <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
+                  <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.before.split('/').pop()}</p>
                 </div>
               )}
               <div className="absolute top-4 left-4 px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full">
                 <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
               </div>
             </div>
-            
-            {/* AFTER - Tu foto "después" */}
+            {/* AFTER - Tu foto "después" o diseño alternativo */}
             <div className="w-1/2 relative overflow-hidden">
               {!afterError ? (
                 <img 
@@ -636,11 +634,10 @@ const BeforeAfterCard = ({ item, index }) => {
                   onError={() => setAfterError(true)}
                 />
               ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                  <div className="text-center p-2">
-                    <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
-                    <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.after.split('/').pop()}</p>
-                  </div>
+                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
+                  <Sparkles className="w-10 h-10 text-cyan-700 mb-2" />
+                  <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
+                  <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.after.split('/').pop()}</p>
                 </div>
               )}
               <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full">
@@ -726,13 +723,9 @@ const CeramicCoating = () => {
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
-                    <div className="text-center p-8">
-                      <Shield className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                      <p className="text-slate-500 text-sm">Agrega tu imagen en:</p>
-                      <p className="text-cyan-400 text-xs mt-1 font-mono">public/images/ceramico/coating-close.jpg</p>
-                      <p className="text-slate-600 text-xs mt-2">Close-up gotas repelidas en capó</p>
-                    </div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
+                    <Shield className="w-16 h-16 text-cyan-700 mb-4" />
+                    <p className="text-cyan-400 text-xs font-mono">Sin imagen</p>
                   </div>
                 )}
                 <div className="absolute -inset-px rounded-3xl bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20 opacity-50" />
@@ -821,89 +814,442 @@ const HowItWorks = () => {
   );
 };
 
-const Coverage = () => {
-  const [imgError, setImgError] = useState(false);
+// ============================================================
+// MAPA VISUAL PREMIUM — Santa Fe Lifestyle, Xochitepec, Morelos
+// Mapa estilizado en SVG con animaciones y diseño oscuro
+// No requiere imágenes externas
+// ============================================================
+
+const CoverageMap = () => {
+  const [activeZone, setActiveZone] = useState(null);
+
+  const zonas = [
+    {
+      id: "santa-fe",
+      nombre: "Santa Fe Lifestyle",
+      tipo: "Principal",
+      descripcion: "Fraccionamiento residencial premium con acceso directo",
+      tiempo: "15-20 min",
+      coordenadas: { cx: 280, cy: 180, r: 35 },
+      color: "#06b6d4", // cyan-500
+      glowColor: "rgba(6, 182, 212, 0.4)",
+      icon: Home
+    },
+    {
+      id: "xochitepec-centro",
+      nombre: "Xochitepec Centro",
+      tipo: "Principal",
+      descripcion: "Zona urbana y comercial del municipio",
+      tiempo: "10-15 min",
+      coordenadas: { cx: 220, cy: 220, r: 30 },
+      color: "#3b82f6", // blue-500
+      glowColor: "rgba(59, 130, 246, 0.4)",
+      icon: MapPin
+    },
+    {
+      id: "los-sauces",
+      nombre: "Fracc. Los Sauces",
+      tipo: "Residencial",
+      descripcion: "Zona habitacional cercana",
+      tiempo: "15-25 min",
+      coordenadas: { cx: 320, cy: 140, r: 25 },
+      color: "#8b5cf6", // violet-500
+      glowColor: "rgba(139, 92, 246, 0.3)",
+      icon: Home
+    },
+    {
+      id: "benito-juarez",
+      nombre: "Col. Benito Juárez",
+      tipo: "Urbana",
+      descripcion: "Sector céntrico de Xochitepec",
+      tiempo: "10-20 min",
+      coordenadas: { cx: 180, cy: 200, r: 22 },
+      color: "#10b981", // emerald-500
+      glowColor: "rgba(16, 185, 129, 0.3)",
+      icon: MapPin
+    },
+    {
+      id: "jardines",
+      nombre: "Fracc. Jardines",
+      tipo: "Residencial",
+      descripcion: "Zona habitacional con acceso controlado",
+      tiempo: "20-30 min",
+      coordenadas: { cx: 340, cy: 240, r: 25 },
+      color: "#f59e0b", // amber-500
+      glowColor: "rgba(245, 158, 11, 0.3)",
+      icon: Home
+    },
+    {
+      id: "zona-sur",
+      nombre: "Zona Sur Xochitepec",
+      tipo: "Expansión",
+      descripcion: "Comunidades aledañas (consultar)",
+      tiempo: "25-40 min",
+      coordenadas: { cx: 200, cy: 280, r: 28 },
+      color: "#64748b", // slate-500
+      glowColor: "rgba(100, 116, 139, 0.3)",
+      icon: Clock
+    }
+  ];
+
+  const rutasPrincipales = [
+    { nombre: "Autopista México-Cuernavaca", path: "M 50,150 Q 200,120 450,180" },
+    { nombre: "Carretera Federal 95D", path: "M 80,200 Q 250,180 420,220" },
+    { nombre: "Acceso Santa Fe Lifestyle", path: "M 250,100 Q 280,140 280,180" }
+  ];
+
+  const referencias = [
+    { icon: "🛣️", text: "Autopista México-Cuernavaca" },
+    { icon: "🎓", text: "Cerca de UAEM" },
+    { icon: "⛰️", text: "Cercano a Tepoztlán" },
+    { icon: "📍", text: "Carretera Federal 95D" }
+  ];
+
+  const zonaActiva = zonas.find(z => z.id === activeZone);
 
   return (
-    <section id="cobertura" className="py-24 bg-slate-900/50 relative overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          <ScrollReveal>
-            {/* COVERAGE IMAGE - Tu mapa o foto aérea */}
-            <div className="relative aspect-[4/3] rounded-3xl overflow-hidden border border-white/10 bg-slate-800 shadow-xl">
-              {!imgError ? (
-                <img 
-                  src={IMAGES.cobertura} 
-                  alt="Mapa de cobertura de servicio en Santa Fe Lifestyle y Xochitepec"
-                  className="w-full h-full object-cover opacity-80"
-                  onError={() => setImgError(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
-                  <div className="text-center p-8">
-                    <MapPin className="w-16 h-16 text-slate-600 mx-auto mb-4" />
-                    <p className="text-slate-500 text-sm">Agrega tu imagen en:</p>
-                    <p className="text-cyan-400 text-xs mt-1 font-mono">public/images/cobertura/mapa.jpg</p>
-                    <p className="text-slate-600 text-xs mt-2">Mapa estilizado o foto aérea de zona</p>
+    <section id="cobertura" className="py-24 bg-slate-950 relative overflow-hidden">
+      {/* Background effects */}
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/3 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+        {/* Header */}
+        <ScrollReveal>
+          <div className="text-center mb-16">
+            <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">
+              Área de Cobertura
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Servicio a Domicilio en <br />
+              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
+                Santa Fe Lifestyle & Xochitepec
+              </span>
+            </h2>
+            <p className="max-w-2xl mx-auto text-slate-400 text-lg">
+              Mapa interactivo de nuestras zonas de servicio. Selecciona una ubicación 
+              para ver detalles de tiempo y disponibilidad.
+            </p>
+          </div>
+        </ScrollReveal>
+
+        <div className="grid lg:grid-cols-5 gap-8 items-start">
+          {/* MAPA SVG — 3 columnas */}
+          <ScrollReveal className="lg:col-span-3">
+            <div className="relative bg-slate-900/50 rounded-3xl border border-white/10 p-6 overflow-hidden">
+              {/* Título del mapa */}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-white font-semibold flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-cyan-400" />
+                  Xochitepec, Morelos
+                </h3>
+                <span className="text-xs text-slate-500 bg-white/5 px-3 py-1 rounded-full">
+                  Zona Premium
+                </span>
+              </div>
+
+              {/* SVG Mapa */}
+              <div className="relative aspect-[4/3] bg-gradient-to-b from-slate-800/50 to-slate-900/50 rounded-2xl overflow-hidden">
+                <svg 
+                  viewBox="0 0 500 400" 
+                  className="w-full h-full"
+                  style={{ filter: "drop-shadow(0 0 30px rgba(6,182,212,0.1))" }}
+                >
+                  {/* Definiciones de gradientes y filtros */}
+                  <defs>
+                    <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
+                      <stop offset="0%" stopColor="rgba(6,182,212,0.3)" />
+                      <stop offset="100%" stopColor="rgba(6,182,212,0)" />
+                    </radialGradient>
+                    <filter id="pulse">
+                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                      <feMerge>
+                        <feMergeNode in="coloredBlur"/>
+                        <feMergeNode in="SourceGraphic"/>
+                      </feMerge>
+                    </filter>
+                  </defs>
+
+                  {/* Fondo del mapa — silueta estilizada de Morelos/Xochitepec */}
+                  <path 
+                    d="M 80,80 
+                       Q 150,60 250,70 
+                       Q 350,50 420,90 
+                       Q 460,150 450,220 
+                       Q 440,300 380,340 
+                       Q 300,370 200,360 
+                       Q 100,350 60,280 
+                       Q 40,200 60,140 
+                       Q 70,100 80,80 Z" 
+                    fill="rgba(15, 23, 42, 0.6)" 
+                    stroke="rgba(6, 182, 212, 0.2)" 
+                    strokeWidth="1"
+                  />
+
+                  {/* Líneas de carreteras principales */}
+                  {rutasPrincipales.map((ruta, i) => (
+                    <g key={i}>
+                      <path 
+                        d={ruta.path} 
+                        fill="none" 
+                        stroke="rgba(100, 116, 139, 0.3)" 
+                        strokeWidth="2" 
+                        strokeDasharray="8,4"
+                      />
+                      <path 
+                        d={ruta.path} 
+                        fill="none" 
+                        stroke="rgba(6, 182, 212, 0.15)" 
+                        strokeWidth="4"
+                      />
+                    </g>
+                  ))}
+
+                  {/* Etiquetas de carreteras */}
+                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
+                    Autopista México-Cuernavaca
+                  </text>
+                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
+                    Carretera 95D
+                  </text>
+
+                  {/* Zonas de cobertura — Círculos interactivos */}
+                  {zonas.map((zona) => (
+                    <g 
+                      key={zona.id}
+                      className="cursor-pointer transition-all duration-300"
+                      onMouseEnter={() => setActiveZone(zona.id)}
+                      onMouseLeave={() => setActiveZone(null)}
+                      style={{ transformOrigin: `${zona.coordenadas.cx}px ${zona.coordenadas.cy}px` }}
+                    >
+                      {/* Área de influencia (glow) */}
+                      <circle
+                        cx={zona.coordenadas.cx}
+                        cy={zona.coordenadas.cy}
+                        r={zona.coordenadas.r * 1.8}
+                        fill={zona.glowColor}
+                        opacity={activeZone === zona.id ? 0.6 : 0.2}
+                        className="transition-opacity duration-300"
+                      />
+                      
+                      {/* Círculo principal */}
+                      <circle
+                        cx={zona.coordenadas.cx}
+                        cy={zona.coordenadas.cy}
+                        r={zona.coordenadas.r}
+                        fill={activeZone === zona.id ? zona.color : "rgba(30, 41, 59, 0.8)"}
+                        stroke={zona.color}
+                        strokeWidth={activeZone === zona.id ? 3 : 1.5}
+                        className="transition-all duration-300"
+                        filter={activeZone === zona.id ? "url(#pulse)" : ""}
+                      />
+                      
+                      {/* Punto central */}
+                      <circle
+                        cx={zona.coordenadas.cx}
+                        cy={zona.coordenadas.cy}
+                        r={6}
+                        fill={zona.color}
+                        className="transition-all duration-300"
+                      />
+                      
+                      {/* Animación de pulso para zonas principales */}
+                      {zona.tipo === "Principal" && (
+                        <>
+                          <circle
+                            cx={zona.coordenadas.cx}
+                            cy={zona.coordenadas.cy}
+                            r={zona.coordenadas.r}
+                            fill="none"
+                            stroke={zona.color}
+                            strokeWidth={1}
+                            opacity={0.5}
+                          >
+                            <animate
+                              attributeName="r"
+                              values={`${zona.coordenadas.r};${zona.coordenadas.r * 1.5};${zona.coordenadas.r}`}
+                              dur="3s"
+                              repeatCount="indefinite"
+                            />
+                            <animate
+                              attributeName="opacity"
+                              values="0.5;0;0.5"
+                              dur="3s"
+                              repeatCount="indefinite"
+                            />
+                          </circle>
+                        </>
+                      )}
+
+                      {/* Nombre de la zona */}
+                      <text
+                        x={zona.coordenadas.cx}
+                        y={zona.coordenadas.cy + zona.coordenadas.r + 15}
+                        textAnchor="middle"
+                        fill={activeZone === zona.id ? "#fff" : "rgba(148, 163, 184, 0.7)"}
+                        fontSize="9"
+                        fontWeight={activeZone === zona.id ? "600" : "400"}
+                        fontFamily="Inter"
+                        className="transition-all duration-300"
+                      >
+                        {zona.nombre}
+                      </text>
+                    </g>
+                  ))}
+
+                  {/* Indicador "Tú estás aquí" estilo */}
+                  <g transform="translate(280, 180)">
+                    <circle r="4" fill="#ef4444">
+                      <animate
+                        attributeName="r"
+                        values="4;8;4"
+                        dur="2s"
+                        repeatCount="indefinite"
+                      />
+                      <animate
+                        attributeName="opacity"
+                        values="1;0.3;1"
+                        dur="2s"
+                        repeatCount="indefinite"
+                      />
+                    </circle>
+                    <circle r="2" fill="#ef4444" />
+                  </g>
+                </svg>
+
+                {/* Overlay de información al hover */}
+                {zonaActiva && (
+                  <div className="absolute bottom-4 left-4 right-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl p-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
+                    <div className="flex items-center gap-3">
+                      <div 
+                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                        style={{ backgroundColor: `${zonaActiva.color}20` }}
+                      >
+                        <zonaActiva.icon className="w-5 h-5" style={{ color: zonaActiva.color }} />
+                      </div>
+                      <div className="flex-grow">
+                        <h4 className="text-white font-bold text-sm">{zonaActiva.nombre}</h4>
+                        <p className="text-slate-400 text-xs">{zonaActiva.descripcion}</p>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-xs text-slate-500 block">Llegada</span>
+                        <span className="text-cyan-400 font-bold text-sm">{zonaActiva.tiempo}</span>
+                      </div>
+                    </div>
                   </div>
+                )}
+              </div>
+
+              {/* Leyenda del mapa */}
+              <div className="flex flex-wrap items-center gap-4 mt-4 text-xs">
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-cyan-500" />
+                  <span className="text-slate-400">Zona Principal</span>
                 </div>
-              )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 to-transparent" />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-900/40 to-transparent" />
-              
-              {/* Punto de ubicación animado */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
-                <div className="w-4 h-4 bg-cyan-400 rounded-full animate-ping absolute" />
-                <div className="w-4 h-4 bg-cyan-400 rounded-full relative shadow-lg shadow-cyan-400/50" />
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-violet-500" />
+                  <span className="text-slate-400">Residencial</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="w-3 h-3 rounded-full bg-slate-500" />
+                  <span className="text-slate-400">Zona de Expansión</span>
+                </div>
+                <div className="flex items-center gap-2 ml-auto">
+                  <div className="w-8 h-0.5 bg-slate-600 border-dashed" style={{ borderTop: "1px dashed rgba(100,116,139,0.5)" }} />
+                  <span className="text-slate-500">Vía de acceso</span>
+                </div>
               </div>
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={200}>
-            <div>
-              <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Zona de Cobertura</span>
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-                Llegamos <span className="text-slate-400">hasta ti</span>
-              </h2>
-              <p className="text-slate-400 text-lg mb-8 leading-relaxed">
-                Servicio a domicilio en las principales zonas residenciales 
-                y fraccionamientos de la región.
-              </p>
-
-              <div className="space-y-4">
-                {[
-                  { name: "Santa Fe Lifestyle", desc: "Cobertura principal" },
-                  { name: "Xochitepec, Morelos", desc: "Centro y alrededores" },
-                  { name: "Fraccionamientos", desc: "Zonas residenciales" },
-                  { name: "Zonas Aledañas", desc: "Consulta disponibilidad" }
-                ].map((zone, index) => (
-                  <div key={index} className="flex items-center gap-4 p-4 rounded-xl bg-white/5 border border-white/10 hover:border-cyan-500/30 transition-colors">
-                    <MapPin className="w-5 h-5 text-cyan-400 flex-shrink-0" />
-                    <div>
-                      <h4 className="text-white font-semibold">{zone.name}</h4>
-                      <p className="text-slate-400 text-sm">{zone.desc}</p>
+          {/* Panel lateral de información — 2 columnas */}
+          <ScrollReveal delay={200} className="lg:col-span-2">
+            <div className="space-y-6">
+              {/* Tarjeta de zona activa o default */}
+              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+                  <Shield className="w-5 h-5 text-cyan-400" />
+                  Zonas Cubiertas
+                </h3>
+                
+                <div className="space-y-3">
+                  {zonas.map((zona) => (
+                    <div 
+                      key={zona.id}
+                      className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 cursor-pointer ${
+                        activeZone === zona.id 
+                          ? 'bg-cyan-500/10 border border-cyan-500/20' 
+                          : 'bg-white/5 border border-transparent hover:bg-white/[0.03]'
+                      }`}
+                      onMouseEnter={() => setActiveZone(zona.id)}
+                      onMouseLeave={() => setActiveZone(null)}
+                    >
+                      <div 
+                        className="w-3 h-3 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: zona.color }}
+                      />
+                      <div className="flex-grow">
+                        <p className="text-white text-sm font-medium">{zona.nombre}</p>
+                        <p className="text-slate-500 text-xs">{zona.tipo}</p>
+                      </div>
+                      <span className="text-cyan-400 text-xs font-medium">{zona.tiempo}</span>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
+              {/* Referencias geográficas */}
+              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+                <h3 className="text-white font-bold mb-4 text-sm">Referencias Geográficas</h3>
+                <div className="space-y-3">
+                  {referencias.map((ref, i) => (
+                    <div key={i} className="flex items-center gap-3">
+                      <span className="text-lg">{ref.icon}</span>
+                      <span className="text-slate-400 text-sm">{ref.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* CTA */}
               <a
-                href={WHATSAPP_LINK("Hola, quiero confirmar si tienen cobertura en mi zona.")}
+                href={WHATSAPP_LINK("Hola, vivo en [tu colonia/fraccionamiento], ¿tienen cobertura?")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 mt-8 text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+                className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02] transition-all duration-300"
               >
-                Verificar mi zona <ArrowRight className="w-4 h-4" />
+                <MessageCircle className="w-5 h-5" />
+                Verificar mi ubicación
               </a>
             </div>
           </ScrollReveal>
         </div>
+
+        {/* Stats de cobertura */}
+        <ScrollReveal delay={300}>
+          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
+            {[
+              { valor: "6+", label: "Zonas cubiertas", icon: MapPin },
+              { valor: "15min", label: "Tiempo promedio", icon: Clock },
+              { valor: "0$", label: "Costo de traslado", icon: Home },
+              { valor: "100%", label: "Satisfacción", icon: Award }
+            ].map((stat, i) => (
+              <div key={i} className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5">
+                <stat.icon className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
+                <p className="text-2xl font-bold text-white mb-1">{stat.valor}</p>
+                <p className="text-slate-500 text-sm">{stat.label}</p>
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
 };
 
-const Testimonials = () => {
+function Testimonials() {
   const testimonials = [
     {
       name: "Carlos M.",
@@ -946,7 +1292,7 @@ const Testimonials = () => {
       </div>
     </section>
   );
-};
+}
 
 // Componente auxiliar para testimonios con foto opcional
 const TestimonialCard = ({ item, index }) => {
@@ -974,10 +1320,9 @@ const TestimonialCard = ({ item, index }) => {
                 className="w-full h-full object-cover"
                 onError={() => setImgError(true)}
               />
-            ) : null}
-            <span className={`text-white font-bold text-sm ${!imgError && item.image ? 'absolute' : ''}`}>
-              {item.name[0]}
-            </span>
+            ) : (
+              <span className="text-white font-bold text-lg">{item.name[0]}</span>
+            )}
           </div>
           <div>
             <h4 className="text-white font-semibold">{item.name}</h4>
@@ -1159,7 +1504,7 @@ function App() {
       <BeforeAfter />
       <CeramicCoating />
       <HowItWorks />
-      <Coverage />
+      <CoverageMap />
       <Testimonials />
       <FinalCTA />
       <Footer />
