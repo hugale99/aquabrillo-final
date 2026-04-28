@@ -1761,7 +1761,7 @@ const Footer = () => {
                 <Droplets className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">
-                AQUA<span className="text-cyan-400">BRILLO / GT DETAILING MX</span>
+                AQUABRILLO /<span className="text-cyan-400"> GT DETAILING MX</span>
               </span>
             </div>
             <p className="text-slate-400 max-w-sm mb-6 leading-relaxed">
