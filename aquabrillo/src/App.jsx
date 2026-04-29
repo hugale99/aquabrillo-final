@@ -165,7 +165,7 @@ const Navbar = () => {
             href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden lg:flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+            className="hidden lg:flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
           >
             <Phone className="w-4 h-4" />
             Agendar por WhatsApp
@@ -194,7 +194,7 @@ const Navbar = () => {
             href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full mt-4"
+            className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
           >
             <Phone className="w-4 h-4" />
             Agendar por WhatsApp
@@ -252,7 +252,7 @@ const Hero = () => {
               href={WHATSAPP_LINK("Hola, quiero agendar un servicio para mi auto.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300 text-lg"
+              className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
             >
               <MessageCircle className="w-5 h-5" />
               Cotizar por WhatsApp
@@ -920,7 +920,7 @@ const ResultsCarousel = () => {
               href={WHATSAPP_LINK("Hola, vi sus resultados y me interesa agendar un servicio. Mi auto es [marca/modelo].")}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
             >
               <Sparkles className="w-5 h-5" />
               Quiero resultados como estos
@@ -980,7 +980,7 @@ const CeramicCoating = () => {
                 href={WHATSAPP_LINK("Hola, me interesa el recubrimiento cerámico.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+                className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
                 <Gem className="w-5 h-5" />
                 Solicitar evaluación gratuita
@@ -1102,8 +1102,8 @@ const CoverageMap = () => {
       id: "santa-fe",
       nombre: "Santa Fe Lifestyle y alrededores",
       tipo: "Principal",
-      descripcion: "Fraccionamiento residencial premium con acceso directo",
-      tiempo: "15-20 min",
+      descripcion: "Fraccionamiento residencial con acceso directo",
+     /* tiempo: "30-45 min",*/
       coordenadas: { cx: 280, cy: 180, r: 35 },
       color: "#06b6d4",
       glowColor: "rgba(6, 182, 212, 0.4)",
@@ -1114,18 +1114,18 @@ const CoverageMap = () => {
       nombre: "Xochitepec Centro",
       tipo: "Principal",
       descripcion: "Zona urbana y comercial del municipio",
-      tiempo: "10-15 min",
+      /* tiempo: "10-15 min", */
       coordenadas: { cx: 220, cy: 220, r: 30 },
       color: "#3b82f6",
       glowColor: "rgba(59, 130, 246, 0.4)",
       icon: MapPin
     },
     {
-      id: "los-sauces",
-      nombre: "Fracc. Los Sauces",
-      tipo: "Residencial",
+      id: "Zona habitacional",
+      nombre: "Alpuyeca",
+      tipo: "Urbana",
       descripcion: "Zona habitacional cercana",
-      tiempo: "15-25 min",
+      /* tiempo: "15-25 min", */
       coordenadas: { cx: 320, cy: 140, r: 25 },
       color: "#8b5cf6",
       glowColor: "rgba(139, 92, 246, 0.3)",
@@ -1136,7 +1136,7 @@ const CoverageMap = () => {
       nombre: "Col. Benito Juárez",
       tipo: "Urbana",
       descripcion: "Sector céntrico de Xochitepec",
-      tiempo: "10-20 min",
+      /* tiempo: "10-20 min", */
       coordenadas: { cx: 180, cy: 200, r: 22 },
       color: "#10b981",
       glowColor: "rgba(16, 185, 129, 0.3)",
@@ -1147,18 +1147,18 @@ const CoverageMap = () => {
       nombre: "Fracc. Jardines",
       tipo: "Residencial",
       descripcion: "Zona habitacional con acceso controlado",
-      tiempo: "20-30 min",
+      /* tiempo: "20-30 min", */
       coordenadas: { cx: 340, cy: 240, r: 25 },
       color: "#f59e0b",
       glowColor: "rgba(245, 158, 11, 0.3)",
       icon: Home
     },
     {
-      id: "zona-sur",
-      nombre: "Zona Sur Xochitepec",
+      id: "CuernDistribuidores y zonas aledañas",
+      nombre: "Cuernavaca",
       tipo: "Expansión",
-      descripcion: "Comunidades aledañas (consultar)",
-      tiempo: "25-40 min",
+      descripcion: "Agencias de autos y zona habitacional",
+      /* tiempo: "Consultar", */
       coordenadas: { cx: 200, cy: 280, r: 28 },
       color: "#64748b",
       glowColor: "rgba(100, 116, 139, 0.3)",
@@ -1175,7 +1175,7 @@ const CoverageMap = () => {
   const referencias = [
     { icon: "🛣️", text: "Autopista México-Cuernavaca" },
     { icon: "🎓", text: "Cerca de UAEM" },
-    { icon: "⛰📍", text: "Cercano a Centro de Convenciones Morelos" },
+    { icon: "📍", text: "Cercano a Centro de Convenciones Morelos" },
     { icon: "📍", text: "Carretera Federal 95D" }
   ];
 
@@ -1462,7 +1462,7 @@ const CoverageMap = () => {
                 href={WHATSAPP_LINK("Hola, vivo en [tu colonia/fraccionamiento], ¿tienen cobertura?")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-[1.02] transition-all duration-300"
+                className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-green-500/25 hover:scale-[1.02] transition-all duration-300"
               >
                 <MessageCircle className="w-5 h-5" />
                 Verificar mi ubicación
@@ -1508,7 +1508,7 @@ const B2BServices = () => {
       precio: "$850",
       duracion: "2 hrs",
       frecuencia: "Por lote / entrega",
-      color: "from-cyan-500 to-blue-600",
+      color: "from-green-500 to-green-600",
       tag: "Más solicitado"
     },
     {
@@ -1642,7 +1642,7 @@ const B2BServices = () => {
                 href={WHATSAPP_LINK("Hola, represento una agencia automotriz y me interesa cotizar servicios de detallado corporativo.")}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+                className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
               >
                 <MessageCircle className="w-5 h-5" />
                 Cotizar para agencia
@@ -1798,7 +1798,7 @@ const B2BServices = () => {
                   href={WHATSAPP_LINK("Hola, me gustaría agendar una demostración sin costo para mi agencia. Somos [nombre de agencia].")}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300 text-lg"
+                  className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
                 >
                   <Sparkles className="w-5 h-5" />
                   Agendar demostración gratuita
@@ -1946,7 +1946,7 @@ const FinalCTA = () => {
               href={WHATSAPP_LINK("Hola, quiero agendar una evaluación para mi auto.")}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300 text-lg"
+              className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
             >
               <MessageCircle className="w-6 h-6" />
               Agendar evaluación gratuita
