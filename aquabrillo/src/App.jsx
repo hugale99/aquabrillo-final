@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { 
   Menu, X, Phone, MapPin, Instagram, ChevronRight, 
   Shield, Sparkles, Clock, Home, Award, Droplets, 
-  CheckCircle2, ArrowRight, Star, Quote, Car,
+  CheckCircle2, ArrowRight, Star, Quote, Car, 
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
 
@@ -23,47 +23,47 @@ const IMAGES = {
   // HERO: Tu mejor foto de auto premium
   // Recomendación: Auto oscuro, fondo oscuro, reflejos de agua o luz dramática
   // Formato: JPG o PNG, preferiblemente 1920x1080 o mayor
-  hero: "/hero/hero-car.jpg",
+  hero: "/images/hero/hero-car.jpg",
   
   // SERVICIOS: 6 fotos de tus trabajos reales
   servicios: {
-    lavado: "/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
-    interior: "/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
-    exterior: "/servicios/exterior.jpg",     // Llantas, carrocería, detalles
-    pulido: "/servicios/pulido.JPG",         // Máquina pulidora trabajando
-    ceramico: "/servicios/ceramico.jpg",     // Gotas repelidas en capó
-    paquetes: "/servicios/paquetes.png"      // Auto completo, toma amplia
+    lavado: "/images/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
+    interior: "/images/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
+    exterior: "/images/servicios/exterior.jpg",     // Llantas, carrocería, detalles
+    pulido: "/images/servicios/pulido.jpg",         // Máquina pulidora trabajando
+    ceramico: "/images/servicios/ceramico.jpg",     // Gotas repelidas en capó
+    paquetes: "/images/servicios/paquetes.jpg"      // Auto completo, toma amplia
   },
   
   // RESULTADOS: Fotos antes/después de trabajos reales
   // IMPORTANTE: Usa el MISMO ÁNGULO y MISMA ILUMINACIÓN para before y after
   resultados: {
     interior: {
-      before: "/resultados/interior-before.jpg",   // Asientos sucios/manchados
-      after: "/resultados/interior-after.jpg"      // Mismo ángulo, limpios
+      before: "/images/resultados/interior-before.jpg",   // Asientos sucios/manchados
+      after: "/images/resultados/interior-after.jpg"      // Mismo ángulo, limpios
     },
     pintura: {
-      before: "/resultados/pintura-before.jpg",    // Pintura opaca/rayada
-      after: "/resultados/pintura-after.jpg"       // Mismo panel, brillante
+      before: "/images/resultados/pintura-before.jpg",    // Pintura opaca/rayada
+      after: "/images/resultados/pintura-after.jpg"       // Mismo panel, brillante
     },
     ceramico: {
-      before: "/resultados/ceramico-before.jpg",   // Agua extendida en superficie
-      after: "/resultados/ceramico-after.jpg"      // Gotas formando esferas
+      before: "/images/resultados/ceramico-before.jpg",   // Agua extendida en superficie
+      after: "/images/resultados/ceramico-after.jpg"      // Gotas formando esferas
     }
   },
   
   // CERÁMICO: Tu mejor foto de efecto hidrofóbico
-  ceramico: "/ceramico/coating-close.jpg",
+  ceramico: "/images/ceramico/coating-close.jpg",
   
   // COBERTURA: Mapa personalizado o screenshot de Google Maps estilizado
-  cobertura: "/cobertura/mapa.jpg",
+  cobertura: "/images/cobertura/mapa.jpg",
   
   // TESTIMONIOS: Fotos de autos de clientes (con su permiso)
   // Si no tienes fotos, deja null y se mostrará avatar con inicial
   testimonios: {
-    cliente1: "/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
-    cliente2: "/testimonios/cliente-2.jpg",  // Auto del cliente 2
-    cliente3: "/testimonios/cliente-3.jpg"   // Auto del cliente 3
+    cliente1: "/images/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
+    cliente2: "/images/testimonios/cliente-2.jpg",  // Auto del cliente 2
+    cliente3: "/images/testimonios/cliente-3.jpg"   // Auto del cliente 3
   }
 };
 
@@ -120,7 +120,7 @@ const Navbar = () => {
     { name: 'Beneficios', href: '#beneficios' },
     { name: 'Resultados', href: '#resultados' },
     { name: 'Cobertura', href: '#cobertura' },
-    { name: 'Para Agencias', href: '#b2b' },    // ← AGREGAR ESTA LÍNEA
+    { name: 'Para Agencias', href: '#b2b' },
     { name: 'Testimonios', href: '#testimonios' },
     { name: 'Contacto', href: '#contacto' },
   ];
@@ -267,7 +267,6 @@ const Hero = () => {
           </div>
         </ScrollReveal>
 
-        {/* HERO IMAGE - Tu foto principal */}
         <ScrollReveal delay={400}>
           <div className="mt-16 relative">
             <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/5 group">
@@ -284,7 +283,7 @@ const Hero = () => {
                     <Car className="w-20 h-20 text-slate-700 mx-auto mb-4" />
                     <p className="text-slate-500 text-sm font-medium">Agrega tu imagen en:</p>
                     <p className="text-cyan-400 text-xs mt-2 font-mono">public/images/hero/hero-car.jpg</p>
-                    <p className="text-slate-600 text-xs mt-1">Recomendado: Auto oscuro, fondo negro, reflejos</p>
+                    <p className="text-slate-600 text-xs mt-2">Recomendado: Auto oscuro, fondo negro, reflejos</p>
                   </div>
                 </div>
               )}
@@ -335,7 +334,7 @@ const Services = () => {
     {
       icon: Droplets,
       title: "Lavado Premium a Domicilio",
-      desc: "Limpieza profunda interior y exterior con productos de alta gama que respetan la pintura de tu vehículo y el sol extremo.",
+      desc: "Limpieza profunda exterior con técnicas profesionales y productos de alta gama que respetan la pintura de tu vehículo.",
       benefit: "Brillo intenso sin rayar",
       tag: "Más solicitado",
       price: "Cotizar",
@@ -345,7 +344,7 @@ const Services = () => {
     {
       icon: Car,
       title: "Detallado Interior Premium",
-      desc: "Detallado interior completo. Limpieza de tapicería, paneles, alfombras y tratamiento de olores.",
+      desc: "Restauración completa del habitáculo. Limpieza de tapicería, paneles, alfombras y tratamiento de olores.",
       benefit: "Interior como nuevo",
       tag: "Premium",
       price: "Desde $650",
@@ -358,7 +357,7 @@ const Services = () => {
       desc: "Limpieza de llantas, salpicaderas, motor superficial y tratamiento de superficies exteriores con acabado profesional.",
       benefit: "Presentación impecable",
       tag: "Popular",
-      price: "Desde $850",
+      price: "Desde $650",
       image: IMAGES.servicios.exterior,
       imageAlt: "Auto con llantas brillantes y carrocería impecable"
     },
@@ -420,7 +419,6 @@ const Services = () => {
   );
 };
 
-// Componente auxiliar para manejar error de imagen en servicios
 const ServiceCard = ({ service, index }) => {
   const [imgError, setImgError] = useState(false);
 
@@ -428,7 +426,6 @@ const ServiceCard = ({ service, index }) => {
     <ScrollReveal delay={index * 100}>
       <div className="group relative rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/30 hover:bg-white/[0.04] transition-all duration-500 h-full flex flex-col overflow-hidden">
         
-        {/* SERVICE IMAGE - Tu foto de servicio */}
         <div className="relative h-48 overflow-hidden bg-slate-900">
           {!imgError ? (
             <img 
@@ -544,114 +541,394 @@ const Benefits = () => {
   );
 };
 
-const BeforeAfter = () => {
-  const cases = [
+// ============================================================
+// CARRUSEL DE RESULTADOS — ANTES Y DESPUÉS PREMIUM
+// ============================================================
+
+const ResultsCarousel = () => {
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+  const [direction, setDirection] = useState('next');
+  const [showAfter, setShowAfter] = useState(false);
+  const [touchStart, setTouchStart] = useState(null);
+  const [touchEnd, setTouchEnd] = useState(null);
+
+  const trabajos = [
     {
-      title: "Detallado Interior",
-      desc: "Eliminación de manchas, olores y restauración de tapicería",
-      before: IMAGES.resultados.interior.before,
-      after: IMAGES.resultados.interior.after,
-      beforeAlt: "Interior de auto antes: asientos sucios con manchas",
-      afterAlt: "Interior de auto después: tapicería restaurada y limpia"
+      id: 1,
+      servicio: "Limpieza completa interior",
+      /*vehiculo: "BMW X5 2023",*/
+      /*cliente: "Carlos M.",*/
+      descripcion: "Limpieza completa de tapicería de cuero, limpieza profunda de paneles.",
+      before: "/images/resultados/interior-before.jpg",
+      after: "/images/resultados/interior-after.jpg",
+      beforeAlt: "Interior BMW X5 antes: asientos de cuero opacos, paneles con polvo, alfombras sucias",
+      afterAlt: "Interior BMW X5 después: cuero hidratado y brillante, paneles impecables, olor fresco",
+      duracion: "2 hrs",
+      productos: ["APC"],
+      rating: 5,
+      testimonio: "El interior de mi camioneta quedo muy limpio."
     },
     {
-      title: "Corrección de Pintura",
-      desc: "Eliminación de swirl marks y recuperación de brillo",
-      before: IMAGES.resultados.pintura.before,
-      after: IMAGES.resultados.pintura.after,
-      beforeAlt: "Pintura de auto antes: opaca con micro-rayones",
-      afterAlt: "Pintura de auto después: brillo de espejo sin imperfecciones"
+      id: 2,
+      servicio: "Corrección de Pintura + Cerámico",
+      /*vehiculo: "Mercedes-Benz C-Class",
+      cliente: "Mariana R.",*/
+      descripcion: "Eliminación de swirl marks y hologramas en pintura, pulido y aplicación de cerámico.",
+      before: "/images/resultados/pintura-before.jpg",
+      after: "/images/resultados/pintura-after.jpg",
+      beforeAlt: "Pintura Mercedes antes: swirl marks visibles bajo luz, opacidad en capó",
+      afterAlt: "Pintura Mercedes después: brillo de espejo, profundidad de color, reflejos perfectos",
+      duracion: "6 hrs",
+      productos: [ "Polish", "Ceramic Coating"],
+      rating: 5,
+      testimonio: "El brillo es espectacular."
+    },
+    /*{
+      id: 3,
+      servicio: "Recubrimiento Cerámico",
+      vehiculo: "Audi Q5",
+      cliente: "Alejandro G.",
+      descripcion: "Aplicación de recubrimiento cerámico profesional en carrocería completa, vidrios y llantas. Efecto hidrofóbico activo.",
+      before: "/images/resultados/ceramico-before.jpg",
+      after: "/images/resultados/ceramico-after.jpg",
+      beforeAlt: "Audi Q5 antes: agua estancada en capó, suciedad adherida a la pintura",
+      afterAlt: "Audi Q5 después: gotas de agua perfectamente redondas deslizándose, pintura protegida",
+      duracion: "4 hrs",
+      productos: ["Ceramic Pro", "Surface Prep", "Top Coat"],
+      rating: 5,
+      testimonio: "La lluvia ya no es problema. El agua se va sola y el auto se mantiene limpio por semanas."
+    },*/
+    {
+      id: 4,
+      servicio: "Lavado Premium + Detallado Exterior",
+      /*vehiculo: "Porsche 911",
+      cliente: "Roberto S.",*/
+      descripcion: "Lavado de carrocería con cera, limpieza de llantas y rines, limpieza de acabados cromados.",
+      before: "/images/resultados/exterior-before.jpg",
+      after: "/images/resultados/exterior-after.jpg",
+      beforeAlt: "Porsche 911 antes: contaminación en pintura, llantas con polvo de frenos opacas",
+      afterAlt: "Porsche 911 después: pintura lisa como vidrio, llantas negras brillantes, cromos reflejantes",
+      duracion: "3 hrs",
+      productos: ["Cera", "Shampoo APC", "Carnauba"],
+      rating: 5,
+      testimonio: "El nivel de detalle es impresionante. Hasta las llantas parecen nuevas."
     },
     {
-      title: "Recubrimiento Cerámico",
-      desc: "Protección duradera con acabado hidrofóbico",
-      before: IMAGES.resultados.ceramico.before,
-      after: IMAGES.resultados.ceramico.after,
-      beforeAlt: "Superficie antes: agua estancada sin protección",
-      afterAlt: "Superficie después: gotas repelidas formando esferas perfectas"
-    }
+      id: 5,
+      servicio: "Lavado completo premium",
+      /*vehiculo: "Honda CR-V 2020",
+      cliente: "Agencia Seminuevos",*/
+      descripcion: "Servicio completo: interior, exterior.",
+      before: "/images/resultados/previa-before.jpg",
+      after: "/images/resultados/previa-after.jpg",
+      beforeAlt: "Honda CR-V antes: interior desgastado, pintura opaca, faros amarillentos",
+      afterAlt: "Honda CR-V después: interior revitalizado, pintura con brillo comercial, faros transparentes",
+      duracion: "5 hrs",
+      productos: ["Shampoo APC", "Abrillantador de llantas", "Spray Wax"],
+      rating: 5,
+      testimonio: "El auto quedo super limpio."
+    },
+    /*{
+      id: 6,
+      servicio: "Servicio Express VIP",
+      vehiculo: "Tesla Model 3",
+      cliente: "Evento Lanzamiento",
+      descripcion: "Atención inmediata para flota de 12 unidades en evento de agencia. Limpieza premium rápida en 45 min por auto.",
+      before: "/images/resultados/express-before.jpg",
+      after: "/images/resultados/express-after.jpg",
+      beforeAlt: "Tesla Model 3 antes: huellas dactilares en pantalla, polvo en superficies, marcas de agua",
+      afterAlt: "Tesla Model 3 después: interior impecable, pantalla sin huellas, exterior brillante listo para exhibición",
+      duracion: "45 min",
+      productos: ["Quick Detailer", "Glass Cleaner", "Interior Dressing"],
+      rating: 5,
+      testimonio: "Puntualidad y calidad excepcional. Los autos quedaron listos justo a tiempo para el evento."
+    }*/
   ];
 
+  const minSwipeDistance = 50;
+
+  const onTouchStart = (e) => {
+    setTouchEnd(null);
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const onTouchMove = (e) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const onTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    const distance = touchStart - touchEnd;
+    const isLeftSwipe = distance > minSwipeDistance;
+    const isRightSwipe = distance < -minSwipeDistance;
+    
+    if (isLeftSwipe) goNext();
+    if (isRightSwipe) goPrev();
+  };
+
+  const goNext = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setDirection('next');
+    setShowAfter(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % trabajos.length);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const goPrev = () => {
+    if (isAnimating) return;
+    setIsAnimating(true);
+    setDirection('prev');
+    setShowAfter(false);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev - 1 + trabajos.length) % trabajos.length);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const goToSlide = (index) => {
+    if (isAnimating || index === currentIndex) return;
+    setIsAnimating(true);
+    setDirection(index > currentIndex ? 'next' : 'prev');
+    setShowAfter(false);
+    setTimeout(() => {
+      setCurrentIndex(index);
+      setIsAnimating(false);
+    }, 300);
+  };
+
+  const toggleBeforeAfter = () => {
+    setShowAfter(!showAfter);
+  };
+
+  const trabajo = trabajos[currentIndex];
+
   return (
-    <section id="resultados" className="py-24 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
+    <section id="resultados" className="py-24 bg-slate-950 relative overflow-hidden">
+      <div className="absolute inset-0">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
+      </div>
+
+      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <ScrollReveal>
-          <div className="text-center mb-16">
-            <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Resultados Reales</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Antes y <span className="text-slate-400">Después</span></h2>
+          <div className="text-center mb-12">
+            <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">
+              Galería de Resultados
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              Transformaciones <span className="text-slate-400">reales</span>
+            </h2>
             <p className="max-w-2xl mx-auto text-slate-400 text-lg">
-              La evidencia habla por sí sola. Transformaciones que superan expectativas.
+              Cada vehículo cuenta una historia. Estos son los resultados que 
+              nuestros clientes experimentan.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid md:grid-cols-3 gap-8">
-          {cases.map((item, index) => (
-            <BeforeAfterCard key={index} item={item} index={index} />
-          ))}
-        </div>
+        <ScrollReveal delay={100}>
+          <div 
+            className="relative"
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
+          >
+            <div className="relative bg-slate-900/50 rounded-3xl border border-white/10 overflow-hidden">
+              
+              <div className="flex flex-col md:flex-row md:items-center justify-between p-6 border-b border-white/10 gap-4">
+                <div>
+                  <div className="flex items-center gap-3 mb-2">
+                    <span className="px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-xs font-medium">
+                      {trabajo.servicio}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      {[...Array(trabajo.rating)].map((_, i) => (
+                        <Star key={i} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4">
+                  <div className="text-right hidden md:block">
+                    <p className="text-slate-500 text-xs">Duración</p>
+                    <p className="text-white font-semibold text-sm">{trabajo.duracion}</p>
+                  </div>
+                  <button
+                    onClick={toggleBeforeAfter}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-full text-sm text-white hover:bg-cyan-500/10 hover:border-cyan-500/30 transition-all duration-300"
+                  >
+                    {showAfter ? (
+                      <>
+                        <ArrowRight className="w-4 h-4 rotate-180" />
+                        Ver Antes
+                      </>
+                    ) : (
+                      <>
+                        <Sparkles className="w-4 h-4" />
+                        Ver Después
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
+
+              <div className="relative aspect-[16/9] md:aspect-[21/9] overflow-hidden bg-slate-800">
+                <div className={`absolute inset-0 transition-all duration-700 ease-in-out ${
+                  isAnimating 
+                    ? direction === 'next' 
+                      ? '-translate-x-full opacity-0' 
+                      : 'translate-x-full opacity-0'
+                    : 'translate-x-0 opacity-100'
+                }`}>
+                  <div className={`absolute inset-0 transition-opacity duration-500 ${showAfter ? 'opacity-0' : 'opacity-100'}`}>
+                    <img 
+                      src={trabajo.before} 
+                      alt={trabajo.beforeAlt}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-4 left-4 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-full backdrop-blur-sm">
+                      <span className="text-red-400 font-bold text-sm uppercase tracking-wider">Antes</span>
+                    </div>
+                  </div>
+                  
+                  <div className={`absolute inset-0 transition-opacity duration-500 ${showAfter ? 'opacity-100' : 'opacity-0'}`}>
+                    <img 
+                      src={trabajo.after} 
+                      alt={trabajo.afterAlt}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-4 right-4 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-full backdrop-blur-sm">
+                      <span className="text-cyan-400 font-bold text-sm uppercase tracking-wider">Después</span>
+                    </div>
+                  </div>
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-40" />
+                </div>
+              </div>
+
+              <div className="p-6">
+                <div className="grid md:grid-cols-3 gap-6 mb-6">
+                  <div className="md:col-span-2">
+                    <p className="text-slate-300 text-sm leading-relaxed mb-4">{trabajo.descripcion}</p>
+                    
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-slate-500 text-xs">Productos:</span>
+                      {trabajo.productos.map((prod, i) => (
+                        <span key={i} className="px-2 py-1 bg-white/5 rounded text-xs text-slate-400 border border-white/5">
+                          {prod}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <div className="bg-white/[0.02] border border-white/10 rounded-xl p-4">
+                    <Quote className="w-6 h-6 text-cyan-500/20 mb-2" />
+                    <p className="text-slate-300 text-sm italic mb-2">"{trabajo.testimonio}"</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={goPrev}
+                      className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300"
+                      disabled={isAnimating}
+                    >
+                      <ChevronRight className="w-5 h-5 rotate-180" />
+                    </button>
+                    <button
+                      onClick={goNext}
+                      className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300"
+                      disabled={isAnimating}
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {trabajos.map((_, index) => (
+                      <button
+                        key={index}
+                        onClick={() => goToSlide(index)}
+                        className={`transition-all duration-300 rounded-full ${
+                          index === currentIndex 
+                            ? 'w-8 h-2 bg-cyan-400' 
+                            : 'w-2 h-2 bg-white/20 hover:bg-white/40'
+                        }`}
+                      />
+                    ))}
+                  </div>
+
+                  <span className="text-slate-500 text-sm font-mono">
+                    {String(currentIndex + 1).padStart(2, '0')} / {String(trabajos.length).padStart(2, '0')}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={goPrev}
+              className="hidden lg:flex absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-slate-900 border border-white/10 items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300 shadow-2xl"
+            >
+              <ChevronRight className="w-6 h-6 rotate-180" />
+            </button>
+            <button
+              onClick={goNext}
+              className="hidden lg:flex absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-slate-900 border border-white/10 items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300 shadow-2xl"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={200}>
+          <div className="mt-8 grid grid-cols-3 md:grid-cols-6 gap-3">
+            {trabajos.map((t, index) => (
+              <button
+                key={t.id}
+                onClick={() => goToSlide(index)}
+                className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 ${
+                  index === currentIndex 
+                    ? 'border-cyan-400 shadow-lg shadow-cyan-500/20' 
+                    : 'border-transparent opacity-50 hover:opacity-80'
+                }`}
+              >
+                <img 
+                  src={t.after} 
+                  alt={t.servicio}
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
+                <div className="absolute bottom-1 left-2 right-2">
+                  <p className="text-white text-[10px] font-medium truncate">{t.servicio}</p>
+                </div>
+              </button>
+            ))}
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal delay={300}>
+          <div className="mt-12 text-center">
+            <p className="text-slate-400 mb-4">
+              ¿Quieres que tu auto sea nuestro próximo caso de éxito?
+            </p>
+            <a
+              href={WHATSAPP_LINK("Hola, vi sus resultados y me interesa agendar un servicio. Mi auto es [marca/modelo].")}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-cyan-500 to-blue-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-cyan-500/25 hover:scale-105 transition-all duration-300"
+            >
+              <Sparkles className="w-5 h-5" />
+              Quiero resultados como estos
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
-  );
-};
-
-// Componente auxiliar para manejar errores en Before/After
-const BeforeAfterCard = ({ item, index }) => {
-  const [beforeError, setBeforeError] = useState(false);
-  const [afterError, setAfterError] = useState(false);
-
-  return (
-    <ScrollReveal delay={index * 150}>
-      <div className="group">
-        <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-slate-900 border border-white/10 mb-6">
-          <div className="absolute inset-0 flex">
-            {/* BEFORE - Tu foto "antes" o diseño alternativo */}
-            <div className="w-1/2 relative border-r border-white/20 overflow-hidden">
-              {!beforeError ? (
-                <img 
-                  src={item.before} 
-                  alt={item.beforeAlt}
-                  className="w-full h-full object-cover"
-                  onError={() => setBeforeError(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
-                  <Car className="w-10 h-10 text-slate-700 mb-2" />
-                  <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
-                  <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.before.split('/').pop()}</p>
-                </div>
-              )}
-              <div className="absolute top-4 left-4 px-3 py-1 bg-red-500/20 border border-red-500/30 rounded-full">
-                <span className="text-xs font-bold text-red-400 uppercase">Antes</span>
-              </div>
-            </div>
-            {/* AFTER - Tu foto "después" o diseño alternativo */}
-            <div className="w-1/2 relative overflow-hidden">
-              {!afterError ? (
-                <img 
-                  src={item.after} 
-                  alt={item.afterAlt}
-                  className="w-full h-full object-cover"
-                  onError={() => setAfterError(true)}
-                />
-              ) : (
-                <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
-                  <Sparkles className="w-10 h-10 text-cyan-700 mb-2" />
-                  <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
-                  <p className="text-[10px] text-slate-600 mt-1 font-mono">{item.after.split('/').pop()}</p>
-                </div>
-              )}
-              <div className="absolute top-4 right-4 px-3 py-1 bg-cyan-500/20 border border-cyan-500/30 rounded-full">
-                <span className="text-xs font-bold text-cyan-400 uppercase">Después</span>
-              </div>
-            </div>
-          </div>
-          <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-        </div>
-        <h3 className="text-xl font-bold text-white mb-2">{item.title}</h3>
-        <p className="text-slate-400 text-sm">{item.desc}</p>
-      </div>
-    </ScrollReveal>
   );
 };
 
@@ -679,7 +956,7 @@ const CeramicCoating = () => {
               <p className="text-slate-400 text-lg mb-8 leading-relaxed">
                 La protección definitiva para la pintura de tu vehículo. Una capa invisible 
                 que transforma la superficie en un escudo repelente con brillo de espejo 
-                que dura años, no semanas.
+                que dura meses.
               </p>
 
               <div className="space-y-4 mb-10">
@@ -714,7 +991,6 @@ const CeramicCoating = () => {
 
           <ScrollReveal delay={200}>
             <div className="relative">
-              {/* CERAMIC IMAGE - Tu mejor foto de efecto hidrofóbico */}
               <div className="aspect-square rounded-3xl overflow-hidden border border-white/10 bg-slate-800 shadow-2xl shadow-cyan-500/10">
                 {!imgError ? (
                   <img 
@@ -724,15 +1000,18 @@ const CeramicCoating = () => {
                     onError={() => setImgError(true)}
                   />
                 ) : (
-                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex flex-col items-center justify-center">
-                    <Shield className="w-16 h-16 text-cyan-700 mb-4" />
-                    <p className="text-cyan-400 text-xs font-mono">Sin imagen</p>
+                  <div className="absolute inset-0 bg-gradient-to-br from-slate-800 to-slate-900 flex items-center justify-center">
+                    <div className="text-center p-8">
+                      <Shield className="w-16 h-16 text-slate-600 mx-auto mb-4" />
+                      <p className="text-slate-500 text-sm">Agrega tu imagen en:</p>
+                      <p className="text-cyan-400 text-xs mt-1 font-mono">public/images/ceramico/coating-close.jpg</p>
+                      <p className="text-slate-600 text-xs mt-2">Close-up gotas repelidas en capó</p>
+                    </div>
                   </div>
                 )}
                 <div className="absolute -inset-px rounded-3xl bg-gradient-to-r from-cyan-500/20 via-transparent to-blue-500/20 opacity-50" />
               </div>
               
-              {/* Floating Badge */}
               <div className="absolute -bottom-6 -right-6 bg-slate-900 border border-white/10 rounded-2xl p-4 shadow-xl">
                 <div className="flex items-center gap-3">
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
@@ -776,7 +1055,7 @@ const HowItWorks = () => {
       num: "04",
       icon: Home,
       title: "Vamos a tu Domicilio",
-      desc: "Llegamos puntualmente a tu ubicación y transformamos tu auto en el lugar."
+      desc: "Llegamos a tu ubicación y transformamos tu auto en el lugar."
     }
   ];
 
@@ -815,12 +1094,6 @@ const HowItWorks = () => {
   );
 };
 
-// ============================================================
-// MAPA VISUAL PREMIUM — Santa Fe Lifestyle, Xochitepec, Morelos
-// Mapa estilizado en SVG con animaciones y diseño oscuro
-// No requiere imágenes externas
-// ============================================================
-
 const CoverageMap = () => {
   const [activeZone, setActiveZone] = useState(null);
 
@@ -832,7 +1105,7 @@ const CoverageMap = () => {
       descripcion: "Fraccionamiento residencial premium con acceso directo",
       tiempo: "15-20 min",
       coordenadas: { cx: 280, cy: 180, r: 35 },
-      color: "#06b6d4", // cyan-500
+      color: "#06b6d4",
       glowColor: "rgba(6, 182, 212, 0.4)",
       icon: Home
     },
@@ -843,7 +1116,7 @@ const CoverageMap = () => {
       descripcion: "Zona urbana y comercial del municipio",
       tiempo: "10-15 min",
       coordenadas: { cx: 220, cy: 220, r: 30 },
-      color: "#3b82f6", // blue-500
+      color: "#3b82f6",
       glowColor: "rgba(59, 130, 246, 0.4)",
       icon: MapPin
     },
@@ -854,7 +1127,7 @@ const CoverageMap = () => {
       descripcion: "Zona habitacional cercana",
       tiempo: "15-25 min",
       coordenadas: { cx: 320, cy: 140, r: 25 },
-      color: "#8b5cf6", // violet-500
+      color: "#8b5cf6",
       glowColor: "rgba(139, 92, 246, 0.3)",
       icon: Home
     },
@@ -865,7 +1138,7 @@ const CoverageMap = () => {
       descripcion: "Sector céntrico de Xochitepec",
       tiempo: "10-20 min",
       coordenadas: { cx: 180, cy: 200, r: 22 },
-      color: "#10b981", // emerald-500
+      color: "#10b981",
       glowColor: "rgba(16, 185, 129, 0.3)",
       icon: MapPin
     },
@@ -876,7 +1149,7 @@ const CoverageMap = () => {
       descripcion: "Zona habitacional con acceso controlado",
       tiempo: "20-30 min",
       coordenadas: { cx: 340, cy: 240, r: 25 },
-      color: "#f59e0b", // amber-500
+      color: "#f59e0b",
       glowColor: "rgba(245, 158, 11, 0.3)",
       icon: Home
     },
@@ -887,7 +1160,7 @@ const CoverageMap = () => {
       descripcion: "Comunidades aledañas (consultar)",
       tiempo: "25-40 min",
       coordenadas: { cx: 200, cy: 280, r: 28 },
-      color: "#64748b", // slate-500
+      color: "#64748b",
       glowColor: "rgba(100, 116, 139, 0.3)",
       icon: Clock
     }
@@ -902,7 +1175,7 @@ const CoverageMap = () => {
   const referencias = [
     { icon: "🛣️", text: "Autopista México-Cuernavaca" },
     { icon: "🎓", text: "Cerca de UAEM" },
-    { icon: "📍", text: "Cercano a Centro de Convnciones Morelos" },
+    { icon: "⛰📍", text: "Cercano a Centro de Convenciones Morelos" },
     { icon: "📍", text: "Carretera Federal 95D" }
   ];
 
@@ -910,14 +1183,12 @@ const CoverageMap = () => {
 
   return (
     <section id="cobertura" className="py-24 bg-slate-950 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-0 left-1/3 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <ScrollReveal>
           <div className="text-center mb-16">
             <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">
@@ -926,20 +1197,19 @@ const CoverageMap = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Servicio a Domicilio en <br />
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Santa Fe Lifestyle & Xochitepec
+                Santa Fe Lifestyle y alrededores
               </span>
             </h2>
             <p className="max-w-2xl mx-auto text-slate-400 text-lg">
-              Mapa interactivo de nuestras zonas de servicio. escribenos para saber disponibilidad.
+              Mapa interactivo de nuestras zonas de servicio. Selecciona una ubicación 
+              para ver disponibilidad.
             </p>
           </div>
         </ScrollReveal>
 
         <div className="grid lg:grid-cols-5 gap-8 items-start">
-          {/* MAPA SVG — 3 columnas */}
           <ScrollReveal className="lg:col-span-3">
             <div className="relative bg-slate-900/50 rounded-3xl border border-white/10 p-6 overflow-hidden">
-              {/* Título del mapa */}
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-white font-semibold flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-cyan-400" />
@@ -950,14 +1220,12 @@ const CoverageMap = () => {
                 </span>
               </div>
 
-              {/* SVG Mapa */}
               <div className="relative aspect-[4/3] bg-gradient-to-b from-slate-800/50 to-slate-900/50 rounded-2xl overflow-hidden">
                 <svg 
                   viewBox="0 0 500 400" 
                   className="w-full h-full"
                   style={{ filter: "drop-shadow(0 0 30px rgba(6,182,212,0.1))" }}
                 >
-                  {/* Definiciones de gradientes y filtros */}
                   <defs>
                     <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
                       <stop offset="0%" stopColor="rgba(6,182,212,0.3)" />
@@ -972,23 +1240,13 @@ const CoverageMap = () => {
                     </filter>
                   </defs>
 
-                  {/* Fondo del mapa — silueta estilizada de Morelos/Xochitepec */}
                   <path 
-                    d="M 80,80 
-                       Q 150,60 250,70 
-                       Q 350,50 420,90 
-                       Q 460,150 450,220 
-                       Q 440,300 380,340 
-                       Q 300,370 200,360 
-                       Q 100,350 60,280 
-                       Q 40,200 60,140 
-                       Q 70,100 80,80 Z" 
+                    d="M 80,80 Q 150,60 250,70 Q 350,50 420,90 Q 460,150 450,220 Q 440,300 380,340 Q 300,370 200,360 Q 100,350 60,280 Q 40,200 60,140 Q 70,100 80,80 Z" 
                     fill="rgba(15, 23, 42, 0.6)" 
                     stroke="rgba(6, 182, 212, 0.2)" 
                     strokeWidth="1"
                   />
 
-                  {/* Líneas de carreteras principales */}
                   {rutasPrincipales.map((ruta, i) => (
                     <g key={i}>
                       <path 
@@ -1007,7 +1265,6 @@ const CoverageMap = () => {
                     </g>
                   ))}
 
-                  {/* Etiquetas de carreteras */}
                   <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
                     Autopista México-Cuernavaca
                   </text>
@@ -1015,7 +1272,6 @@ const CoverageMap = () => {
                     Carretera 95D
                   </text>
 
-                  {/* Zonas de cobertura — Círculos interactivos */}
                   {zonas.map((zona) => (
                     <g 
                       key={zona.id}
@@ -1024,7 +1280,6 @@ const CoverageMap = () => {
                       onMouseLeave={() => setActiveZone(null)}
                       style={{ transformOrigin: `${zona.coordenadas.cx}px ${zona.coordenadas.cy}px` }}
                     >
-                      {/* Área de influencia (glow) */}
                       <circle
                         cx={zona.coordenadas.cx}
                         cy={zona.coordenadas.cy}
@@ -1034,7 +1289,6 @@ const CoverageMap = () => {
                         className="transition-opacity duration-300"
                       />
                       
-                      {/* Círculo principal */}
                       <circle
                         cx={zona.coordenadas.cx}
                         cy={zona.coordenadas.cy}
@@ -1046,7 +1300,6 @@ const CoverageMap = () => {
                         filter={activeZone === zona.id ? "url(#pulse)" : ""}
                       />
                       
-                      {/* Punto central */}
                       <circle
                         cx={zona.coordenadas.cx}
                         cy={zona.coordenadas.cy}
@@ -1055,7 +1308,6 @@ const CoverageMap = () => {
                         className="transition-all duration-300"
                       />
                       
-                      {/* Animación de pulso para zonas principales */}
                       {zona.tipo === "Principal" && (
                         <>
                           <circle
@@ -1083,7 +1335,6 @@ const CoverageMap = () => {
                         </>
                       )}
 
-                      {/* Nombre de la zona */}
                       <text
                         x={zona.coordenadas.cx}
                         y={zona.coordenadas.cy + zona.coordenadas.r + 15}
@@ -1099,7 +1350,6 @@ const CoverageMap = () => {
                     </g>
                   ))}
 
-                  {/* Indicador "Tú estás aquí" estilo */}
                   <g transform="translate(280, 180)">
                     <circle r="4" fill="#ef4444">
                       <animate
@@ -1119,7 +1369,6 @@ const CoverageMap = () => {
                   </g>
                 </svg>
 
-                {/* Overlay de información al hover */}
                 {zonaActiva && (
                   <div className="absolute bottom-4 left-4 right-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl p-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
                     <div className="flex items-center gap-3">
@@ -1142,7 +1391,6 @@ const CoverageMap = () => {
                 )}
               </div>
 
-              {/* Leyenda del mapa */}
               <div className="flex flex-wrap items-center gap-4 mt-4 text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-cyan-500" />
@@ -1164,10 +1412,8 @@ const CoverageMap = () => {
             </div>
           </ScrollReveal>
 
-          {/* Panel lateral de información — 2 columnas */}
           <ScrollReveal delay={200} className="lg:col-span-2">
             <div className="space-y-6">
-              {/* Tarjeta de zona activa o default */}
               <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
                 <h3 className="text-white font-bold mb-4 flex items-center gap-2">
                   <Shield className="w-5 h-5 text-cyan-400" />
@@ -1200,7 +1446,6 @@ const CoverageMap = () => {
                 </div>
               </div>
 
-              {/* Referencias geográficas */}
               <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
                 <h3 className="text-white font-bold mb-4 text-sm">Referencias Geográficas</h3>
                 <div className="space-y-3">
@@ -1213,7 +1458,6 @@ const CoverageMap = () => {
                 </div>
               </div>
 
-              {/* CTA */}
               <a
                 href={WHATSAPP_LINK("Hola, vivo en [tu colonia/fraccionamiento], ¿tienen cobertura?")}
                 target="_blank"
@@ -1227,7 +1471,6 @@ const CoverageMap = () => {
           </ScrollReveal>
         </div>
 
-        {/* Stats de cobertura */}
         <ScrollReveal delay={300}>
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
@@ -1251,8 +1494,6 @@ const CoverageMap = () => {
 
 // ============================================================
 // SECCIÓN B2B — SERVICIOS PARA AGENCIAS Y EXPOSICIONES
-// Basado en Propuesta Técnica y Económica GT Detailing MX
-// Contacto: Hugo Franco — 777 388 7690
 // ============================================================
 
 const B2BServices = () => {
@@ -1285,7 +1526,7 @@ const B2BServices = () => {
       id: "pre-venta",
       icon: Car,
       titulo: "Detallado Pre-Venta (Seminuevos/Demo)",
-      descripcion: "Lavado detallado, pulido de pintura, restauración de faros, limpieza profunda de tapicería y motor. Mejora la percepción y valor del vehículo.",
+      descripcion: "Lavado detallado, pulido de pintura, restauración de faros, limpieza profunda de tapicería. Mejora la percepción y valor del vehículo.",
       precio: "$1,400",
       duracion: "3 hrs",
       frecuencia: "Según rotación",
@@ -1359,14 +1600,12 @@ const B2BServices = () => {
 
   return (
     <section id="b2b" className="py-24 bg-gradient-to-b from-slate-950 to-slate-900 relative overflow-hidden">
-      {/* Background effects */}
       <div className="absolute inset-0">
         <div className="absolute top-1/4 right-0 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
         <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
       </div>
 
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        {/* Header */}
         <ScrollReveal>
           <div className="text-center mb-16">
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-cyan-500/10 border border-cyan-500/20 mb-6">
@@ -1381,13 +1620,12 @@ const B2BServices = () => {
             </h2>
             <p className="max-w-3xl mx-auto text-slate-400 text-lg">
               GT Detailing MX / AQUABRILLO es aliado estratégico de agencias automotrices 
-              que buscan elevar el estándar de presentación y satisfacción del cliente final. 
+              que buscan elevar la presentación y satisfacción del cliente final. 
               Servicios profesionales para piso de venta, entregas especiales y procesos de reventa.
             </p>
           </div>
         </ScrollReveal>
 
-        {/* Contacto rápido B2B */}
         <ScrollReveal delay={100}>
           <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6 mb-16 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="flex items-center gap-4">
@@ -1413,7 +1651,6 @@ const B2BServices = () => {
           </div>
         </ScrollReveal>
 
-        {/* Servicios B2B Grid */}
         <ScrollReveal delay={150}>
           <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
             <Sparkles className="w-6 h-6 text-cyan-400" />
@@ -1433,7 +1670,6 @@ const B2BServices = () => {
                 onMouseEnter={() => setActiveService(servicio.id)}
                 onMouseLeave={() => setActiveService(null)}
               >
-                {/* Header de tarjeta con gradiente */}
                 <div className={`h-2 bg-gradient-to-r ${servicio.color}`} />
                 
                 <div className="p-6 flex flex-col flex-grow">
@@ -1453,7 +1689,6 @@ const B2BServices = () => {
                   <h4 className="text-lg font-bold text-white mb-2">{servicio.titulo}</h4>
                   <p className="text-slate-400 text-sm leading-relaxed mb-4 flex-grow">{servicio.descripcion}</p>
 
-                  {/* Detalles del servicio */}
                   <div className="space-y-2 mb-6">
                     <div className="flex items-center justify-between text-sm">
                       <span className="text-slate-500">Precio unitario</span>
@@ -1484,7 +1719,6 @@ const B2BServices = () => {
           ))}
         </div>
 
-        {/* Metodología de trabajo */}
         <ScrollReveal>
           <div className="mb-16">
             <h3 className="text-2xl font-bold text-white mb-8 flex items-center gap-3">
@@ -1510,7 +1744,6 @@ const B2BServices = () => {
           </div>
         </ScrollReveal>
 
-        {/* Diferenciadores */}
         <ScrollReveal>
           <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-8 mb-16">
             <h3 className="text-2xl font-bold text-white mb-8 text-center">
@@ -1530,7 +1763,6 @@ const B2BServices = () => {
           </div>
         </ScrollReveal>
 
-        {/* Descuentos por volumen */}
         <ScrollReveal>
           <div className="bg-gradient-to-r from-cyan-500/10 to-blue-600/10 border border-cyan-500/20 rounded-2xl p-8 mb-16">
             <div className="text-center mb-8">
@@ -1550,7 +1782,6 @@ const B2BServices = () => {
           </div>
         </ScrollReveal>
 
-        {/* CTA Final B2B */}
         <ScrollReveal>
           <div className="text-center">
             <div className="max-w-3xl mx-auto bg-white/[0.02] border border-white/10 rounded-3xl p-10">
@@ -1559,7 +1790,7 @@ const B2BServices = () => {
               </h3>
               <p className="text-slate-400 mb-8">
                 Agenda una demostración gratuita en tu agencia y descubre por qué 
-                confiar en GT Detailing MX / AQUABRILLO 
+                las principales concesionarias confían en GT Detailing MX / AQUABRILLO 
                 para la presentación de sus unidades.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -1592,14 +1823,13 @@ const B2BServices = () => {
           </div>
         </ScrollReveal>
 
-        {/* Condiciones comerciales */}
         <ScrollReveal>
           <div className="mt-16 grid md:grid-cols-4 gap-6 text-center">
             {[
               { icon: Clock, label: "Horario", valor: "Martes a Sábado 8am-6pm" },
               { icon: Shield, label: "Garantía", valor: "15 días en cerámicos" },
               { icon: Phone, label: "Pago", valor: "Transferencia, efectivo, terminal" },
-              { icon: Award, label: "Vigencia", valor: "Precios válidos 60 días" }
+              { icon: Award, label: "Vigencia", valor: "Precio sujeto a cambio" }
             ].map((cond, i) => (
               <div key={i} className="p-4">
                 <cond.icon className="w-5 h-5 text-slate-500 mx-auto mb-2" />
@@ -1614,28 +1844,25 @@ const B2BServices = () => {
   );
 };
 
-function Testimonials() {
+const Testimonials = () => {
   const testimonials = [
     {
       name: "Juan Manuel",
       role: "BYD King",
       text: "Increíble el nivel de detalle. El servicio a domicilio es un lujo que vale cada peso.",
-      rating: 5,
-      image: IMAGES.testimonios.cliente1
+      rating: 5
     },
     {
       name: "Ivonne B",
       role: "JEEP Renegade",
       text: "Profesionalismo absoluto. Llegaron puntual, trabajaron con cuidado y el resultado superó mis expectativas. Totalmente recomendable.",
-      rating: 5,
-      image: IMAGES.testimonios.cliente2
+      rating: 5
     },
     {
       name: "Luis Alonso",
       role: "MG ONE",
       text: "El recubrimiento cerámico cambió por completo la apariencia de mi auto. El brillo es espectacular y la protección se nota al instante.",
       rating: 5,
-      image: IMAGES.testimonios.cliente3
     }
   ];
 
@@ -1657,9 +1884,8 @@ function Testimonials() {
       </div>
     </section>
   );
-}
+};
 
-// Componente auxiliar para testimonios con foto opcional
 const TestimonialCard = ({ item, index }) => {
   const [imgError, setImgError] = useState(false);
 
@@ -1676,18 +1902,16 @@ const TestimonialCard = ({ item, index }) => {
           ))}
         </div>
         <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-          {/* Avatar: Foto del auto del cliente o inicial con gradiente */}
           <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-cyan-500/30 to-blue-600/30 flex items-center justify-center flex-shrink-0">
-            {item.image && !imgError ? (
-              <img 
-                src={item.image} 
-                alt={`Auto de ${item.name}`}
-                className="w-full h-full object-cover"
-                onError={() => setImgError(true)}
-              />
-            ) : (
-              <span className="text-white font-bold text-lg">{item.name[0]}</span>
-            )}
+            <img 
+              src={IMAGES.testimonios[`cliente${index + 1}`]} 
+              alt={`Auto de ${item.name}`}
+              className="w-full h-full object-cover"
+              onError={() => setImgError(true)}
+            />
+            <span className={`text-white font-bold text-sm ${imgError ? '' : 'hidden'}`}>
+              {item.name[0]}
+            </span>
           </div>
           <div>
             <h4 className="text-white font-semibold">{item.name}</h4>
@@ -1761,11 +1985,11 @@ const Footer = () => {
                 <Droplets className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">
-                AQUABRILLO /<span className="text-cyan-400"> GT DETAILING MX</span>
+                AQUABRILLO /<span className="text-cyan-400">GT DETAILING MX</span>
               </span>
             </div>
             <p className="text-slate-400 max-w-sm mb-6 leading-relaxed">
-              Detallado automotriz premium a domicilio. Transformamos tu vehículo 
+              Detaillado automotriz premium a domicilio. Transformamos tu vehículo 
               con la precisión y el cuidado que solo los verdaderos apasionados 
               entienden.
             </p>
@@ -1826,7 +2050,7 @@ const Footer = () => {
             © 2026 AQUABRILLO. Todos los derechos reservados.
           </p>
           <p className="text-slate-600 text-xs">
-            Detailing premium a domicilio. Obsesión por el detalle.
+            Detallado premium a domicilio. Obsesión por el detalle.
           </p>
         </div>
       </div>
@@ -1866,11 +2090,11 @@ function App() {
       <Credibility />
       <Services />
       <Benefits />
-      <BeforeAfter />
+      <ResultsCarousel />
       <CeramicCoating />
       <HowItWorks />
       <CoverageMap />
-      <B2BServices />      {/* ← AGREGAR ESTA LÍNEA */}
+      <B2BServices />
       <Testimonials />
       <FinalCTA />
       <Footer />
