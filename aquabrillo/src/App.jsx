@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { 
-  Menu, X, Phone, MapPin, Instagram, ChevronRight, 
+  Menu, X, Phone, MapPin, Instagram, Facebook, ChevronRight, 
   Shield, Sparkles, Clock, Home, Award, Droplets, 
   CheckCircle2, ArrowRight, Star, Quote, Car, 
   Paintbrush, Gem, Zap, MessageCircle
@@ -9,6 +9,7 @@ import {
 const WHATSAPP_NUMBER = "7773887690";
 const WHATSAPP_LINK = (text) => `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 const INSTAGRAM_URL = "https://www.instagram.com/santafecarwashexpress?igsh=MW4ydm03c3Jxa2Jvbw==";
+const FACEBOOK_URL = "https://www.facebook.com/share/1JZTAu7cAa/?mibextid=wwXIfr";
 
 // ============================================================
 // CONFIGURACIÓN DE IMÁGENES PROPIAS
@@ -2015,6 +2016,14 @@ const Footer = () => {
               >
                 <Instagram className="w-5 h-5 text-cyan-400" />
               </a>
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
+              >
+                <Facebook className="w-5 h-5 text-cyan-400" />
+              </a>
             </div>
           </div>
 
@@ -2045,6 +2054,10 @@ const Footer = () => {
               <li className="flex items-center gap-2 text-slate-400 text-sm">
                 <Instagram className="w-4 h-4 text-cyan-400" />
                 @santafecarwashexpress
+              </li>
+              <li className="flex items-center gap-2 text-slate-400 text-sm">
+                <Facebook className="w-4 h-4 text-cyan-400" />
+                /gtdetailingmx
               </li>
             </ul>
           </div>
