@@ -20,6 +20,9 @@ const INSTAGRAM_URL = "https://www.instagram.com/santafecarwashexpress?igsh=MW4y
 // ============================================================
 
 const IMAGES = {
+  // LOGO: Tu logo en formato PNG o SVG con fondo transparente
+  logo: "/images/logo.png",
+  
   // HERO: Tu mejor foto de auto premium
   // Recomendación: Auto oscuro, fondo oscuro, reflejos de agua o luz dramática
   // Formato: JPG o PNG, preferiblemente 1920x1080 o mayor
@@ -140,7 +143,8 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300">
+            <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+            <div className="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300">
               <Droplets className="w-5 h-5 text-white" />
             </div>
             <span className="text-xl font-bold tracking-tight text-white">
@@ -1981,7 +1985,8 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
+              <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+              <div className="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
                 <Droplets className="w-5 h-5 text-white" />
               </div>
               <span className="text-xl font-bold text-white">
@@ -1989,7 +1994,7 @@ const Footer = () => {
               </span>
             </div>
             <p className="text-slate-400 max-w-sm mb-6 leading-relaxed">
-              Detaillado automotriz premium a domicilio. Transformamos tu vehículo 
+              Lavado y detallado premium a domicilio. Transformamos tu vehículo 
               con la precisión y el cuidado que solo los verdaderos apasionados 
               entienden.
             </p>
@@ -2050,7 +2055,7 @@ const Footer = () => {
             © 2026 AQUABRILLO. Todos los derechos reservados.
           </p>
           <p className="text-slate-600 text-xs">
-            Detallado premium a domicilio. Obsesión por el detalle.
+            Lavado y detallado premium a domicilio. Obsesión por el detalle.
           </p>
         </div>
       </div>
