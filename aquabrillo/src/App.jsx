@@ -183,9 +183,9 @@ const Navbar = () => {
       </div>
 
       <div className={`lg:hidden transition-all duration-500 overflow-hidden ${
-        isOpen ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'
+        isOpen ? 'max-h-[calc(100vh-5rem)] opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-white/5 px-6 py-6 space-y-4">
+        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-white/5 px-6 py-6 space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
           {navLinks.map((link) => (
             <button
               key={link.name}
