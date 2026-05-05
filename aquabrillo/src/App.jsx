@@ -5,6 +5,7 @@ import {
   CheckCircle2, ArrowRight, Star, Quote, Car, 
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
+import PreferencesForm from './components/PreferencesForm';
 
 const WHATSAPP_NUMBER = "7773887690";
 const WHATSAPP_LINK = (text) => `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
@@ -2104,6 +2105,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-950 text-white antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
       <Navbar />
+      <PreferencesForm />
       <Hero />
       <Credibility />
       <Services />
