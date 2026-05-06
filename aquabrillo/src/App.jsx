@@ -68,7 +68,8 @@ const IMAGES = {
   testimonios: {
     cliente1: "/images/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
     cliente2: "/images/testimonios/cliente-2.jpg",  // Auto del cliente 2
-    cliente3: "/images/testimonios/cliente-3.jpg"   // Auto del cliente 3
+    cliente3: "/images/testimonios/cliente-3.jpg",   // Auto del cliente 3
+    cliente4: "/images/testimonios/cliente-4.jpg"    // Auto del cliente 4
   }
 };
 
@@ -1868,6 +1869,12 @@ const Testimonials = () => {
       name: "Luis Alonso",
       role: "MG ONE",
       text: "El recubrimiento cerámico cambió por completo la apariencia de mi auto. El brillo es espectacular y la protección se nota al instante.",
+      rating: 5,
+    },
+    {
+      name: "Anonimo",
+      role: "VW Passat",
+      text: "Satisfecho con el trabajo que realizaron en mi auto. El cambio en la pintura es impresionante, el brillo es más profundo, incluso siendo un auto color negro.",
       rating: 5,
     }
   ];
