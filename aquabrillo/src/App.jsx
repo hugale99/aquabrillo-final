@@ -52,7 +52,7 @@ const IMAGES = {
       after: "/images/resultados/pintura-after.jpg"       // Mismo panel, brillante
     },
     ceramico: {
-      before: "/images/resultados/ceramico-before.jpg",   // Agua extendida en superficie
+      before: "/images/resultados/ceramico-before.jpeg",   // Agua extendida en superficie
       after: "/images/resultados/ceramico-after.jpg"      // Gotas formando esferas
     }
   },
@@ -591,21 +591,21 @@ const ResultsCarousel = () => {
       rating: 5,
       testimonio: "El brillo es espectacular."
     },
-    /*{
+    {
       id: 3,
       servicio: "Recubrimiento Cerámico",
-      vehiculo: "Audi Q5",
-      cliente: "Alejandro G.",
+      /*vehiculo: "Passat",
+      cliente: "Alejandro G.",*/
       descripcion: "Aplicación de recubrimiento cerámico profesional en carrocería completa, vidrios y llantas. Efecto hidrofóbico activo.",
-      before: "/images/resultados/ceramico-before.jpg",
+      before: "/images/resultados/ceramico-before.jpeg",
       after: "/images/resultados/ceramico-after.jpg",
-      beforeAlt: "Audi Q5 antes: agua estancada en capó, suciedad adherida a la pintura",
-      afterAlt: "Audi Q5 después: gotas de agua perfectamente redondas deslizándose, pintura protegida",
-      duracion: "4 hrs",
-      productos: ["Ceramic Pro", "Surface Prep", "Top Coat"],
+      beforeAlt: "Passat antes: suciedad adherida a la pintura",
+      afterAlt: "Passat después: Brillo en superficie, pintura protegida",
+      duracion: "6 hrs",
+      productos: ["Ceramic Coating Meguiars", "Shampoo APC", "Caly Bar"],
       rating: 5,
-      testimonio: "La lluvia ya no es problema. El agua se va sola y el auto se mantiene limpio por semanas."
-    },*/
+      testimonio: "El brillo es mucho más profundo y el acabado se ve como nuevo, sobre todo siendo un auto color negro."
+    },
     {
       id: 4,
       servicio: "Lavado Premium + Detallado Exterior",
@@ -638,9 +638,9 @@ const ResultsCarousel = () => {
     },
     /*{
       id: 6,
-      servicio: "Servicio Express VIP",
-      vehiculo: "Tesla Model 3",
-      cliente: "Evento Lanzamiento",
+      servicio: "Recubrimiento cerámico",
+      vehiculo: "Passat",
+      cliente: "Brillo",
       descripcion: "Atención inmediata para flota de 12 unidades en evento de agencia. Limpieza premium rápida en 45 min por auto.",
       before: "/images/resultados/express-before.jpg",
       after: "/images/resultados/express-after.jpg",
@@ -2076,7 +2076,7 @@ const Footer = () => {
             © 2026 AQUABRILLO. Todos los derechos reservados.
           </p>
           <p className="text-slate-600 text-xs">
-            Lavado y detallado premium a domicilio. Obsesión por el detalle.
+            Lavado y detallado premium a domicilio.
           </p>
         </div>
       </div>
