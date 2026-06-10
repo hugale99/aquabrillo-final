@@ -6,6 +6,7 @@ import {
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
+import MundialSection from './components/MundialSection';  // ← ← ← AGREGA ESTA LÍNEA
 
 const WHATSAPP_NUMBER = "7773887690";
 const WHATSAPP_LINK = (text) => `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
@@ -304,6 +305,33 @@ const Hero = () => {
     </section>
   );
 };
+// ← ← ← AGREGA ESTA LÍNEA nueva de la actualización del mundial
+function App() {
+  return (
+    <div className="min-h-screen bg-slate-950 text-white antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
+      <Navbar />
+      <PreferencesForm />
+      <Hero />
+      
+      {/* ← ← ← PEGA AQUÍ LA SECCIÓN MUNDIALISTA */}
+      <MundialSection />
+      
+      <Credibility />
+      <Services />
+      <Benefits />
+      <ResultsCarousel />
+      <CeramicCoating />
+      <HowItWorks />
+      <CoverageMap />
+      <B2BServices />
+      <Testimonials />
+      <FinalCTA />
+      <Footer />
+      <FloatingWhatsApp />
+    </div>
+  );
+}
+
 
 const Credibility = () => {
   const items = [
