@@ -305,34 +305,6 @@ const Hero = () => {
     </section>
   );
 };
-// ← ← ← AGREGA ESTA LÍNEA nueva de la actualización del mundial
-function App() {
-  return (
-    <div className="min-h-screen bg-slate-950 text-white antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
-      <Navbar />
-      <PreferencesForm />
-      <Hero />
-      
-      {/* ← ← ← PEGA AQUÍ LA SECCIÓN MUNDIALISTA */}
-      <MundialSection />
-      
-      <Credibility />
-      <Services />
-      <Benefits />
-      <ResultsCarousel />
-      <CeramicCoating />
-      <HowItWorks />
-      <CoverageMap />
-      <B2BServices />
-      <Testimonials />
-      <FinalCTA />
-      <Footer />
-      <FloatingWhatsApp />
-    </div>
-  );
-}
-
-
 const Credibility = () => {
   const items = [
     { icon: Home, label: "Atención a Domicilio", desc: "Vamos donde estés" },
@@ -2142,6 +2114,7 @@ function App() {
       <Navbar />
       <PreferencesForm />
       <Hero />
+      <MundialSection />
       <Credibility />
       <Services />
       <Benefits />
