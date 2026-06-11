@@ -64,114 +64,172 @@ const WORLD_CUP_VIDEOS = [
 const PROMOS = [
   {
     icon: Sparkles,
-    tag: 'Kickoff',
+    tag: 'Data Gol',
     title: 'Gol de Brillo',
-    subtitle: 'Lavado exterior + aspirado express',
-    price: '150',
-    note: 'Ideal para llegar impecable al partido',
-    features: ['Lavado exterior cuidadoso', 'Aspirado rapido', 'Cristales limpios'],
+    subtitle: 'Combo premium ',
+    price: '999',
+    note: 'Detallado completo interior + exterior',
+    features: ['Limpieza profunda', 'Tratamiento para interiorres, Piel/Plasticos', 'Eliminación de olores'],
     accent: 'from-cyan-300 to-blue-400'
   },
   {
     icon: Trophy,
-    tag: 'Mas elegido',
+    tag: 'Míster Fútbol',
     title: 'Combo Mundialista',
-    subtitle: 'Lavado premium completo',
-    price: '349',
-    note: 'Brillo, interior y aroma premium',
-    features: ['Lavado premium', 'Hidratacion de plasticos', 'Aromatizacion premium'],
+    subtitle: 'Recubrimiento cerámico',
+    price: '1999',
+    note: 'Protección de larga duración. Repelencia al agua y contaminantes ambientales.',
+    features: ['Brillo profundo', 'Protección total en pintura', 'Efecto hidrofóbico'],
     accent: 'from-amber-200 to-yellow-500'
   },
   {
     icon: Shield,
-    tag: 'Edicion limitada',
+    tag: 'Pizarra Deportiva',
     title: 'Hat-Trick AQUABRILLO',
-    subtitle: 'Brillo extremo + proteccion',
-    price: '599',
-    note: 'Para autos que merecen final',
-    features: ['Lavado premium', 'Descontaminado de cristales', 'Terminacion ceramica'],
+    subtitle: 'Paquetes a tu medida',
+    price: 'Cotizar',
+    note: 'Combinaciones personalizadas de servicios para todo tipo de autos/cammionetas, clásicos o para ocasiones especiales.',
+    features: ['Detallado premium', 'Limpieza profunda', 'Terminacion ceramica'],
     accent: 'from-emerald-300 to-teal-500'
   }
 ];
 
+const TEAMS = {
+  ALG: { name: 'Argelia', code: 'ALG', flag: 'dz' },
+  ARG: { name: 'Argentina', code: 'ARG', flag: 'ar' },
+  AUS: { name: 'Australia', code: 'AUS', flag: 'au' },
+  AUT: { name: 'Austria', code: 'AUT', flag: 'at' },
+  BEL: { name: 'Belgica', code: 'BEL', flag: 'be' },
+  BIH: { name: 'Bosnia y Herzegovina', code: 'BIH', flag: 'ba' },
+  BRA: { name: 'Brasil', code: 'BRA', flag: 'br' },
+  CAN: { name: 'Canada', code: 'CAN', flag: 'ca' },
+  CIV: { name: 'Costa de Marfil', code: 'CIV', flag: 'ci' },
+  COL: { name: 'Colombia', code: 'COL', flag: 'co' },
+  COD: { name: 'RD Congo', code: 'COD', flag: 'cd' },
+  CPV: { name: 'Cabo Verde', code: 'CPV', flag: 'cv' },
+  CRO: { name: 'Croacia', code: 'CRO', flag: 'hr' },
+  CUW: { name: 'Curacao', code: 'CUW', flag: 'cw' },
+  CZE: { name: 'Chequia', code: 'CZE', flag: 'cz' },
+  ECU: { name: 'Ecuador', code: 'ECU', flag: 'ec' },
+  EGY: { name: 'Egipto', code: 'EGY', flag: 'eg' },
+  ENG: { name: 'Inglaterra', code: 'ENG', flag: 'gb-eng' },
+  FRA: { name: 'Francia', code: 'FRA', flag: 'fr' },
+  GER: { name: 'Alemania', code: 'GER', flag: 'de' },
+  GHA: { name: 'Ghana', code: 'GHA', flag: 'gh' },
+  HAI: { name: 'Haiti', code: 'HAI', flag: 'ht' },
+  IRN: { name: 'Iran', code: 'IRN', flag: 'ir' },
+  IRQ: { name: 'Irak', code: 'IRQ', flag: 'iq' },
+  JOR: { name: 'Jordania', code: 'JOR', flag: 'jo' },
+  JPN: { name: 'Japon', code: 'JPN', flag: 'jp' },
+  KOR: { name: 'Corea Republica', code: 'KOR', flag: 'kr' },
+  MAR: { name: 'Marruecos', code: 'MAR', flag: 'ma' },
+  MEX: { name: 'Mexico', code: 'MEX', flag: 'mx' },
+  NED: { name: 'Paises Bajos', code: 'NED', flag: 'nl' },
+  NOR: { name: 'Noruega', code: 'NOR', flag: 'no' },
+  NZL: { name: 'Nueva Zelanda', code: 'NZL', flag: 'nz' },
+  PAN: { name: 'Panama', code: 'PAN', flag: 'pa' },
+  PAR: { name: 'Paraguay', code: 'PAR', flag: 'py' },
+  POR: { name: 'Portugal', code: 'POR', flag: 'pt' },
+  QAT: { name: 'Qatar', code: 'QAT', flag: 'qa' },
+  RSA: { name: 'Sudafrica', code: 'RSA', flag: 'za' },
+  KSA: { name: 'Arabia Saudita', code: 'KSA', flag: 'sa' },
+  SCO: { name: 'Escocia', code: 'SCO', flag: 'gb-sct' },
+  SEN: { name: 'Senegal', code: 'SEN', flag: 'sn' },
+  ESP: { name: 'Espana', code: 'ESP', flag: 'es' },
+  SUI: { name: 'Suiza', code: 'SUI', flag: 'ch' },
+  SWE: { name: 'Suecia', code: 'SWE', flag: 'se' },
+  TUN: { name: 'Tunez', code: 'TUN', flag: 'tn' },
+  TUR: { name: 'Turquia', code: 'TUR', flag: 'tr' },
+  URU: { name: 'Uruguay', code: 'URU', flag: 'uy' },
+  USA: { name: 'Estados Unidos', code: 'USA', flag: 'us' },
+  UZB: { name: 'Uzbekistan', code: 'UZB', flag: 'uz' }
+};
+
+const makeMatch = (kickoff, stage, venue, home, away, featured = false, reward = 'Pronostico correcto: beneficio especial AQUABRILLO') => ({
+  kickoff,
+  stage,
+  venue,
+  home: TEAMS[home],
+  away: TEAMS[away],
+  homeScore: null,
+  awayScore: null,
+  featured,
+  reward
+});
+
 const MATCHES = [
-  {
-    kickoff: '2026-06-11T13:00:00-06:00',
-    stage: 'Grupo A',
-    venue: 'Ciudad de Mexico',
-    home: { name: 'Mexico', code: 'MEX', flag: 'mx' },
-    away: { name: 'Sudafrica', code: 'RSA', flag: 'za' },
-    homeScore: null,
-    awayScore: null,
-    featured: true,
-    reward: 'Si le atinas al equipo ganador: Descontaminado gratis de cristales'
-  },
-  {
-    kickoff: '2026-06-11T19:00:00-06:00',
-    stage: 'Grupo A',
-    venue: 'Guadalajara',
-    home: { name: 'Corea Republica', code: 'KOR', flag: 'kr' },
-    away: { name: 'Chequia', code: 'CZE', flag: 'cz' },
-    homeScore: null,
-    awayScore: null,
-    featured: false,
-    reward: 'Pronostico correcto: 15% OFF'
-  },
-  {
-    kickoff: '2026-06-12T13:00:00-06:00',
-    stage: 'Grupo B',
-    venue: 'Toronto',
-    home: { name: 'Canada', code: 'CAN', flag: 'ca' },
-    away: { name: 'Bosnia y Herzegovina', code: 'BIH', flag: 'ba' },
-    homeScore: null,
-    awayScore: null,
-    featured: false,
-    reward: 'Agenda antes del juego: aromatizante gratis'
-  },
-  {
-    kickoff: '2026-06-12T19:00:00-06:00',
-    stage: 'Grupo D',
-    venue: 'Los Angeles',
-    home: { name: 'Estados Unidos', code: 'USA', flag: 'us' },
-    away: { name: 'Paraguay', code: 'PAR', flag: 'py' },
-    homeScore: null,
-    awayScore: null,
-    featured: false,
-    reward: 'Comparte marcador: participa por upgrade'
-  },
-  {
-    kickoff: '2026-06-18T20:00:00-06:00',
-    stage: 'Grupo A',
-    venue: 'Guadalajara',
-    home: { name: 'Mexico', code: 'MEX', flag: 'mx' },
-    away: { name: 'Corea Republica', code: 'KOR', flag: 'kr' },
-    homeScore: null,
-    awayScore: null,
-    featured: true,
-    reward: 'Gol de Mexico: hidratacion de plasticos'
-  },
-  {
-    kickoff: '2026-06-24T19:00:00-06:00',
-    stage: 'Grupo A',
-    venue: 'Ciudad de Mexico',
-    home: { name: 'Mexico', code: 'MEX', flag: 'mx' },
-    away: { name: 'Chequia', code: 'CZE', flag: 'cz' },
-    homeScore: null,
-    awayScore: null,
-    featured: true,
-    reward: 'Cierre de grupo: paquete premium limitado'
-  },
-  {
-    kickoff: '2026-07-19T16:00:00-06:00',
-    stage: 'Final',
-    venue: 'New York/New Jersey',
-    home: { name: 'Ganador SF1', code: 'SF1', flag: null },
-    away: { name: 'Ganador SF2', code: 'SF2', flag: null },
-    homeScore: null,
-    awayScore: null,
-    featured: false,
-    reward: 'Gran cierre: sorteo de detallado interior'
-  }
+  makeMatch('2026-06-11T13:00:00-06:00', 'Grupo A', 'Ciudad de Mexico', 'MEX', 'RSA', true, 'Si le atinas al equipo ganador: Descontaminado gratis de cristales'),
+  makeMatch('2026-06-11T20:00:00-06:00', 'Grupo A', 'Guadalajara', 'KOR', 'CZE'),
+  makeMatch('2026-06-12T13:00:00-06:00', 'Grupo B', 'Toronto', 'CAN', 'BIH'),
+  makeMatch('2026-06-12T19:00:00-06:00', 'Grupo D', 'Los Angeles', 'USA', 'PAR'),
+  makeMatch('2026-06-13T13:00:00-06:00', 'Grupo B', 'San Francisco Bay Area', 'QAT', 'SUI'),
+  makeMatch('2026-06-13T16:00:00-06:00', 'Grupo C', 'New York/New Jersey', 'BRA', 'MAR'),
+  makeMatch('2026-06-13T19:00:00-06:00', 'Grupo C', 'Boston', 'HAI', 'SCO'),
+  makeMatch('2026-06-13T22:00:00-06:00', 'Grupo D', 'Vancouver', 'AUS', 'TUR'),
+  makeMatch('2026-06-14T11:00:00-06:00', 'Grupo E', 'Houston', 'GER', 'CUW'),
+  makeMatch('2026-06-14T14:00:00-06:00', 'Grupo F', 'Dallas', 'NED', 'JPN'),
+  makeMatch('2026-06-14T17:00:00-06:00', 'Grupo E', 'Philadelphia', 'CIV', 'ECU'),
+  makeMatch('2026-06-14T20:00:00-06:00', 'Grupo F', 'Monterrey', 'SWE', 'TUN'),
+  makeMatch('2026-06-15T10:00:00-06:00', 'Grupo H', 'Atlanta', 'ESP', 'CPV'),
+  makeMatch('2026-06-15T13:00:00-06:00', 'Grupo G', 'Seattle', 'BEL', 'EGY'),
+  makeMatch('2026-06-15T16:00:00-06:00', 'Grupo H', 'Miami', 'KSA', 'URU'),
+  makeMatch('2026-06-15T19:00:00-06:00', 'Grupo G', 'Los Angeles', 'IRN', 'NZL'),
+  makeMatch('2026-06-16T13:00:00-06:00', 'Grupo I', 'New York/New Jersey', 'FRA', 'SEN'),
+  makeMatch('2026-06-16T16:00:00-06:00', 'Grupo I', 'Boston', 'IRQ', 'NOR'),
+  makeMatch('2026-06-16T19:00:00-06:00', 'Grupo J', 'Kansas City', 'ARG', 'ALG'),
+  makeMatch('2026-06-16T22:00:00-06:00', 'Grupo J', 'San Francisco Bay Area', 'AUT', 'JOR'),
+  makeMatch('2026-06-17T11:00:00-06:00', 'Grupo K', 'Miami', 'POR', 'COD'),
+  makeMatch('2026-06-17T14:00:00-06:00', 'Grupo L', 'Dallas', 'ENG', 'CRO'),
+  makeMatch('2026-06-17T17:00:00-06:00', 'Grupo L', 'Toronto', 'GHA', 'PAN'),
+  makeMatch('2026-06-17T20:00:00-06:00', 'Grupo K', 'Houston', 'UZB', 'COL'),
+  makeMatch('2026-06-18T10:00:00-06:00', 'Grupo A', 'Sede Mundial 2026', 'CZE', 'RSA'),
+  makeMatch('2026-06-18T13:00:00-06:00', 'Grupo B', 'Sede Mundial 2026', 'SUI', 'BIH'),
+  makeMatch('2026-06-18T16:00:00-06:00', 'Grupo B', 'Sede Mundial 2026', 'CAN', 'QAT'),
+  makeMatch('2026-06-18T19:00:00-06:00', 'Grupo A', 'Guadalajara', 'MEX', 'KOR', true, 'Gol de Mexico: hidratacion de plasticos'),
+  makeMatch('2026-06-19T13:00:00-06:00', 'Grupo D', 'Sede Mundial 2026', 'USA', 'AUS'),
+  makeMatch('2026-06-19T16:00:00-06:00', 'Grupo C', 'Sede Mundial 2026', 'SCO', 'MAR'),
+  makeMatch('2026-06-19T18:30:00-06:00', 'Grupo C', 'Sede Mundial 2026', 'BRA', 'HAI'),
+  makeMatch('2026-06-19T21:00:00-06:00', 'Grupo D', 'Sede Mundial 2026', 'TUR', 'PAR'),
+  makeMatch('2026-06-20T11:00:00-06:00', 'Grupo F', 'Sede Mundial 2026', 'NED', 'SWE'),
+  makeMatch('2026-06-20T14:00:00-06:00', 'Grupo E', 'Sede Mundial 2026', 'GER', 'CIV'),
+  makeMatch('2026-06-20T18:00:00-06:00', 'Grupo E', 'Sede Mundial 2026', 'ECU', 'CUW'),
+  makeMatch('2026-06-20T22:00:00-06:00', 'Grupo F', 'Sede Mundial 2026', 'TUN', 'JPN'),
+  makeMatch('2026-06-21T10:00:00-06:00', 'Grupo H', 'Sede Mundial 2026', 'ESP', 'KSA'),
+  makeMatch('2026-06-21T13:00:00-06:00', 'Grupo G', 'Sede Mundial 2026', 'BEL', 'IRN'),
+  makeMatch('2026-06-21T16:00:00-06:00', 'Grupo H', 'Sede Mundial 2026', 'URU', 'CPV'),
+  makeMatch('2026-06-21T19:00:00-06:00', 'Grupo G', 'Sede Mundial 2026', 'NZL', 'EGY'),
+  makeMatch('2026-06-22T11:00:00-06:00', 'Grupo J', 'Sede Mundial 2026', 'ARG', 'AUT'),
+  makeMatch('2026-06-22T15:00:00-06:00', 'Grupo I', 'Sede Mundial 2026', 'FRA', 'IRQ'),
+  makeMatch('2026-06-22T18:00:00-06:00', 'Grupo I', 'Sede Mundial 2026', 'NOR', 'SEN'),
+  makeMatch('2026-06-22T21:00:00-06:00', 'Grupo J', 'Sede Mundial 2026', 'JOR', 'ALG'),
+  makeMatch('2026-06-23T11:00:00-06:00', 'Grupo K', 'Sede Mundial 2026', 'POR', 'UZB'),
+  makeMatch('2026-06-23T14:00:00-06:00', 'Grupo L', 'Sede Mundial 2026', 'ENG', 'GHA'),
+  makeMatch('2026-06-23T17:00:00-06:00', 'Grupo L', 'Sede Mundial 2026', 'PAN', 'CRO'),
+  makeMatch('2026-06-23T20:00:00-06:00', 'Grupo K', 'Sede Mundial 2026', 'COL', 'COD'),
+  makeMatch('2026-06-24T13:00:00-06:00', 'Grupo B', 'Sede Mundial 2026', 'SUI', 'CAN'),
+  makeMatch('2026-06-24T13:00:00-06:00', 'Grupo B', 'Sede Mundial 2026', 'BIH', 'QAT'),
+  makeMatch('2026-06-24T16:00:00-06:00', 'Grupo C', 'Sede Mundial 2026', 'MAR', 'HAI'),
+  makeMatch('2026-06-24T16:00:00-06:00', 'Grupo C', 'Sede Mundial 2026', 'SCO', 'BRA'),
+  makeMatch('2026-06-24T19:00:00-06:00', 'Grupo A', 'Sede Mundial 2026', 'RSA', 'KOR'),
+  makeMatch('2026-06-24T19:00:00-06:00', 'Grupo A', 'Ciudad de Mexico', 'CZE', 'MEX', true, 'Cierre de grupo: paquete premium limitado'),
+  makeMatch('2026-06-25T14:00:00-06:00', 'Grupo E', 'Sede Mundial 2026', 'CUW', 'CIV'),
+  makeMatch('2026-06-25T14:00:00-06:00', 'Grupo E', 'Sede Mundial 2026', 'ECU', 'GER'),
+  makeMatch('2026-06-25T17:00:00-06:00', 'Grupo F', 'Sede Mundial 2026', 'TUN', 'NED'),
+  makeMatch('2026-06-25T17:00:00-06:00', 'Grupo F', 'Sede Mundial 2026', 'JPN', 'SWE'),
+  makeMatch('2026-06-25T20:00:00-06:00', 'Grupo D', 'Sede Mundial 2026', 'TUR', 'USA'),
+  makeMatch('2026-06-25T20:00:00-06:00', 'Grupo D', 'Sede Mundial 2026', 'PAR', 'AUS'),
+  makeMatch('2026-06-26T13:00:00-06:00', 'Grupo I', 'Sede Mundial 2026', 'NOR', 'FRA'),
+  makeMatch('2026-06-26T13:00:00-06:00', 'Grupo I', 'Sede Mundial 2026', 'SEN', 'IRQ'),
+  makeMatch('2026-06-26T18:00:00-06:00', 'Grupo H', 'Sede Mundial 2026', 'CPV', 'KSA'),
+  makeMatch('2026-06-26T18:00:00-06:00', 'Grupo H', 'Sede Mundial 2026', 'URU', 'ESP'),
+  makeMatch('2026-06-26T21:00:00-06:00', 'Grupo G', 'Sede Mundial 2026', 'NZL', 'BEL'),
+  makeMatch('2026-06-26T21:00:00-06:00', 'Grupo G', 'Sede Mundial 2026', 'EGY', 'IRN'),
+  makeMatch('2026-06-27T15:00:00-06:00', 'Grupo L', 'Sede Mundial 2026', 'PAN', 'ENG'),
+  makeMatch('2026-06-27T15:00:00-06:00', 'Grupo L', 'Sede Mundial 2026', 'CRO', 'GHA'),
+  makeMatch('2026-06-27T17:30:00-06:00', 'Grupo K', 'Sede Mundial 2026', 'COL', 'POR'),
+  makeMatch('2026-06-27T17:30:00-06:00', 'Grupo K', 'Sede Mundial 2026', 'COD', 'UZB'),
+  makeMatch('2026-06-27T20:00:00-06:00', 'Grupo J', 'Sede Mundial 2026', 'ALG', 'AUT'),
+  makeMatch('2026-06-27T20:00:00-06:00', 'Grupo J', 'Sede Mundial 2026', 'JOR', 'ARG')
 ];
 
 const DYNAMICS = [
@@ -238,6 +296,33 @@ const getMatchStatus = (match) => {
   if (now >= kickoff && now <= matchEnd) return 'En vivo';
   if (now > matchEnd) return 'Final';
   return 'Proximo';
+};
+
+const getMatchWeek = (match) => {
+  const date = new Date(match.kickoff);
+  const day = date.getDate();
+
+  if (day <= 17) return 'Semana 1 - Jornada 1';
+  if (day <= 23) return 'Semana 2 - Jornada 2';
+  return 'Semana 3 - Cierre de grupos';
+};
+
+const getCurrentCalendarWeek = (matchesByWeek) => {
+  const now = new Date();
+  const entries = Object.entries(matchesByWeek);
+
+  const activeEntry = entries.find(([, matches]) => {
+    const firstMatch = new Date(matches[0].kickoff);
+    const lastMatch = new Date(matches[matches.length - 1].kickoff);
+    lastMatch.setHours(23, 59, 59, 999);
+
+    return now >= firstMatch && now <= lastMatch;
+  });
+
+  if (activeEntry) return activeEntry[0];
+
+  const nextEntry = entries.find(([, matches]) => new Date(matches[matches.length - 1].kickoff) >= now);
+  return nextEntry?.[0] ?? entries[entries.length - 1]?.[0];
 };
 
 const TeamFlag = ({ team, large = false }) => (
@@ -369,16 +454,16 @@ const MatchRow = ({ match }) => {
   const isLive = status === 'En vivo';
 
   return (
-    <div className={`rounded-2xl border p-3 transition duration-300 hover:bg-white/[0.06] ${
-      match.featured ? 'border-cyan-300/25 bg-cyan-300/[0.06]' : 'border-white/10 bg-white/[0.035]'
+    <div className={`rounded-2xl border p-3 text-slate-950 shadow-[0_14px_34px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(0,0,0,0.24)] ${
+      match.featured ? 'border-cyan-200 bg-cyan-50' : 'border-white/80 bg-white'
     }`}>
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-white px-2.5 py-1 text-[0.68rem] font-bold capitalize text-slate-950">{formatMatchDate(match.kickoff)}</span>
-          <span className="text-xs font-medium text-slate-400">{formatMatchTime(match.kickoff)} CDMX</span>
+          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-[0.68rem] font-bold capitalize text-slate-700">{formatMatchDate(match.kickoff)}</span>
+          <span className="text-xs font-semibold text-slate-500">{formatMatchTime(match.kickoff)} CDMX</span>
         </div>
         <span className={`rounded-full px-2.5 py-1 text-[0.68rem] font-bold ${
-          isLive ? 'bg-red-500 text-white' : match.featured ? 'bg-cyan-300 text-slate-950' : 'bg-white/10 text-slate-300'
+          isLive ? 'bg-red-500 text-white' : match.featured ? 'bg-cyan-500 text-white' : 'bg-slate-100 text-slate-600'
         }`}>
           {status}
         </span>
@@ -387,16 +472,16 @@ const MatchRow = ({ match }) => {
       <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
         <div className="min-w-0 text-left">
           <TeamFlag team={match.home} />
-          <p className="mt-2 text-xs text-slate-500">{match.stage}</p>
-          <p className="mt-0.5 truncate text-sm font-semibold text-white">{match.home.name}</p>
+          <p className="mt-2 text-xs font-semibold text-slate-400">{match.stage}</p>
+          <p className="mt-0.5 truncate text-sm font-bold text-slate-950">{match.home.name}</p>
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">{match.home.code}</p>
         </div>
 
-        <div className="rounded-xl border border-white/10 bg-black/25 px-3 py-2 text-center shadow-inner shadow-black/20">
+        <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center">
           {hasScore ? (
-            <span className="font-mono text-lg font-bold text-white">{match.homeScore} - {match.awayScore}</span>
+            <span className="font-mono text-lg font-black text-slate-950">{match.homeScore} - {match.awayScore}</span>
           ) : (
-            <span className="font-mono text-xs font-bold uppercase tracking-[0.16em] text-slate-400">VS</span>
+            <span className="font-mono text-xs font-black uppercase tracking-[0.16em] text-slate-500">VS</span>
           )}
         </div>
 
@@ -405,14 +490,11 @@ const MatchRow = ({ match }) => {
             <TeamFlag team={match.away} />
           </div>
           <p className="mt-2 truncate text-xs text-slate-500">{match.venue}</p>
-          <p className="mt-0.5 truncate text-sm font-semibold text-white">{match.away.name}</p>
+          <p className="mt-0.5 truncate text-sm font-bold text-slate-950">{match.away.name}</p>
           <p className="text-[0.62rem] font-bold uppercase tracking-[0.16em] text-slate-500">{match.away.code}</p>
         </div>
       </div>
 
-      <div className="mt-3 rounded-xl border border-white/10 bg-black/15 px-3 py-2 text-xs leading-5 text-slate-300">
-        {match.reward}
-      </div>
     </div>
   );
 };
@@ -506,10 +588,35 @@ const DynamicCard = ({ dynamic }) => {
 
 const MundialSection = () => {
   const [isVisible, setIsVisible] = useState(false);
+  const [calendarPage, setCalendarPage] = useState(0);
   const sectionRef = useRef(null);
 
   const featuredMatch = useMemo(() => MATCHES.find((match) => match.featured) ?? MATCHES[0], []);
   const featuredStatus = getMatchStatus(featuredMatch);
+  const matchesByWeek = useMemo(() => (
+    MATCHES.reduce((weeks, match) => {
+      const week = getMatchWeek(match);
+      if (!weeks[week]) weeks[week] = [];
+      weeks[week].push(match);
+      return weeks;
+    }, {})
+  ), []);
+  const currentCalendarWeek = useMemo(() => getCurrentCalendarWeek(matchesByWeek), [matchesByWeek]);
+  const matchesPerPage = 6;
+  const totalCalendarPages = Math.ceil(MATCHES.length / matchesPerPage);
+  const visibleCalendarMatches = MATCHES.slice(
+    calendarPage * matchesPerPage,
+    calendarPage * matchesPerPage + matchesPerPage
+  );
+  const firstVisibleMatch = visibleCalendarMatches[0];
+  const lastVisibleMatch = visibleCalendarMatches[visibleCalendarMatches.length - 1];
+  const showFullCalendar = false;
+  const hiddenWeekEntries = [];
+  const setShowFullCalendar = () => {};
+
+  const goToCalendarPage = (direction) => {
+    setCalendarPage((current) => Math.min(Math.max(current + direction, 0), totalCalendarPages - 1));
+  };
 
   useEffect(() => {
     const updateVisibility = () => {
@@ -577,14 +684,14 @@ const MundialSection = () => {
           <div>
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-4 py-2 backdrop-blur-xl">
               <Sparkles className="h-4 w-4 text-cyan-200" />
-              <span className="text-xs font-bold uppercase tracking-[0.24em] text-slate-300">Ofertas exclusivas del Mundial</span>
+              <span className="text-xs font-bold uppercase tracking-[0.24em] text-slate-300">Por tiempo limitado, ofertas exclusivas del Mundial</span>
             </div>
 
-            <h2 className="max-w-4xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-7xl">
-              El partido se vive mejor con tu auto impecable.
+            <h2 className="max-w-4xl text-5xl font-semibold tracking-tight text-white sm:text-6xl lg:text-4xl">
+              Disfruta del Mundial sin distracciones y con tu auto reluciente.
             </h2>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-400">
-              Agenda antes del silbatazo, desbloquea dinamicas por marcador y recibe beneficios premium durante todo el Mundial.
+              Agenda tu lavado y detallado a domicilio antes del partido, desbloquea dinámicas según el marcador y disfruta de beneficios premium durante todo el Mundial.
             </p>
 
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -670,10 +777,88 @@ const MundialSection = () => {
             </p>
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-            {MATCHES.map((match) => (
-              <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
+          <div className="space-y-8">
+            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 sm:p-4">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <div>
+                  <h4 className="text-xl font-semibold tracking-tight text-white">{currentCalendarWeek}</h4>
+                  <p className="mt-1 text-xs font-medium text-slate-500">
+                    Mostrando {calendarPage * matchesPerPage + 1}-{calendarPage * matchesPerPage + visibleCalendarMatches.length} de {MATCHES.length} partidos
+                    {firstVisibleMatch && lastVisibleMatch ? ` - ${formatMatchDate(firstVisibleMatch.kickoff)} a ${formatMatchDate(lastVisibleMatch.kickoff)}` : ''}
+                  </p>
+                </div>
+                <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
+                  <button
+                    type="button"
+                    onClick={() => goToCalendarPage(-1)}
+                    disabled={calendarPage === 0}
+                    aria-label="Ver partidos anteriores"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_12px_28px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <ChevronRight className="h-5 w-5 rotate-180" />
+                  </button>
+                  <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">
+                    Pagina {calendarPage + 1} / {totalCalendarPages}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => goToCalendarPage(1)}
+                    disabled={calendarPage >= totalCalendarPages - 1}
+                    aria-label="Ver siguientes partidos"
+                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-200 bg-cyan-300 text-slate-950 shadow-[0_12px_28px_rgba(0,0,0,0.22)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40"
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                {visibleCalendarMatches.map((match) => (
+                  <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
+                ))}
+              </div>
+              <div className="mt-4 flex justify-center gap-1.5">
+                {Array.from({ length: totalCalendarPages }).map((_, index) => (
+                  <span
+                    key={index}
+                    className={`h-2 rounded-full transition-all duration-300 ${index === calendarPage ? 'w-7 bg-cyan-300' : 'w-2 bg-white/20'}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            {showFullCalendar && hiddenWeekEntries.map(([week, matches]) => (
+              <div key={week} className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 sm:p-4">
+                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+                  <div>
+                    <h4 className="text-xl font-semibold tracking-tight text-white">{week}</h4>
+                    <p className="mt-1 text-xs font-medium text-slate-500">
+                      Horario CDMX - {matches.length} partidos
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">
+                    Estilo resultados
+                  </span>
+                </div>
+                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                  {matches.map((match) => (
+                    <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
+                  ))}
+                </div>
+              </div>
             ))}
+
+            {!showFullCalendar && hiddenWeekEntries.length > 0 && (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={() => setShowFullCalendar(true)}
+                  className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-[0_12px_28px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-slate-50 sm:w-auto"
+                >
+                  Ver más partidos
+                  <ChevronRight className="h-4 w-4 rotate-90" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
