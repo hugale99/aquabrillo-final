@@ -8,13 +8,11 @@ import {
   Clock,
   Gift,
   MessageCircle,
-  Play,
   Shield,
   Sparkles,
   Star,
   Trophy,
-  Users,
-  Video
+  Users
 } from 'lucide-react';
 
 // ============================================================
@@ -26,40 +24,33 @@ const FECHA_FIN_MUNDIAL = new Date('2026-07-19T23:59:59');
 
 const WHATSAPP_NUMBER = '7773887690';
 const WHATSAPP_MESSAGE = 'Hola AQUABRILLO, quiero aprovechar una promocion exclusiva del Mundial.';
+const LIVE_SCORE_ENDPOINT = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
 
 const getWhatsAppLink = (text = WHATSAPP_MESSAGE) =>
   `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
-// Videos no-FIFA verificados con oEmbed 200 y enlace de respaldo.
-const WORLD_CUP_VIDEOS = [
-  {
-    title: 'Brasil 2014 - We Are One',
-    label: 'PitbullVEVO',
-    src: '',
-    poster: 'https://img.youtube.com/vi/TGtWWb9emYI/hqdefault.jpg',
-    youtubeId: 'TGtWWb9emYI',
-    sourceUrl: 'https://www.youtube.com/watch?v=TGtWWb9emYI',
-    cta: 'Ver en YouTube'
-  },
-  {
-    title: 'Rusia 2018 - Live It Up',
-    label: 'NickyJamTV',
-    src: '',
-    poster: 'https://img.youtube.com/vi/V15BYnSr0P8/hqdefault.jpg',
-    youtubeId: 'V15BYnSr0P8',
-    sourceUrl: 'https://www.youtube.com/watch?v=V15BYnSr0P8',
-    cta: 'Ver en YouTube'
-  },
-  {
-    title: 'Qatar 2022 - Hayya Hayya',
-    label: 'Universal Music',
-    src: '',
-    poster: 'https://img.youtube.com/vi/keFzKYeUjfk/hqdefault.jpg',
-    youtubeId: 'keFzKYeUjfk',
-    sourceUrl: 'https://www.youtube.com/watch?v=keFzKYeUjfk',
-    cta: 'Ver en YouTube'
-  }
-];
+const formatScoreboardDate = (date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+};
+
+const getLiveScoreUrl = () => {
+  const start = new Date();
+  start.setDate(start.getDate() - 1);
+
+  const end = new Date();
+  end.setDate(end.getDate() + 1);
+
+  return `${LIVE_SCORE_ENDPOINT}?dates=${formatScoreboardDate(start)}-${formatScoreboardDate(end)}`;
+};
+
+const getEspnMatchStatus = (statusName) => {
+  if (statusName === 'STATUS_FULL_TIME' || statusName === 'STATUS_FINAL') return 'Final';
+  if (statusName === 'STATUS_SCHEDULED' || statusName === 'STATUS_PRE_GAME') return 'Proximo';
+  return 'En vivo';
+};
 
 const PROMOS = [
   {
@@ -145,20 +136,33 @@ const TEAMS = {
   UZB: { name: 'Uzbekistan', code: 'UZB', flag: 'uz' }
 };
 
-const makeMatch = (kickoff, stage, venue, home, away, featured = false, reward = 'Pronostico correcto: beneficio especial AQUABRILLO') => ({
+const makeMatch = (
+  kickoff,
+  stage,
+  venue,
+  home,
+  away,
+  featured = false,
+  reward = 'Pronostico correcto: beneficio especial AQUABRILLO',
+  homeScore = null,
+  awayScore = null,
+  liveStatus = undefined
+) => ({
+  id: `${new Date(kickoff).toISOString()}-${home}-${away}`,
   kickoff,
   stage,
   venue,
   home: TEAMS[home],
   away: TEAMS[away],
-  homeScore: null,
-  awayScore: null,
+  homeScore,
+  awayScore,
+  liveStatus,
   featured,
   reward
 });
 
 const MATCHES = [
-  makeMatch('2026-06-11T13:00:00-06:00', 'Grupo A', 'Ciudad de Mexico', 'MEX', 'RSA', true, 'Si le atinas al equipo ganador: Descontaminado gratis de cristales'),
+  makeMatch('2026-06-11T13:00:00-06:00', 'Grupo A', 'Ciudad de Mexico', 'MEX', 'RSA', true, 'Si le atinas al equipo ganador: Descontaminado gratis de cristales', 2, 0, 'Final'),
   makeMatch('2026-06-11T20:00:00-06:00', 'Grupo A', 'Guadalajara', 'KOR', 'CZE'),
   makeMatch('2026-06-12T13:00:00-06:00', 'Grupo B', 'Toronto', 'CAN', 'BIH'),
   makeMatch('2026-06-12T19:00:00-06:00', 'Grupo D', 'Los Angeles', 'USA', 'PAR'),
@@ -289,6 +293,8 @@ const formatMatchTime = (kickoff) =>
   }).format(new Date(kickoff));
 
 const getMatchStatus = (match) => {
+  if (match.liveStatus) return match.liveStatus;
+
   const now = new Date();
   const kickoff = new Date(match.kickoff);
   const matchEnd = new Date(kickoff.getTime() + 120 * 60 * 1000);
@@ -296,6 +302,31 @@ const getMatchStatus = (match) => {
   if (now >= kickoff && now <= matchEnd) return 'En vivo';
   if (now > matchEnd) return 'Final';
   return 'Proximo';
+};
+
+const applyLiveScore = (match, liveScores) => {
+  const liveScore = liveScores[match.id];
+  if (!liveScore) return match;
+
+  return {
+    ...match,
+    homeScore: Number.isInteger(liveScore.homeScore) ? liveScore.homeScore : match.homeScore,
+    awayScore: Number.isInteger(liveScore.awayScore) ? liveScore.awayScore : match.awayScore,
+    liveStatus: liveScore.status || match.liveStatus
+  };
+};
+
+const getFeaturedMatch = (matches) => {
+  const now = new Date();
+  const liveMatch = matches.find((match) => getMatchStatus(match) === 'En vivo');
+  if (liveMatch) return liveMatch;
+
+  const upcomingMatch = matches.find((match) => {
+    const matchEnd = new Date(new Date(match.kickoff).getTime() + 120 * 60 * 1000);
+    return matchEnd >= now;
+  });
+
+  return upcomingMatch ?? matches[matches.length - 1];
 };
 
 const getMatchWeek = (match) => {
@@ -499,74 +530,6 @@ const MatchRow = ({ match }) => {
   );
 };
 
-const VideoCard = ({ video, index }) => {
-  const [videoError, setVideoError] = useState(false);
-
-  return (
-    <article className="group overflow-hidden rounded-[1.75rem] border border-white/10 bg-white/[0.04] backdrop-blur-xl">
-      <div className="relative aspect-[9/14] overflow-hidden bg-slate-900">
-        {video.youtubeId ? (
-          <iframe
-            className="h-full w-full"
-            src={`https://www.youtube-nocookie.com/embed/${video.youtubeId}?rel=0&modestbranding=1&playsinline=1`}
-            title={video.title}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowFullScreen
-            loading="lazy"
-          />
-        ) : !videoError ? (
-          <video
-            className="h-full w-full object-cover"
-            src={video.src}
-            poster={video.poster}
-            muted
-            loop
-            playsInline
-            preload="metadata"
-            onMouseEnter={(event) => event.currentTarget.play().catch(() => {})}
-            onMouseLeave={(event) => event.currentTarget.pause()}
-            onError={() => setVideoError(true)}
-          />
-        ) : (
-          <div className={`flex h-full w-full items-center justify-center bg-gradient-to-br ${
-            index === 0 ? 'from-cyan-500/25 via-slate-950 to-blue-900/30' : index === 1 ? 'from-emerald-400/20 via-slate-950 to-cyan-900/30' : 'from-amber-300/20 via-slate-950 to-cyan-900/30'
-          }`}>
-            <div className="text-center">
-              <Video className="mx-auto mb-4 h-10 w-10 text-white/60" />
-              <p className="mx-auto max-w-[11rem] text-sm font-medium text-white/70">Agrega el video en public/videos/mundial</p>
-            </div>
-          </div>
-        )}
-
-        {!video.youtubeId && <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/10 to-transparent" />}
-        <div className="absolute left-4 top-4 rounded-full bg-black/40 px-3 py-1 text-xs font-bold text-white backdrop-blur-xl">
-          {video.label}
-        </div>
-        <div className={`absolute inset-x-4 bottom-4 ${video.youtubeId ? 'pointer-events-none' : ''}`}>
-          <div className="mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-white text-slate-950 shadow-xl transition duration-300 group-hover:scale-110">
-            <Play className="ml-0.5 h-5 w-5 fill-current" />
-          </div>
-          <h4 className="text-xl font-semibold text-white">{video.title}</h4>
-          <p className="mt-1 text-sm text-slate-300">{video.cta}</p>
-        </div>
-      </div>
-      {video.sourceUrl && (
-        <div className="border-t border-white/10 p-4">
-          <a
-            href={video.sourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-white px-4 py-3 text-sm font-bold text-slate-950 transition duration-300 hover:bg-cyan-100"
-          >
-            {video.cta}
-            <ArrowRight className="h-4 w-4" />
-          </a>
-        </div>
-      )}
-    </article>
-  );
-};
-
 const DynamicCard = ({ dynamic }) => {
   const Icon = dynamic.icon;
 
@@ -589,22 +552,27 @@ const DynamicCard = ({ dynamic }) => {
 const MundialSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [calendarPage, setCalendarPage] = useState(0);
+  const [liveScores, setLiveScores] = useState({});
   const sectionRef = useRef(null);
 
-  const featuredMatch = useMemo(() => MATCHES.find((match) => match.featured) ?? MATCHES[0], []);
+  const matchesWithLiveScores = useMemo(
+    () => MATCHES.map((match) => applyLiveScore(match, liveScores)),
+    [liveScores]
+  );
+  const featuredMatch = useMemo(() => getFeaturedMatch(matchesWithLiveScores), [matchesWithLiveScores]);
   const featuredStatus = getMatchStatus(featuredMatch);
   const matchesByWeek = useMemo(() => (
-    MATCHES.reduce((weeks, match) => {
+    matchesWithLiveScores.reduce((weeks, match) => {
       const week = getMatchWeek(match);
       if (!weeks[week]) weeks[week] = [];
       weeks[week].push(match);
       return weeks;
     }, {})
-  ), []);
+  ), [matchesWithLiveScores]);
   const currentCalendarWeek = useMemo(() => getCurrentCalendarWeek(matchesByWeek), [matchesByWeek]);
   const matchesPerPage = 6;
-  const totalCalendarPages = Math.ceil(MATCHES.length / matchesPerPage);
-  const visibleCalendarMatches = MATCHES.slice(
+  const totalCalendarPages = Math.ceil(matchesWithLiveScores.length / matchesPerPage);
+  const visibleCalendarMatches = matchesWithLiveScores.slice(
     calendarPage * matchesPerPage,
     calendarPage * matchesPerPage + matchesPerPage
   );
@@ -626,6 +594,49 @@ const MundialSection = () => {
 
     updateVisibility();
     const interval = setInterval(updateVisibility, 3600000);
+    return () => clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    if (!LIVE_SCORE_ENDPOINT) return undefined;
+
+    const fetchLiveScores = async () => {
+      try {
+        const response = await fetch(getLiveScoreUrl());
+        if (!response.ok) return;
+
+        const payload = await response.json();
+        const events = Array.isArray(payload.events) ? payload.events : [];
+
+        setLiveScores(events.reduce((scoreMap, event) => {
+          const competition = event.competitions?.[0];
+          const competitors = competition?.competitors ?? [];
+          const home = competitors.find((competitor) => competitor.homeAway === 'home');
+          const away = competitors.find((competitor) => competitor.homeAway === 'away');
+          const status = getEspnMatchStatus(event.status?.type?.name);
+          const shouldShowScore = status === 'En vivo' || status === 'Final';
+
+          if (!home?.team?.abbreviation || !away?.team?.abbreviation || !event.date) {
+            return scoreMap;
+          }
+
+          const matchId = `${new Date(event.date).toISOString()}-${home.team.abbreviation}-${away.team.abbreviation}`;
+          return {
+            ...scoreMap,
+            [matchId]: {
+              homeScore: shouldShowScore ? Number(home.score) : null,
+              awayScore: shouldShowScore ? Number(away.score) : null,
+              status
+            }
+          };
+        }, {}));
+      } catch {
+        // Keep the local schedule if the live score feed is unavailable.
+      }
+    };
+
+    fetchLiveScores();
+    const interval = setInterval(fetchLiveScores, 30000);
     return () => clearInterval(interval);
   }, []);
 
@@ -670,6 +681,7 @@ const MundialSection = () => {
           0%, 100% { box-shadow: 0 0 0 0 rgba(103, 232, 249, 0.28); }
           50% { box-shadow: 0 0 0 12px rgba(103, 232, 249, 0); }
         }
+
       `}</style>
 
       <div className="absolute inset-0 pointer-events-none">
@@ -732,7 +744,11 @@ const MundialSection = () => {
                   <p className="mt-3 truncate text-xl font-semibold text-white">{featuredMatch.home.name}</p>
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{featuredMatch.home.code}</p>
                 </div>
-                <div className="rounded-2xl bg-white px-5 py-4 font-mono text-lg font-black text-slate-950">VS</div>
+                <div className="rounded-2xl bg-white px-5 py-4 text-center font-mono text-lg font-black text-slate-950">
+                  {Number.isInteger(featuredMatch.homeScore) && Number.isInteger(featuredMatch.awayScore)
+                    ? `${featuredMatch.homeScore} - ${featuredMatch.awayScore}`
+                    : 'VS'}
+                </div>
                 <div className="min-w-0">
                   <div className="flex justify-center">
                     <TeamFlag team={featuredMatch.away} large />
@@ -748,7 +764,6 @@ const MundialSection = () => {
                 <Clock className="h-4 w-4 text-cyan-200" />
                 <span>{formatMatchTime(featuredMatch.kickoff)} CDMX</span>
               </div>
-
               <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center text-sm text-slate-300">
                 {featuredMatch.reward}
               </div>
@@ -783,7 +798,7 @@ const MundialSection = () => {
                 <div>
                   <h4 className="text-xl font-semibold tracking-tight text-white">{currentCalendarWeek}</h4>
                   <p className="mt-1 text-xs font-medium text-slate-500">
-                    Mostrando {calendarPage * matchesPerPage + 1}-{calendarPage * matchesPerPage + visibleCalendarMatches.length} de {MATCHES.length} partidos
+                  Mostrando {calendarPage * matchesPerPage + 1}-{calendarPage * matchesPerPage + visibleCalendarMatches.length} de {matchesWithLiveScores.length} partidos
                     {firstVisibleMatch && lastVisibleMatch ? ` - ${formatMatchDate(firstVisibleMatch.kickoff)} a ${formatMatchDate(lastVisibleMatch.kickoff)}` : ''}
                   </p>
                 </div>
@@ -862,7 +877,7 @@ const MundialSection = () => {
           </div>
         </div>
 
-        <div className="mundial-reveal mt-20" style={{ transitionDelay: '340ms' }}>
+        <div className="hidden" style={{ transitionDelay: '340ms' }}>
           <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
             <div>
               <p className="text-sm font-bold uppercase tracking-[0.24em] text-cyan-200">AQUAVIDEOS</p>
@@ -879,11 +894,7 @@ const MundialSection = () => {
             </a>
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-3">
-            {WORLD_CUP_VIDEOS.map((video, index) => (
-              <VideoCard key={video.title} video={video} index={index} />
-            ))}
-          </div>
+          <div className="grid gap-5 sm:grid-cols-3" />
         </div>
 
         <div id="dinamicas-mundialistas" className="mundial-reveal mt-20" style={{ transitionDelay: '420ms' }}>
