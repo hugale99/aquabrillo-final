@@ -238,30 +238,70 @@ const MATCHES = [
 
 const DYNAMICS = [
   {
+    id: 'Adivina el marcador',
+    automationTag: 'MUNDIAL_PREDICCION_MARCADOR',
     icon: Trophy,
     title: 'Adivina el marcador',
     description: 'Agenda tu lavado, manda tu pronostico antes del silbatazo y participa por descuento en tu siguiente servicio.',
-    reward: 'Hasta 25% OFF'
+    reward: 'Hasta 25% OFF',
+    requiredFormat: 'MEX[0-9]-[0-9]',
+    whatsappIntent: 'participar_prediccion_marcador'
   },
   {
+    id: 'Gol de Mexico',
+    automationTag: 'MUNDIAL_GOL_MEXICO',
     icon: Star,
     title: 'Gol de Mexico',
     description: 'Si Mexico gana, quienes agenden ese dia reciben un upgrade de hidratacion de plasticos o cristales premium.',
-    reward: 'Upgrade gratis'
+    reward: 'Upgrade gratis',
+    requiredFormat: 'MEX[0-9]-[0-9]',
+    whatsappIntent: 'participar_gol_mexico'
   },
   {
+    id: 'Cliente MVP',
+    automationTag: 'MUNDIAL_CLIENTE_MVP',
     icon: Users,
     title: 'Cliente MVP',
     description: 'Recomienda a un amigo durante el Mundial. Si ambos agendan, los dos reciben beneficio en su proxima visita.',
-    reward: 'Beneficio doble'
+    reward: 'Beneficio doble',
+    requiredFormat: 'REFERIDO_NOMBRE',
+    whatsappIntent: 'participar_cliente_mvp'
   },
   {
+    id: 'Historia campeona',
+    automationTag: 'MUNDIAL_HISTORIA_CAMPEONA',
     icon: Gift,
     title: 'Historia campeona',
     description: 'Sube una historia de tu auto limpio, etiqueta a AQUABRILLO y participa por una limpieza interior completa.',
-    reward: 'Sorteo semanal'
+    reward: 'Sorteo semanal',
+    requiredFormat: 'INSTAGRAM_STORY_TAG',
+    whatsappIntent: 'participar_historia_campeona'
   }
 ];
+
+const getDynamicWhatsAppMessage = (dynamic) => [
+  'Quiero participar en la dinamica mundialista de AQUABRILLO.',
+  `Dinamica: ${dynamic.title}`
+].join('\n');
+
+const registerDynamicSelection = (dynamic) => {
+  if (typeof window === 'undefined') return;
+
+  const storageKey = 'aquabrillo_mundial_dynamic_selections';
+  const currentSelections = JSON.parse(window.localStorage.getItem(storageKey) || '[]');
+  const selection = {
+    id: `${dynamic.id}_${Date.now()}`,
+    dynamicId: dynamic.id,
+    automationTag: dynamic.automationTag,
+    whatsappIntent: dynamic.whatsappIntent,
+    title: dynamic.title,
+    selectedAt: new Date().toISOString(),
+    channel: 'web_whatsapp_cta',
+    status: 'Seleccion iniciada'
+  };
+
+  window.localStorage.setItem(storageKey, JSON.stringify([selection, ...currentSelections].slice(0, 100)));
+};
 
 const getTimeLeft = (targetDate) => {
   const diff = targetDate - new Date();
@@ -469,7 +509,7 @@ const PromoCard = ({ promo }) => {
           href={getWhatsAppLink(`Hola AQUABRILLO, quiero la promocion mundialista "${promo.title}".`)}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-slate-950 transition duration-300 hover:scale-[1.02] hover:bg-cyan-100"
+          className="mt-auto inline-flex items-center justify-center gap-2 rounded-full bg-[#25D366] px-5 py-3 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 transition duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-[#25D366]/30"
         >
           Reservar paquete
           <ChevronRight className="h-4 w-4" />
@@ -534,7 +574,12 @@ const DynamicCard = ({ dynamic }) => {
   const Icon = dynamic.icon;
 
   return (
-    <article className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30">
+    <article
+      className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-5 backdrop-blur-xl transition duration-300 hover:-translate-y-1 hover:border-cyan-300/30"
+      data-dynamic-id={dynamic.id}
+      data-automation-tag={dynamic.automationTag}
+      data-whatsapp-intent={dynamic.whatsappIntent}
+    >
       <div className="mb-5 flex items-center justify-between">
         <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-white text-slate-950">
           <Icon className="h-5 w-5" />
@@ -544,7 +589,20 @@ const DynamicCard = ({ dynamic }) => {
         </span>
       </div>
       <h4 className="text-lg font-semibold text-white">{dynamic.title}</h4>
+      <p className="mt-2 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100/70">
+        Dinamica seleccionada: {dynamic.title}
+      </p>
       <p className="mt-3 text-sm leading-relaxed text-slate-400">{dynamic.description}</p>
+      <a
+        href={getWhatsAppLink(getDynamicWhatsAppMessage(dynamic))}
+        target="_blank"
+        rel="noopener noreferrer"
+        onClick={() => registerDynamicSelection(dynamic)}
+        className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-[#25D366] px-4 py-3 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 transition duration-300 hover:bg-[#1EBE5D] hover:shadow-[#25D366]/30"
+      >
+        Participar por WhatsApp
+        <MessageCircle className="h-4 w-4" />
+      </a>
     </article>
   );
 };
@@ -711,7 +769,7 @@ const MundialSection = () => {
                 href={getWhatsAppLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-3 rounded-full bg-white px-6 py-4 text-sm font-bold text-slate-950 transition duration-300 hover:scale-[1.02] hover:bg-cyan-100"
+                className="inline-flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-sm font-bold text-white shadow-lg shadow-[#25D366]/20 transition duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-[#25D366]/30"
               >
                 <MessageCircle className="h-5 w-5" />
                 Agendar promocion
@@ -905,7 +963,7 @@ const MundialSection = () => {
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {DYNAMICS.map((dynamic) => (
-              <DynamicCard key={dynamic.title} dynamic={dynamic} />
+              <DynamicCard key={dynamic.id} dynamic={dynamic} />
             ))}
           </div>
         </div>
@@ -927,7 +985,7 @@ const MundialSection = () => {
               href={getWhatsAppLink('Hola AQUABRILLO, quiero reservar una promocion mundialista y participar en las dinamicas.')}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex flex-none items-center justify-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 text-sm font-bold text-white shadow-xl shadow-green-500/20 transition duration-300 hover:scale-[1.02]"
+              className="inline-flex flex-none items-center justify-center gap-3 rounded-full bg-[#25D366] px-6 py-4 text-sm font-bold text-white shadow-xl shadow-[#25D366]/20 transition duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-[#25D366]/30"
             >
               <MessageCircle className="h-5 w-5" />
               Reservar por WhatsApp
