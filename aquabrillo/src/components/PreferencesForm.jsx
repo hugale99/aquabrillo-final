@@ -17,6 +17,7 @@ const PreferencesForm = () => {
   const [errors, setErrors] = useState({});
   const [feedback, setFeedback] = useState({ message: '', type: '' });
   const [isOpen, setIsOpen] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const isValidEmail = (email) => {
     if (!email) return true;
@@ -74,6 +75,8 @@ const PreferencesForm = () => {
 
     if (!validateForm()) return;
 
+    setIsSubmitting(true);
+
     try {
       await fetch(GOOGLE_APPS_SCRIPT_URL, {
         method: 'POST',
@@ -87,8 +90,7 @@ const PreferencesForm = () => {
         type: 'success'
       });
       setFormData(defaultFormData);
-    } catch (error) {
-      console.error('Error al enviar el formulario:', error);
+    } catch {
       setFeedback({
         message: '⚠️ No se pudo enviar tu respuesta. Intenta nuevamente en unos segundos.',
         type: 'error'
@@ -97,6 +99,7 @@ const PreferencesForm = () => {
       setTimeout(() => {
         setFeedback({ message: '', type: '' });
       }, 6000);
+      setIsSubmitting(false);
     }
   };
 
@@ -320,6 +323,13 @@ const PreferencesForm = () => {
           filter: brightness(1.06);
         }
 
+        .pref-button:disabled {
+          cursor: wait;
+          opacity: 0.72;
+          transform: none;
+          filter: none;
+        }
+
         .pref-small-note {
           color: var(--muted);
           font-size: 13px;
@@ -453,20 +463,20 @@ const PreferencesForm = () => {
       `}</style>
 
       <div className="pref-form-wrapper px-6 lg:px-8">
-        <button className="pref-widget-fixed" type="button" onClick={handleToggle}>
+        <button className="pref-widget-fixed" type="button" onClick={handleToggle} aria-expanded={isOpen} aria-controls="preferences-drawer">
           <span className="pref-widget-icon">💬</span>
           <span>Tu opinión nos interesa</span>
         </button>
       </div>
 
       <div className={`pref-overlay ${isOpen ? 'show' : ''}`} onClick={closePanel} />
-      <div className={`pref-drawer ${isOpen ? 'show' : ''}`}>
+      <div id="preferences-drawer" className={`pref-drawer ${isOpen ? 'show' : ''}`} aria-hidden={!isOpen}>
         <div className="pref-panel-header">
           <div>
             <h2 className="pref-panel-title">Tu opinión nos interesa</h2>
             <p className="pref-panel-description">Tus respuestas nos ayudan a crear mejores paquetes, promociones y experiencias para ti.</p>
           </div>
-          <button className="pref-drawer-close" type="button" onClick={closePanel}>
+          <button className="pref-drawer-close" type="button" onClick={closePanel} aria-label="Cerrar formulario de preferencias">
             ✕
           </button>
         </div>
@@ -627,8 +637,8 @@ const PreferencesForm = () => {
               </div>
 
               <div className="pref-actions">
-                <button type="submit" className="pref-button">
-                  Enviar mis respuestas
+                <button type="submit" className="pref-button" disabled={isSubmitting}>
+                  {isSubmitting ? 'Enviando respuestas...' : 'Enviar mis respuestas'}
                 </button>
                 <div className="pref-small-note">
                   Al enviar este formulario aceptas que tus respuestas sean utilizadas únicamente para mejorar la oferta de servicios de AQUABRILLO.
@@ -636,7 +646,7 @@ const PreferencesForm = () => {
               </div>
 
               {feedback.message && (
-                <div className={`pref-message ${feedback.type} show`}>
+                <div className={`pref-message ${feedback.type} show`} role="status" aria-live="polite">
                   {feedback.message}
                 </div>
               )}

@@ -1,78 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { 
-  Menu, X, Phone, MapPin, Instagram, Facebook, ChevronRight, 
-  Shield, Sparkles, Clock, Home, Award, Droplets, 
-  CheckCircle2, ArrowRight, Star, Quote, Car, 
+import {
+  Menu, X, Phone, MapPin, Instagram, Facebook, ChevronRight,
+  Shield, Sparkles, Clock, Home, Award, Droplets,
+  CheckCircle2, ArrowRight, Star, Quote, Car,
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
 import PreferencesForm from './components/PreferencesForm';
-import MundialSection from './components/MundialSection';  // ← ← ← AGREGA ESTA LÍNEA
+import MundialSection from './components/MundialSection';
+import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
-const WHATSAPP_NUMBER = "7773887690";
-const WHATSAPP_LINK = (text) => `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
-const INSTAGRAM_URL = "https://www.instagram.com/santafecarwashexpress?igsh=MW4ydm03c3Jxa2Jvbw==";
-const FACEBOOK_URL = "https://www.facebook.com/share/1JZTAu7cAa/?mibextid=wwXIfr";
-
-// ============================================================
-// CONFIGURACIÓN DE IMÁGENES PROPIAS
-// Instrucciones:
-// 1. Crea la carpeta public/images/ en tu proyecto
-// 2. Dentro de public/images/ crea las subcarpetas: hero, servicios, resultados, ceramico, cobertura, testimonios
-// 3. Copia tus fotos con los nombres exactos de abajo
-// 4. Las imágenes se cargan automáticamente desde /images/... (ruta relativa a public/)
-// ============================================================
-
-const IMAGES = {
-  // LOGO: Tu logo en formato PNG o SVG con fondo transparente
-  logo: "/images/logo.png",
-  
-  // HERO: Tu mejor foto de auto premium
-  // Recomendación: Auto oscuro, fondo oscuro, reflejos de agua o luz dramática
-  // Formato: JPG o PNG, preferiblemente 1920x1080 o mayor
-  hero: "/images/hero/hero-car.jpg",
-  
-  // SERVICIOS: 6 fotos de tus trabajos reales
-  servicios: {
-    lavado: "/images/servicios/lavado.jpg",         // Espuma, microfibra, agua en acción
-    interior: "/images/servicios/interior.jpg",     // Tapicería limpia, cuero brillante
-    exterior: "/images/servicios/exterior.jpg",     // Llantas, carrocería, detalles
-    pulido: "/images/servicios/pulido.jpg",         // Máquina pulidora trabajando
-    ceramico: "/images/servicios/ceramico.jpg",     // Gotas repelidas en capó
-    paquetes: "/images/servicios/paquetes.jpg"      // Auto completo, toma amplia
-  },
-  
-  // RESULTADOS: Fotos antes/después de trabajos reales
-  // IMPORTANTE: Usa el MISMO ÁNGULO y MISMA ILUMINACIÓN para before y after
-  resultados: {
-    interior: {
-      before: "/images/resultados/interior-before.jpg",   // Asientos sucios/manchados
-      after: "/images/resultados/interior-after.jpg"      // Mismo ángulo, limpios
-    },
-    pintura: {
-      before: "/images/resultados/pintura-before.jpg",    // Pintura opaca/rayada
-      after: "/images/resultados/pintura-after.jpg"       // Mismo panel, brillante
-    },
-    ceramico: {
-      before: "/images/resultados/ceramico-before.jpeg",   // Agua extendida en superficie
-      after: "/images/resultados/ceramico-after.jpg"      // Gotas formando esferas
-    }
-  },
-  
-  // CERÁMICO: Tu mejor foto de efecto hidrofóbico
-  ceramico: "/images/ceramico/coating-close.jpg",
-  
-  // COBERTURA: Mapa personalizado o screenshot de Google Maps estilizado
-  cobertura: "/images/cobertura/mapa.jpg",
-  
-  // TESTIMONIOS: Fotos de autos de clientes (con su permiso)
-  // Si no tienes fotos, deja null y se mostrará avatar con inicial
-  testimonios: {
-    cliente1: "/images/testimonios/cliente-1.jpg",  // Auto del cliente 1 después de servicio
-    cliente2: "/images/testimonios/cliente-2.jpg",  // Auto del cliente 2
-    cliente3: "/images/testimonios/cliente-3.jpg",   // Auto del cliente 3
-    cliente4: "/images/testimonios/cliente-4.jpg"    // Auto del cliente 4
-  }
-};
+const WHATSAPP_LINK = getWhatsAppLink;
 
 // ============================================================
 // COMPONENTES DEL SITIO
@@ -147,7 +84,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="flex items-center gap-3 group">
-            <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+            <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
             <div className="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300">
               <Droplets className="w-5 h-5 text-white" />
             </div>
@@ -170,7 +107,7 @@ const Navbar = () => {
           </div>
 
           <a
-            href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
+            href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
             target="_blank"
             rel="noopener noreferrer"
             className="hidden lg:flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
@@ -179,7 +116,12 @@ const Navbar = () => {
             Agendar por WhatsApp
           </a>
 
-          <button onClick={() => setIsOpen(!isOpen)} className="lg:hidden p-2 text-white">
+          <button
+            onClick={() => setIsOpen(!isOpen)}
+            className="lg:hidden p-2 text-white"
+            aria-label={isOpen ? 'Cerrar menu' : 'Abrir menu'}
+            aria-expanded={isOpen}
+          >
             {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
           </button>
         </div>
@@ -199,7 +141,7 @@ const Navbar = () => {
             </button>
           ))}
           <a
-            href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
+            href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
             target="_blank"
             rel="noopener noreferrer"
             className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
@@ -257,7 +199,7 @@ const Hero = () => {
         <ScrollReveal delay={300}>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a
-              href={WHATSAPP_LINK("Hola, quiero agendar un servicio para mi auto.")}
+              href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.carService)}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
@@ -267,7 +209,7 @@ const Hero = () => {
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </a>
             <button
-              onClick={() => document.querySelector('#servicios').scrollIntoView({ behavior: 'smooth' })}
+              onClick={() => document.querySelector('#servicios')?.scrollIntoView({ behavior: 'smooth' })}
               className="flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-all duration-300"
             >
               Ver servicios
@@ -283,6 +225,8 @@ const Hero = () => {
                   src={IMAGES.hero} 
                   alt="Auto premium con acabado de espejo y reflejos cinematográficos"
                   className="w-full h-full object-cover"
+                  fetchPriority="high"
+                  decoding="async"
                   onError={() => setImgError(true)}
                 />
               ) : (
@@ -439,6 +383,9 @@ const ServiceCard = ({ service, index }) => {
               src={service.image} 
               alt={service.imageAlt}
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+              loading="lazy"
+              decoding="async"
+              sizes="(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"
               onError={() => setImgError(true)}
             />
           ) : (
@@ -796,6 +743,9 @@ const ResultsCarousel = () => {
                       src={trabajo.before} 
                       alt={trabajo.beforeAlt}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(min-width: 1024px) 960px, 100vw"
                     />
                     <div className="absolute top-4 left-4 px-4 py-2 bg-red-500/20 border border-red-500/30 rounded-full backdrop-blur-sm">
                       <span className="text-red-400 font-bold text-sm uppercase tracking-wider">Antes</span>
@@ -807,6 +757,9 @@ const ResultsCarousel = () => {
                       src={trabajo.after} 
                       alt={trabajo.afterAlt}
                       className="w-full h-full object-cover"
+                      loading="lazy"
+                      decoding="async"
+                      sizes="(min-width: 1024px) 960px, 100vw"
                     />
                     <div className="absolute top-4 right-4 px-4 py-2 bg-cyan-500/20 border border-cyan-500/30 rounded-full backdrop-blur-sm">
                       <span className="text-cyan-400 font-bold text-sm uppercase tracking-wider">Después</span>
@@ -844,6 +797,7 @@ const ResultsCarousel = () => {
                       onClick={goPrev}
                       className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300"
                       disabled={isAnimating}
+                      aria-label="Ver resultado anterior"
                     >
                       <ChevronRight className="w-5 h-5 rotate-180" />
                     </button>
@@ -851,6 +805,7 @@ const ResultsCarousel = () => {
                       onClick={goNext}
                       className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300"
                       disabled={isAnimating}
+                      aria-label="Ver siguiente resultado"
                     >
                       <ChevronRight className="w-5 h-5" />
                     </button>
@@ -861,6 +816,7 @@ const ResultsCarousel = () => {
                       <button
                         key={index}
                         onClick={() => goToSlide(index)}
+                        aria-label={`Ver resultado ${index + 1}`}
                         className={`transition-all duration-300 rounded-full ${
                           index === currentIndex 
                             ? 'w-8 h-2 bg-cyan-400' 
@@ -880,12 +836,14 @@ const ResultsCarousel = () => {
             <button
               onClick={goPrev}
               className="hidden lg:flex absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-slate-900 border border-white/10 items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300 shadow-2xl"
+              aria-label="Ver resultado anterior"
             >
               <ChevronRight className="w-6 h-6 rotate-180" />
             </button>
             <button
               onClick={goNext}
               className="hidden lg:flex absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 w-14 h-14 rounded-full bg-slate-900 border border-white/10 items-center justify-center text-white hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all duration-300 shadow-2xl"
+              aria-label="Ver siguiente resultado"
             >
               <ChevronRight className="w-6 h-6" />
             </button>
@@ -898,6 +856,7 @@ const ResultsCarousel = () => {
               <button
                 key={t.id}
                 onClick={() => goToSlide(index)}
+                aria-label={`Ver resultado de ${t.servicio}`}
                 className={`relative aspect-video rounded-xl overflow-hidden border-2 transition-all duration-300 ${
                   index === currentIndex 
                     ? 'border-cyan-400 shadow-lg shadow-cyan-500/20' 
@@ -908,6 +867,9 @@ const ResultsCarousel = () => {
                   src={t.after} 
                   alt={t.servicio}
                   className="w-full h-full object-cover"
+                  loading="lazy"
+                  decoding="async"
+                  sizes="(min-width: 768px) 16vw, 33vw"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
                 <div className="absolute bottom-1 left-2 right-2">
@@ -924,7 +886,7 @@ const ResultsCarousel = () => {
               ¿Quieres que tu auto sea nuestro próximo caso de éxito?
             </p>
             <a
-              href={WHATSAPP_LINK("Hola, vi sus resultados y me interesa agendar un servicio. Mi auto es [marca/modelo].")}
+              href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.results)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
@@ -984,7 +946,7 @@ const CeramicCoating = () => {
               </div>
 
               <a
-                href={WHATSAPP_LINK("Hola, me interesa el recubrimiento cerámico.")}
+                href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.ceramic)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
@@ -1004,6 +966,9 @@ const CeramicCoating = () => {
                     src={IMAGES.ceramico} 
                     alt="Capó negro con recubrimiento cerámico mostrando efecto hidrofóbico"
                     className="w-full h-full object-cover"
+                    loading="lazy"
+                    decoding="async"
+                    sizes="(min-width: 1024px) 50vw, 100vw"
                     onError={() => setImgError(true)}
                   />
                 ) : (
@@ -1466,7 +1431,7 @@ const CoverageMap = () => {
               </div>
 
               <a
-                href={WHATSAPP_LINK("Hola, vivo en [tu colonia/fraccionamiento], ¿tienen cobertura?")}
+                href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.coverage)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2 w-full px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-green-500/25 hover:scale-[1.02] transition-all duration-300"
@@ -1646,7 +1611,7 @@ const B2BServices = () => {
             </div>
             <div className="flex items-center gap-4">
               <a
-                href={WHATSAPP_LINK("Hola, represento una agencia automotriz y me interesa cotizar servicios de detallado corporativo.")}
+                href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.b2b)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
@@ -1802,7 +1767,7 @@ const B2BServices = () => {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a
-                  href={WHATSAPP_LINK("Hola, me gustaría agendar una demostración sin costo para mi agencia. Somos [nombre de agencia].")}
+                  href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.b2bDemo)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
@@ -1920,6 +1885,8 @@ const TestimonialCard = ({ item, index }) => {
               src={IMAGES.testimonios[`cliente${index + 1}`]} 
               alt={`Auto de ${item.name}`}
               className="w-full h-full object-cover"
+              loading="lazy"
+              decoding="async"
               onError={() => setImgError(true)}
             />
             <span className={`text-white font-bold text-sm ${imgError ? '' : 'hidden'}`}>
@@ -1956,7 +1923,7 @@ const FinalCTA = () => {
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-12">
             <a
-              href={WHATSAPP_LINK("Hola, quiero agendar una evaluación para mi auto.")}
+              href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.evaluation)}
               target="_blank"
               rel="noopener noreferrer"
               className="group flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-green-500 to-green-600 text-white font-bold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
@@ -1994,7 +1961,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="md:col-span-2">
             <div className="flex items-center gap-3 mb-6">
-              <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+              <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" loading="lazy" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
               <div className="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center">
                 <Droplets className="w-5 h-5 text-white" />
               </div>
@@ -2009,7 +1976,7 @@ const Footer = () => {
             </p>
             <div className="flex items-center gap-4">
               <a
-                href={WHATSAPP_LINK("Hola, me interesa un servicio de AQUABRILLO.")}
+                href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalService)}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
@@ -2017,7 +1984,7 @@ const Footer = () => {
                 <Phone className="w-5 h-5 text-cyan-400" />
               </a>
               <a
-                href={INSTAGRAM_URL}
+                href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
@@ -2025,7 +1992,7 @@ const Footer = () => {
                 <Instagram className="w-5 h-5 text-cyan-400" />
               </a>
               <a
-                href={FACEBOOK_URL}
+                href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
@@ -2095,7 +2062,7 @@ const FloatingWhatsApp = () => {
 
   return (
     <a
-      href={WHATSAPP_LINK("Hola, me interesa cotizar un servicio de AQUABRILLO.")}
+      href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
       target="_blank"
       rel="noopener noreferrer"
       className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full shadow-2xl shadow-green-500/30 hover:scale-105 transition-all duration-500 ${
