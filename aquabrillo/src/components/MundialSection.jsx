@@ -26,6 +26,16 @@ const WHATSAPP_NUMBER = '7773887690';
 const WHATSAPP_MESSAGE = 'Hola AQUABRILLO, quiero aprovechar una promocion exclusiva del Mundial.';
 const LIVE_SCORE_ENDPOINT = 'https://site.api.espn.com/apis/site/v2/sports/soccer/fifa.world/scoreboard';
 
+const TEAM_CODE_ALIASES = {
+  KSA: 'KSA',
+  RSA: 'RSA',
+  ZAF: 'RSA',
+  KOR: 'KOR',
+  ROK: 'KOR',
+  USA: 'USA',
+  USMNT: 'USA'
+};
+
 const getWhatsAppLink = (text = WHATSAPP_MESSAGE) =>
   `https://wa.me/52${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
 
@@ -51,6 +61,26 @@ const getEspnMatchStatus = (statusName) => {
   if (statusName === 'STATUS_SCHEDULED' || statusName === 'STATUS_PRE_GAME') return 'Proximo';
   return 'En vivo';
 };
+
+const normalizeTeamCode = (code) => TEAM_CODE_ALIASES[code] || code;
+
+const getMatchDateKey = (dateValue) => {
+  const date = new Date(dateValue);
+  const formatter = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Mexico_City',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  });
+
+  return formatter.format(date);
+};
+
+const getMatchupKey = (dateValue, homeCode, awayCode) =>
+  `${getMatchDateKey(dateValue)}-${normalizeTeamCode(homeCode)}-${normalizeTeamCode(awayCode)}`;
+
+const getReverseMatchupKey = (dateValue, homeCode, awayCode) =>
+  `${getMatchDateKey(dateValue)}-${normalizeTeamCode(awayCode)}-${normalizeTeamCode(homeCode)}`;
 
 const PROMOS = [
   {
@@ -345,7 +375,11 @@ const getMatchStatus = (match) => {
 };
 
 const applyLiveScore = (match, liveScores) => {
-  const liveScore = liveScores[match.id];
+  const liveScore =
+    liveScores.byId?.[match.id] ||
+    liveScores.byMatchup?.[getMatchupKey(match.kickoff, match.home.code, match.away.code)] ||
+    liveScores.byMatchup?.[getReverseMatchupKey(match.kickoff, match.home.code, match.away.code)];
+
   if (!liveScore) return match;
 
   return {
@@ -523,6 +557,7 @@ const MatchRow = ({ match }) => {
   const hasScore = Number.isInteger(match.homeScore) && Number.isInteger(match.awayScore);
   const status = getMatchStatus(match);
   const isLive = status === 'En vivo';
+  const shouldRenderScoreboard = hasScore || isLive;
 
   return (
     <div className={`rounded-2xl border p-3 text-slate-950 shadow-[0_14px_34px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_18px_44px_rgba(0,0,0,0.24)] ${
@@ -549,8 +584,8 @@ const MatchRow = ({ match }) => {
         </div>
 
         <div className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-2 text-center">
-          {hasScore ? (
-            <span className="font-mono text-lg font-black text-slate-950">{match.homeScore} - {match.awayScore}</span>
+          {shouldRenderScoreboard ? (
+            <span className="font-mono text-lg font-black text-slate-950">{match.homeScore ?? 0} - {match.awayScore ?? 0}</span>
           ) : (
             <span className="font-mono text-xs font-black uppercase tracking-[0.16em] text-slate-500">VS</span>
           )}
@@ -619,6 +654,8 @@ const MundialSection = () => {
   );
   const featuredMatch = useMemo(() => getFeaturedMatch(matchesWithLiveScores), [matchesWithLiveScores]);
   const featuredStatus = getMatchStatus(featuredMatch);
+  const featuredHasScore = Number.isInteger(featuredMatch.homeScore) && Number.isInteger(featuredMatch.awayScore);
+  const shouldRenderFeaturedScore = featuredHasScore || featuredStatus === 'En vivo';
   const matchesByWeek = useMemo(() => (
     matchesWithLiveScores.reduce((weeks, match) => {
       const week = getMatchWeek(match);
@@ -678,16 +715,35 @@ const MundialSection = () => {
             return scoreMap;
           }
 
-          const matchId = `${new Date(event.date).toISOString()}-${home.team.abbreviation}-${away.team.abbreviation}`;
+          const homeCode = normalizeTeamCode(home.team.abbreviation);
+          const awayCode = normalizeTeamCode(away.team.abbreviation);
+          const matchId = `${new Date(event.date).toISOString()}-${homeCode}-${awayCode}`;
+          const matchupKey = getMatchupKey(event.date, homeCode, awayCode);
+          const reverseMatchupKey = getReverseMatchupKey(event.date, homeCode, awayCode);
+          const score = {
+            homeScore: shouldShowScore ? Number(home.score) : null,
+            awayScore: shouldShowScore ? Number(away.score) : null,
+            status
+          };
+          const reverseScore = {
+            homeScore: score.awayScore,
+            awayScore: score.homeScore,
+            status
+          };
+
           return {
             ...scoreMap,
-            [matchId]: {
-              homeScore: shouldShowScore ? Number(home.score) : null,
-              awayScore: shouldShowScore ? Number(away.score) : null,
-              status
+            byId: {
+              ...scoreMap.byId,
+              [matchId]: score
+            },
+            byMatchup: {
+              ...scoreMap.byMatchup,
+              [matchupKey]: score,
+              [reverseMatchupKey]: reverseScore
             }
           };
-        }, {}));
+        }, { byId: {}, byMatchup: {} }));
       } catch {
         // Keep the local schedule if the live score feed is unavailable.
       }
@@ -803,8 +859,8 @@ const MundialSection = () => {
                   <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{featuredMatch.home.code}</p>
                 </div>
                 <div className="rounded-2xl bg-white px-5 py-4 text-center font-mono text-lg font-black text-slate-950">
-                  {Number.isInteger(featuredMatch.homeScore) && Number.isInteger(featuredMatch.awayScore)
-                    ? `${featuredMatch.homeScore} - ${featuredMatch.awayScore}`
+                  {shouldRenderFeaturedScore
+                    ? `${featuredMatch.homeScore ?? 0} - ${featuredMatch.awayScore ?? 0}`
                     : 'VS'}
                 </div>
                 <div className="min-w-0">
