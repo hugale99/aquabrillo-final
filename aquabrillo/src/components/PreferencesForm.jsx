@@ -470,10 +470,17 @@ const PreferencesForm = () => {
       </div>
 
       <div className={`pref-overlay ${isOpen ? 'show' : ''}`} onClick={closePanel} />
-      <div id="preferences-drawer" className={`pref-drawer ${isOpen ? 'show' : ''}`} aria-hidden={!isOpen}>
+      <div
+        id="preferences-drawer"
+        className={`pref-drawer ${isOpen ? 'show' : ''}`}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="preferences-title"
+        aria-hidden={!isOpen}
+      >
         <div className="pref-panel-header">
           <div>
-            <h2 className="pref-panel-title">Tu opinión nos interesa</h2>
+            <h2 id="preferences-title" className="pref-panel-title">Tu opinión nos interesa</h2>
             <p className="pref-panel-description">Tus respuestas nos ayudan a crear mejores paquetes, promociones y experiencias para ti.</p>
           </div>
           <button className="pref-drawer-close" type="button" onClick={closePanel} aria-label="Cerrar formulario de preferencias">
@@ -510,8 +517,10 @@ const PreferencesForm = () => {
                   placeholder="ejemplo@correo.com"
                   value={formData.correo}
                   onChange={handleChange}
+                  aria-invalid={Boolean(errors.correo)}
+                  aria-describedby={errors.correo ? 'correo-error' : undefined}
                 />
-                {errors.correo && <div className="pref-error show">Por favor ingresa un correo válido o deja el campo vacío.</div>}
+                {errors.correo && <div id="correo-error" className="pref-error show">Por favor ingresa un correo válido o deja el campo vacío.</div>}
               </div>
 
               <div className="pref-section-label">Preferencias de servicio</div>

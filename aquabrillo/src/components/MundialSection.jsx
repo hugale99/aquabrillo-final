@@ -82,6 +82,38 @@ const getMatchupKey = (dateValue, homeCode, awayCode) =>
 const getReverseMatchupKey = (dateValue, homeCode, awayCode) =>
   `${getMatchDateKey(dateValue)}-${normalizeTeamCode(awayCode)}-${normalizeTeamCode(homeCode)}`;
 
+const getCalendarDayKey = (dateValue) => {
+  const date = new Date(dateValue);
+  return new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Mexico_City',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(date);
+};
+
+const getDailyMatches = (matches) => {
+  const todayKey = getCalendarDayKey(new Date());
+  const todayMatches = matches.filter((match) => getCalendarDayKey(match.kickoff) === todayKey);
+
+  if (todayMatches.length > 0) {
+    return {
+      label: 'Partidos de hoy',
+      dateKey: todayKey,
+      matches: todayMatches
+    };
+  }
+
+  const nextMatch = matches.find((match) => new Date(match.kickoff) >= new Date());
+  const nextDateKey = nextMatch ? getCalendarDayKey(nextMatch.kickoff) : getCalendarDayKey(matches[matches.length - 1].kickoff);
+
+  return {
+    label: nextMatch ? 'Siguiente jornada' : 'Ultima jornada',
+    dateKey: nextDateKey,
+    matches: matches.filter((match) => getCalendarDayKey(match.kickoff) === nextDateKey)
+  };
+};
+
 const PROMOS = [
   {
     icon: Sparkles,
@@ -403,31 +435,12 @@ const getFeaturedMatch = (matches) => {
   return upcomingMatch ?? matches[matches.length - 1];
 };
 
-const getMatchWeek = (match) => {
-  const date = new Date(match.kickoff);
-  const day = date.getDate();
+const getFeaturedMatches = (matches) => {
+  const featuredMatch = getFeaturedMatch(matches);
+  const featuredKickoff = new Date(featuredMatch.kickoff).getTime();
+  const sameTimeMatches = matches.filter((match) => new Date(match.kickoff).getTime() === featuredKickoff);
 
-  if (day <= 17) return 'Semana 1 - Jornada 1';
-  if (day <= 23) return 'Semana 2 - Jornada 2';
-  return 'Semana 3 - Cierre de grupos';
-};
-
-const getCurrentCalendarWeek = (matchesByWeek) => {
-  const now = new Date();
-  const entries = Object.entries(matchesByWeek);
-
-  const activeEntry = entries.find(([, matches]) => {
-    const firstMatch = new Date(matches[0].kickoff);
-    const lastMatch = new Date(matches[matches.length - 1].kickoff);
-    lastMatch.setHours(23, 59, 59, 999);
-
-    return now >= firstMatch && now <= lastMatch;
-  });
-
-  if (activeEntry) return activeEntry[0];
-
-  const nextEntry = entries.find(([, matches]) => new Date(matches[matches.length - 1].kickoff) >= now);
-  return nextEntry?.[0] ?? entries[entries.length - 1]?.[0];
+  return sameTimeMatches.length > 1 ? sameTimeMatches.slice(0, 2) : [featuredMatch];
 };
 
 const TeamFlag = ({ team, large = false }) => (
@@ -605,6 +618,59 @@ const MatchRow = ({ match }) => {
   );
 };
 
+const FeaturedMatchCard = ({ match }) => {
+  const status = getMatchStatus(match);
+  const hasScore = Number.isInteger(match.homeScore) && Number.isInteger(match.awayScore);
+  const shouldRenderScore = hasScore || status === 'En vivo';
+
+  return (
+    <div className="rounded-[1.35rem] border border-cyan-200/15 bg-slate-950/70 p-4">
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-xs font-bold uppercase tracking-[0.2em] text-cyan-200">{match.stage}</p>
+          <p className="mt-1 truncate text-xs text-slate-500">{match.venue}</p>
+        </div>
+        <span className="rounded-full bg-cyan-300 px-2.5 py-1 text-[0.68rem] font-bold text-slate-950" style={{ animation: 'aquabrillo-score-pulse 2.4s ease-in-out infinite' }}>
+          {status}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3 text-center">
+        <div className="min-w-0">
+          <TeamFlag team={match.home} large />
+          <p className="mt-3 truncate text-base font-semibold text-white">{match.home.name}</p>
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-slate-500">{match.home.code}</p>
+        </div>
+        <div className="rounded-2xl bg-white px-4 py-3 text-center font-mono text-base font-black text-slate-950">
+          {shouldRenderScore ? `${match.homeScore ?? 0} - ${match.awayScore ?? 0}` : 'VS'}
+        </div>
+        <div className="min-w-0">
+          <div className="flex justify-center">
+            <TeamFlag team={match.away} large />
+          </div>
+          <p className="mt-3 truncate text-base font-semibold text-white">{match.away.name}</p>
+          <p className="text-[0.65rem] font-bold uppercase tracking-[0.18em] text-slate-500">{match.away.code}</p>
+        </div>
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center justify-center gap-3 text-xs text-slate-400">
+        <span className="inline-flex items-center gap-1.5">
+          <CalendarDays className="h-3.5 w-3.5 text-cyan-200" />
+          <span className="capitalize">{formatMatchDate(match.kickoff)}</span>
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <Clock className="h-3.5 w-3.5 text-cyan-200" />
+          {formatMatchTime(match.kickoff)} CDMX
+        </span>
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-3 text-center text-xs leading-5 text-slate-300">
+        {match.reward}
+      </div>
+    </div>
+  );
+};
+
 const DynamicCard = ({ dynamic }) => {
   const Icon = dynamic.icon;
 
@@ -644,7 +710,6 @@ const DynamicCard = ({ dynamic }) => {
 
 const MundialSection = () => {
   const [isVisible, setIsVisible] = useState(false);
-  const [calendarPage, setCalendarPage] = useState(0);
   const [liveScores, setLiveScores] = useState({});
   const sectionRef = useRef(null);
 
@@ -652,34 +717,9 @@ const MundialSection = () => {
     () => MATCHES.map((match) => applyLiveScore(match, liveScores)),
     [liveScores]
   );
-  const featuredMatch = useMemo(() => getFeaturedMatch(matchesWithLiveScores), [matchesWithLiveScores]);
-  const featuredStatus = getMatchStatus(featuredMatch);
-  const featuredHasScore = Number.isInteger(featuredMatch.homeScore) && Number.isInteger(featuredMatch.awayScore);
-  const shouldRenderFeaturedScore = featuredHasScore || featuredStatus === 'En vivo';
-  const matchesByWeek = useMemo(() => (
-    matchesWithLiveScores.reduce((weeks, match) => {
-      const week = getMatchWeek(match);
-      if (!weeks[week]) weeks[week] = [];
-      weeks[week].push(match);
-      return weeks;
-    }, {})
-  ), [matchesWithLiveScores]);
-  const currentCalendarWeek = useMemo(() => getCurrentCalendarWeek(matchesByWeek), [matchesByWeek]);
-  const matchesPerPage = 6;
-  const totalCalendarPages = Math.ceil(matchesWithLiveScores.length / matchesPerPage);
-  const visibleCalendarMatches = matchesWithLiveScores.slice(
-    calendarPage * matchesPerPage,
-    calendarPage * matchesPerPage + matchesPerPage
-  );
-  const firstVisibleMatch = visibleCalendarMatches[0];
-  const lastVisibleMatch = visibleCalendarMatches[visibleCalendarMatches.length - 1];
-  const showFullCalendar = false;
-  const hiddenWeekEntries = [];
-  const setShowFullCalendar = () => {};
-
-  const goToCalendarPage = (direction) => {
-    setCalendarPage((current) => Math.min(Math.max(current + direction, 0), totalCalendarPages - 1));
-  };
+  const featuredMatches = useMemo(() => getFeaturedMatches(matchesWithLiveScores), [matchesWithLiveScores]);
+  const featuredMatchTime = featuredMatches[0]?.kickoff;
+  const dailyCalendar = useMemo(() => getDailyMatches(matchesWithLiveScores), [matchesWithLiveScores]);
 
   useEffect(() => {
     const updateVisibility = () => {
@@ -841,46 +881,28 @@ const MundialSection = () => {
           </div>
 
           <div className="rounded-[2.25rem] border border-white/10 bg-white/[0.04] p-4 shadow-2xl shadow-black/25 backdrop-blur-2xl">
-            <div className="rounded-[1.75rem] border border-cyan-200/15 bg-slate-950/70 p-5">
-              <div className="mb-5 flex items-center justify-between gap-4">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-200">Partido destacado</p>
-                  <p className="mt-1 text-sm text-slate-500">{featuredMatch.stage} - {featuredMatch.venue}</p>
-                </div>
-                <span className="rounded-full bg-cyan-300 px-3 py-1 text-xs font-bold text-slate-950" style={{ animation: 'aquabrillo-score-pulse 2.4s ease-in-out infinite' }}>
-                  {featuredStatus}
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3 px-1">
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-cyan-200">
+                  {featuredMatches.length > 1 ? 'Partidos destacados' : 'Partido destacado'}
+                </p>
+                <p className="mt-1 text-sm text-slate-500">
+                  {featuredMatches.length > 1 && featuredMatchTime
+                    ? `Mismo horario - ${formatMatchTime(featuredMatchTime)} CDMX`
+                    : 'Marcador y estado actualizado'}
+                </p>
+              </div>
+              {featuredMatches.length > 1 && (
+                <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.16em] text-cyan-100">
+                  {featuredMatches.length} partidos
                 </span>
-              </div>
+              )}
+            </div>
 
-              <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-center">
-                <div className="min-w-0">
-                  <TeamFlag team={featuredMatch.home} large />
-                  <p className="mt-3 truncate text-xl font-semibold text-white">{featuredMatch.home.name}</p>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{featuredMatch.home.code}</p>
-                </div>
-                <div className="rounded-2xl bg-white px-5 py-4 text-center font-mono text-lg font-black text-slate-950">
-                  {shouldRenderFeaturedScore
-                    ? `${featuredMatch.homeScore ?? 0} - ${featuredMatch.awayScore ?? 0}`
-                    : 'VS'}
-                </div>
-                <div className="min-w-0">
-                  <div className="flex justify-center">
-                    <TeamFlag team={featuredMatch.away} large />
-                  </div>
-                  <p className="mt-3 truncate text-xl font-semibold text-white">{featuredMatch.away.name}</p>
-                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{featuredMatch.away.code}</p>
-                </div>
-              </div>
-
-              <div className="mt-5 flex items-center justify-center gap-3 text-sm text-slate-400">
-                <CalendarDays className="h-4 w-4 text-cyan-200" />
-                <span className="capitalize">{formatMatchDate(featuredMatch.kickoff)}</span>
-                <Clock className="h-4 w-4 text-cyan-200" />
-                <span>{formatMatchTime(featuredMatch.kickoff)} CDMX</span>
-              </div>
-              <div className="mt-5 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-center text-sm text-slate-300">
-                {featuredMatch.reward}
-              </div>
+            <div className={`grid gap-3 ${featuredMatches.length > 1 ? 'xl:grid-cols-2' : ''}`}>
+              {featuredMatches.map((match) => (
+                <FeaturedMatchCard key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
+              ))}
             </div>
           </div>
         </div>
@@ -906,109 +928,24 @@ const MundialSection = () => {
             </p>
           </div>
 
-          <div className="space-y-8">
-            <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 sm:p-4">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                <div>
-                  <h4 className="text-xl font-semibold tracking-tight text-white">{currentCalendarWeek}</h4>
-                  <p className="mt-1 text-xs font-medium text-slate-500">
-                  Mostrando {calendarPage * matchesPerPage + 1}-{calendarPage * matchesPerPage + visibleCalendarMatches.length} de {matchesWithLiveScores.length} partidos
-                    {firstVisibleMatch && lastVisibleMatch ? ` - ${formatMatchDate(firstVisibleMatch.kickoff)} a ${formatMatchDate(lastVisibleMatch.kickoff)}` : ''}
-                  </p>
-                </div>
-                <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
-                  <button
-                    type="button"
-                    onClick={() => goToCalendarPage(-1)}
-                    disabled={calendarPage === 0}
-                    aria-label="Ver partidos anteriores"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_12px_28px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <ChevronRight className="h-5 w-5 rotate-180" />
-                  </button>
-                  <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">
-                    Pagina {calendarPage + 1} / {totalCalendarPages}
-                  </span>
-                  <button
-                    type="button"
-                    onClick={() => goToCalendarPage(1)}
-                    disabled={calendarPage >= totalCalendarPages - 1}
-                    aria-label="Ver siguientes partidos"
-                    className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-cyan-200 bg-cyan-300 text-slate-950 shadow-[0_12px_28px_rgba(0,0,0,0.22)] transition duration-300 hover:-translate-y-0.5 hover:bg-cyan-200 disabled:cursor-not-allowed disabled:opacity-40"
-                  >
-                    <ChevronRight className="h-5 w-5" />
-                  </button>
-                </div>
+          <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 sm:p-4">
+            <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h4 className="text-xl font-semibold tracking-tight text-white">{dailyCalendar.label}</h4>
+                <p className="mt-1 text-xs font-medium text-slate-500">
+                  {dailyCalendar.matches.length} partidos - {dailyCalendar.matches[0] ? formatMatchDate(dailyCalendar.matches[0].kickoff) : ''}
+                </p>
               </div>
-              <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                {visibleCalendarMatches.map((match) => (
-                  <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
-                ))}
-              </div>
-              <div className="mt-4 flex justify-center gap-1.5">
-                {Array.from({ length: totalCalendarPages }).map((_, index) => (
-                  <span
-                    key={index}
-                    className={`h-2 rounded-full transition-all duration-300 ${index === calendarPage ? 'w-7 bg-cyan-300' : 'w-2 bg-white/20'}`}
-                  />
-                ))}
-              </div>
+              <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">
+                Horario CDMX
+              </span>
             </div>
-
-            {showFullCalendar && hiddenWeekEntries.map(([week, matches]) => (
-              <div key={week} className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-3 sm:p-4">
-                <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-                  <div>
-                    <h4 className="text-xl font-semibold tracking-tight text-white">{week}</h4>
-                    <p className="mt-1 text-xs font-medium text-slate-500">
-                      Horario CDMX - {matches.length} partidos
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-cyan-300/10 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-cyan-100">
-                    Estilo resultados
-                  </span>
-                </div>
-                <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  {matches.map((match) => (
-                    <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
-                  ))}
-                </div>
-              </div>
-            ))}
-
-            {!showFullCalendar && hiddenWeekEntries.length > 0 && (
-              <div className="flex justify-center">
-                <button
-                  type="button"
-                  onClick={() => setShowFullCalendar(true)}
-                  className="inline-flex w-full max-w-xs items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-6 py-3 text-sm font-bold text-slate-700 shadow-[0_12px_28px_rgba(0,0,0,0.18)] transition duration-300 hover:-translate-y-0.5 hover:bg-slate-50 sm:w-auto"
-                >
-                  Ver más partidos
-                  <ChevronRight className="h-4 w-4 rotate-90" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="hidden" style={{ transitionDelay: '340ms' }}>
-          <div className="mb-8 flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-            <div>
-              <p className="text-sm font-bold uppercase tracking-[0.24em] text-cyan-200">AQUAVIDEOS</p>
-              <h3 className="mt-4 text-4xl font-semibold tracking-tight text-white">Disfruta de los mejores goles de los últimos mundiales.</h3>
+            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {dailyCalendar.matches.map((match) => (
+                <MatchRow key={`${match.kickoff}-${match.home.code}-${match.away.code}`} match={match} />
+              ))}
             </div>
-            <a
-              href={getWhatsAppLink('Hola AQUABRILLO, quiero ver las promociones en video del Mundial.')}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm font-bold text-cyan-100 hover:text-white"
-            >
-              Pedir recomendacion
-              <ArrowRight className="h-4 w-4" />
-            </a>
           </div>
-
-          <div className="grid gap-5 sm:grid-cols-3" />
         </div>
 
         <div id="dinamicas-mundialistas" className="mundial-reveal mt-20" style={{ transitionDelay: '420ms' }}>

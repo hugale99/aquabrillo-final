@@ -1,12 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import {
-  Menu, X, Phone, MapPin, Instagram, Facebook, ChevronRight,
+  Phone, MapPin, Instagram, Facebook, ChevronRight,
   Shield, Sparkles, Clock, Home, Award, Droplets,
   CheckCircle2, ArrowRight, Star, Quote, Car,
   Paintbrush, Gem, Zap, MessageCircle
 } from 'lucide-react';
+import Navbar from './components/layout/Navbar';
 import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
+import ScrollReveal from './components/ui/ScrollReveal';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
@@ -15,181 +17,42 @@ const WHATSAPP_LINK = getWhatsAppLink;
 // COMPONENTES DEL SITIO
 // ============================================================
 
-const ScrollReveal = ({ children, delay = 0, className = "" }) => {
-  const [isVisible, setIsVisible] = useState(false);
-  const ref = useRef(null);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.disconnect();
-        }
-      },
-      { threshold: 0.1 }
-    );
-    if (ref.current) observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, []);
-
-  return (
-    <div
-      ref={ref}
-      className={`transition-all duration-1000 ${className} ${
-        isVisible 
-          ? 'opacity-100 translate-y-0' 
-          : 'opacity-0 translate-y-10'
-      }`}
-      style={{ transitionDelay: `${delay}ms` }}
-    >
-      {children}
-    </div>
-  );
-};
-
-const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  const navLinks = [
-    { name: 'Inicio', href: '#inicio' },
-    { name: 'Servicios', href: '#servicios' },
-    { name: 'Beneficios', href: '#beneficios' },
-    { name: 'Resultados', href: '#resultados' },
-    { name: 'Cobertura', href: '#cobertura' },
-    { name: 'Para Agencias', href: '#b2b' },
-    { name: 'Testimonios', href: '#testimonios' },
-    { name: 'Contacto', href: '#contacto' },
-  ];
-
-  const scrollToSection = (href) => {
-    setIsOpen(false);
-    const element = document.querySelector(href);
-    if (element) element.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-      scrolled 
-        ? 'bg-slate-950/90 backdrop-blur-xl border-b border-white/5 shadow-2xl shadow-black/20' 
-        : 'bg-transparent'
-    }`}>
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20">
-          <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="flex items-center gap-3 group">
-            <img src={IMAGES.logo} alt="AQUABRILLO" className="h-10 w-auto" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
-            <div className="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-cyan-400 to-blue-600 flex items-center justify-center shadow-lg shadow-cyan-500/20 group-hover:shadow-cyan-500/40 transition-all duration-300">
-              <Droplets className="w-5 h-5 text-white" />
-            </div>
-            <span className="text-xl font-bold tracking-tight text-white">
-              AQUA<span className="text-cyan-400">BRILLO</span>
-            </span>
-          </a>
-
-          <div className="hidden lg:flex items-center gap-8">
-            {navLinks.map((link) => (
-              <button
-                key={link.name}
-                onClick={() => scrollToSection(link.href)}
-                className="text-sm font-medium text-slate-300 hover:text-white transition-colors duration-300 relative group"
-              >
-                {link.name}
-                <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-cyan-400 group-hover:w-full transition-all duration-300" />
-              </button>
-            ))}
-          </div>
-
-          <a
-            href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="hidden lg:flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-green-500 to-green-600 text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-green-500/25 hover:scale-105 transition-all duration-300"
-          >
-            <Phone className="w-4 h-4" />
-            Agendar por WhatsApp
-          </a>
-
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="lg:hidden p-2 text-white"
-            aria-label={isOpen ? 'Cerrar menu' : 'Abrir menu'}
-            aria-expanded={isOpen}
-          >
-            {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
-        </div>
-      </div>
-
-      <div className={`lg:hidden transition-all duration-500 overflow-hidden ${
-        isOpen ? 'max-h-[calc(100vh-5rem)] opacity-100' : 'max-h-0 opacity-0'
-      }`}>
-        <div className="bg-slate-950/95 backdrop-blur-xl border-t border-white/5 px-6 py-6 space-y-4 max-h-[calc(100vh-5rem)] overflow-y-auto">
-          {navLinks.map((link) => (
-            <button
-              key={link.name}
-              onClick={() => scrollToSection(link.href)}
-              className="block w-full text-left text-slate-300 hover:text-white py-2 transition-colors"
-            >
-              {link.name}
-            </button>
-          ))}
-          <a
-            href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
-          >
-            <Phone className="w-4 h-4" />
-            Agendar por WhatsApp
-          </a>
-        </div>
-      </div>
-    </nav>
-  );
-};
-
 const Hero = () => {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <section id="inicio" className="relative min-h-screen flex items-center justify-center overflow-hidden bg-slate-950">
+    <section id="inicio" className="relative min-h-[100svh] overflow-hidden bg-slate-950">
       <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-600/10 rounded-full blur-3xl" />
+        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)]" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-32 text-center">
+      <div className="relative z-10 mx-auto grid min-h-[100svh] max-w-7xl items-center gap-10 px-5 pb-14 pt-28 text-center sm:px-6 sm:pt-32 lg:grid-cols-[0.86fr_1.14fr] lg:gap-12 lg:px-8 lg:pb-20 lg:pt-36 lg:text-left">
+        <div>
         <ScrollReveal>
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-sm mb-8">
-            <Sparkles className="w-4 h-4 text-cyan-400" />
-            <span className="text-sm text-slate-300 font-medium">Lavado y Detallado a Domicilio</span>
+          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
+            <Sparkles className="h-4 w-4 text-cyan-400" />
+            <span className="text-sm font-medium text-slate-300">Lavado y Detallado a Domicilio</span>
           </div>
         </ScrollReveal>
 
         <ScrollReveal delay={100}>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-white tracking-tight leading-[0.9] mb-8">
+          <h1 className="mb-6 text-4xl font-bold leading-[0.94] tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
             Tu auto <br />
             <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent">
               impecable
             </span>
             <br />
-            <span className="text-3xl md:text-5xl lg:text-6xl font-light text-slate-400">
+            <span className="text-2xl font-light text-slate-400 sm:text-4xl md:text-5xl xl:text-6xl">
               sin salir de casa
             </span>
           </h1>
         </ScrollReveal>
 
         <ScrollReveal delay={200}>
-          <p className="max-w-2xl mx-auto text-lg md:text-xl text-slate-400 mb-12 leading-relaxed">
+          <p className="mx-auto mb-8 max-w-xl text-base leading-relaxed text-slate-400 sm:text-lg lg:mx-0">
             Protección, brillo y detalle profesional para quienes valoran 
             la excelencia. Servicio premium a domicilio en Santa Fe Lifestyle 
             y alrededores de Xochitepec.
@@ -197,34 +60,35 @@ const Hero = () => {
         </ScrollReveal>
 
         <ScrollReveal delay={300}>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+          <div className="flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center lg:justify-start">
             <a
               href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.carService)}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center gap-3 px-8 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full hover:shadow-2xl hover:shadow-green-500/25 hover:scale-105 transition-all duration-300 text-lg"
+              className="group flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 px-7 py-4 text-base font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 sm:text-lg"
             >
-              <MessageCircle className="w-5 h-5" />
+              <MessageCircle className="h-5 w-5" />
               Cotizar por WhatsApp
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
             </a>
             <button
               onClick={() => document.querySelector('#servicios')?.scrollIntoView({ behavior: 'smooth' })}
-              className="flex items-center gap-2 px-8 py-4 border border-white/20 text-white font-medium rounded-full hover:bg-white/5 transition-all duration-300"
+              className="flex items-center justify-center gap-2 rounded-full border border-white/20 px-7 py-4 font-medium text-white transition-all duration-300 hover:bg-white/5"
             >
               Ver servicios
             </button>
           </div>
         </ScrollReveal>
+        </div>
 
-        <ScrollReveal delay={400}>
-          <div className="mt-16 relative">
-            <div className="relative mx-auto max-w-4xl aspect-[21/9] rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-cyan-500/5 group">
+        <ScrollReveal delay={400} className="w-full">
+          <div className="relative">
+            <div className="relative mx-auto h-[280px] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-900 shadow-2xl shadow-cyan-500/10 group sm:h-[360px] lg:h-[560px] xl:h-[620px]">
               {!imgError ? (
                 <img 
                   src={IMAGES.hero} 
                   alt="Auto premium con acabado de espejo y reflejos cinematográficos"
-                  className="w-full h-full object-cover"
+                  className="h-full w-full object-cover object-center"
                   fetchPriority="high"
                   decoding="async"
                   onError={() => setImgError(true)}
@@ -242,6 +106,18 @@ const Hero = () => {
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-70" />
               <div className="absolute inset-0 bg-gradient-to-r from-slate-950/30 via-transparent to-slate-950/30" />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+            </div>
+            <div className="pointer-events-none absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2 sm:bottom-5 sm:left-5 sm:right-auto sm:w-[24rem]">
+              {[
+                ['Premium', 'Productos'],
+                ['Domicilio', 'Servicio'],
+                ['Brillo', 'Final']
+              ].map(([value, label]) => (
+                <div key={value} className="rounded-2xl border border-white/10 bg-slate-950/55 px-3 py-2 text-center backdrop-blur-xl">
+                  <div className="text-sm font-black text-white">{value}</div>
+                  <div className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-cyan-100/60">{label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </ScrollReveal>
@@ -585,10 +461,10 @@ const ResultsCarousel = () => {
     },
     /*{
       id: 6,
-      servicio: "Recubrimiento cerámico",
+      servicio: "Paquetes Especiales",
       vehiculo: "Passat",
       cliente: "Brillo",
-      descripcion: "Atención inmediata para flota de 12 unidades en evento de agencia. Limpieza premium rápida en 45 min por auto.",
+      descripcion: "Combinación personalizada de servicios.",
       before: "/images/resultados/express-before.jpg",
       after: "/images/resultados/express-after.jpg",
       beforeAlt: "Tesla Model 3 antes: huellas dactilares en pantalla, polvo en superficies, marcas de agua",
@@ -1979,6 +1855,7 @@ const Footer = () => {
                 href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalService)}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Contactar a AQUABRILLO por WhatsApp"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
               >
                 <Phone className="w-5 h-5 text-cyan-400" />
@@ -1987,6 +1864,7 @@ const Footer = () => {
                 href={SOCIAL_LINKS.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Abrir Instagram de AQUABRILLO"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
               >
                 <Instagram className="w-5 h-5 text-cyan-400" />
@@ -1995,6 +1873,7 @@ const Footer = () => {
                 href={SOCIAL_LINKS.facebook}
                 target="_blank"
                 rel="noopener noreferrer"
+                aria-label="Abrir Facebook de GT Detailing MX"
                 className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center hover:bg-cyan-500/20 hover:border-cyan-500/30 transition-all"
               >
                 <Facebook className="w-5 h-5 text-cyan-400" />
@@ -2065,6 +1944,7 @@ const FloatingWhatsApp = () => {
       href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
       target="_blank"
       rel="noopener noreferrer"
+      aria-label="Agendar servicio por WhatsApp"
       className={`fixed bottom-6 right-6 z-50 flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-green-500 to-green-600 text-white font-semibold rounded-full shadow-2xl shadow-green-500/30 hover:scale-105 transition-all duration-500 ${
         visible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
       }`}
