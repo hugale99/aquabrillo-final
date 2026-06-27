@@ -30,10 +30,10 @@ const getDistanceKm = (origin, destination) => {
 };
 
 const COVERAGE_BASE = {
-  name: 'Lote Lifestyle, Colinas de Santa Fe',
-  shortName: 'Santa Fe Life',
-  postalCode: '62790',
-  address: 'Lote Lifestyle, Colinas de, 62790 Santa Fe, Morelos',
+  name: 'Santa Fe Life Style',
+  shortName: 'Santa Fe Life Style',
+  postalCode: '62793',
+  address: 'Santa Fe Life Style, 62793 Santa Fe, Morelos',
   lat: 18.746252663889244,
   lng: -99.2357657057617,
   priorityRadiusKm: 5,
@@ -983,8 +983,8 @@ const CoverageMap = () => {
   const zonas = [
     {
       id: "santa-fe",
-      nombre: "Santa Fe Lifestyle y alrededores",
-      label: "Santa Fe Lifestyle y alrededores",
+      nombre: "Santa Fe Life Style y alrededores",
+      label: "Santa Fe Life Style y alrededores",
       tipo: "Principal",
       descripcion: "Zona base y cobertura prioritaria de 0 a 5 km.",
       disponibilidad: "0-5 km",
@@ -1076,11 +1076,11 @@ const CoverageMap = () => {
   const rutasPrincipales = [
     { nombre: "Autopista México-Cuernavaca", path: "M 50,150 Q 200,120 450,180" },
     { nombre: "Carretera Federal 95D", path: "M 80,200 Q 250,180 420,220" },
-    { nombre: "Acceso Santa Fe Lifestyle", path: "M 250,100 Q 280,140 280,180" }
+    { nombre: "Acceso Santa Fe Life Style", path: "M 250,100 Q 280,140 280,180" }
   ];
 
   const referenciasLimpias = [
-    { icon: "CP", text: "Código postal base 62790" },
+    { icon: "CP", text: "Código postal base 62793" },
     { icon: "5", text: "Cobertura prioritaria hasta 5 km" },
     { icon: "15", text: "Cobertura extendida hasta 15 km" },
     { icon: "CV", text: "Cuernavaca bajo ruta programada" }
@@ -1190,7 +1190,7 @@ const CoverageMap = () => {
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Cobertura desde <br />
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Santa Fe, CP 62790
+                Santa Fe, CP 62793
               </span>
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-slate-400">
@@ -1427,7 +1427,7 @@ const CoverageMap = () => {
                     <MapPin className="h-6 w-6 text-white" />
                   </div>
                   <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[0.68rem] font-bold text-white">
-                    Santa Fe Life
+                    Santa Fe Life Style
                   </span>
                 </div>
 
@@ -1579,7 +1579,7 @@ const CoverageMap = () => {
         <ScrollReveal delay={300}>
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { valor: "62790", label: "Código postal base", icon: MapPin },
+              { valor: "62793", label: "Código postal base", icon: MapPin },
               { valor: "5 km", label: "Prioritaria", icon: Clock },
               { valor: "15 km", label: "Extendida", icon: Home },
               { valor: "20 km", label: "Bajo consulta", icon: Award }
