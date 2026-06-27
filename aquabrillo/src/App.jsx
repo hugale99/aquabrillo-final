@@ -1078,10 +1078,10 @@ const CoverageMap = () => {
           </div>
         </ScrollReveal>
 
-        <div className="grid lg:grid-cols-5 gap-8 items-start">
+        <div className="grid gap-5 lg:grid-cols-5 lg:gap-8 lg:items-start">
           <ScrollReveal className="lg:col-span-3">
-            <div className="relative overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-900/55 p-4 shadow-2xl shadow-cyan-950/20 sm:p-6">
-              <div className="flex items-center justify-between mb-4">
+            <div className="relative overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-900/55 p-3 shadow-2xl shadow-cyan-950/20 sm:p-6">
+              <div className="mb-3 flex items-center justify-between sm:mb-4">
                 <h3 className="text-white font-semibold flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-cyan-400" />
                   Radar AQUABRILLO
@@ -1091,10 +1091,11 @@ const CoverageMap = () => {
                 </span>
               </div>
 
-              <div className="relative aspect-square overflow-hidden rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-900/50 sm:aspect-[4/3]">
+              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-900/50">
+                <div className="h-[18rem] overflow-x-auto overflow-y-hidden sm:h-auto sm:overflow-visible">
                 <svg 
                   viewBox="0 0 500 400" 
-                  className="w-full h-full"
+                  className="h-full min-w-[31rem] sm:aspect-[4/3] sm:h-auto sm:min-w-0 sm:w-full"
                   style={{ filter: "drop-shadow(0 0 30px rgba(6,182,212,0.1))" }}
                 >
                   <defs>
@@ -1136,10 +1137,10 @@ const CoverageMap = () => {
                     </g>
                   ))}
 
-                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
+                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter" className="hidden sm:block">
                     Autopista México-Cuernavaca
                   </text>
-                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
+                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter" className="hidden sm:block">
                     Carretera 95D
                   </text>
 
@@ -1214,7 +1215,7 @@ const CoverageMap = () => {
                         fontSize="9"
                         fontWeight={activeZone === zona.id ? "600" : "400"}
                         fontFamily="Inter"
-                        className="transition-all duration-300"
+                        className="hidden transition-all duration-300 sm:block"
                       >
                         {zona.label || zona.nombre}
                       </text>
@@ -1239,6 +1240,7 @@ const CoverageMap = () => {
                     <circle r="2" fill="#ef4444" />
                   </g>
                 </svg>
+                </div>
 
                 {zonaActiva && (
                   <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-slate-900/95 p-3 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200 sm:bottom-4 sm:left-4 sm:right-4 sm:p-4">
