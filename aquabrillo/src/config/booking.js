@@ -15,6 +15,7 @@ export const BOOKING_DEFAULTS = {
   scheduleUrl: '/data/booking-time-slots.csv',
   businessEndHour: '18:30',
   storageKey: 'aquabrillo_prebookings',
+  coverageStorageKey: 'aquabrillo_coverage_context',
   maxLocalHistory: 25,
   premiumWashSlotCapacity: 2,
 };
@@ -394,6 +395,35 @@ export const getLocalPrebookings = () => {
     return Array.isArray(current) ? current : [];
   } catch {
     return [];
+  }
+};
+
+export const saveCoverageContext = (coverageContext) => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const nextContext = {
+      ...coverageContext,
+      updatedAt: new Date().toISOString(),
+    };
+    window.localStorage.setItem(BOOKING_DEFAULTS.coverageStorageKey, JSON.stringify(nextContext));
+    window.dispatchEvent(new CustomEvent('aquabrillo:coverage-updated', {
+      detail: nextContext,
+    }));
+    return nextContext;
+  } catch {
+    return null;
+  }
+};
+
+export const getCoverageContext = () => {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const current = JSON.parse(window.localStorage.getItem(BOOKING_DEFAULTS.coverageStorageKey) || 'null');
+    return current && typeof current === 'object' ? current : null;
+  } catch {
+    return null;
   }
 };
 

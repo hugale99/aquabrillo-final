@@ -108,6 +108,11 @@ const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStat
                 <p><span className="text-slate-500">Vehiculo:</span> {item.vehicle?.label}</p>
                 <p><span className="text-slate-500">Fecha:</span> {item.dateLabel} {item.time}</p>
                 <p><span className="text-slate-500">Servicios:</span> {item.services?.map((service) => service.label).join(', ')}</p>
+                {item.coverage && (
+                  <p>
+                    <span className="text-slate-500">Cobertura:</span> {item.coverage.status} {item.coverage.tier ? `(${item.coverage.tier})` : ''}
+                  </p>
+                )}
                 <p className="font-bold text-white">{currency.format(item.estimate?.price || 0)} | {minutesToLabel(item.estimate?.minutes)}</p>
               </div>
               <label className="mt-3 block">

@@ -26,6 +26,7 @@ const toReservationPayload = (prebooking) => ({
   estimate_price: prebooking.estimate?.price ?? 0,
   estimate_minutes: prebooking.estimate?.minutes ?? 0,
   address: prebooking.address,
+  coverage: prebooking.coverage,
   message: prebooking.message,
   source: hasSupabaseConfig ? 'supabase' : 'local',
 });
@@ -47,6 +48,7 @@ const fromReservationPayload = (reservation) => ({
     minutes: reservation.estimate_minutes,
   },
   address: reservation.address,
+  coverage: reservation.coverage,
   message: reservation.message,
   createdAt: reservation.created_at,
 });

@@ -15,6 +15,7 @@ import {
   createPrebookingFolio,
   getFallbackBookingCatalog,
   getFallbackBookingSchedule,
+  getCoverageContext,
   getSlotAvailability,
   getWeekdayKeyFromDate,
   parseBookingScheduleCsv,
@@ -75,6 +76,7 @@ const BookingMvp = () => {
   const [reservations, setReservations] = useState([]);
   const [reservationStatus, setReservationStatus] = useState(getReservationStorageStatus);
   const [bookingAlert, setBookingAlert] = useState('');
+  const [coverageContext, setCoverageContext] = useState(null);
 
   const dateOptions = useMemo(() => getDateOptions(), []);
   const { vehicles, services } = catalog;
@@ -124,6 +126,24 @@ const BookingMvp = () => {
     return () => {
       isMounted = false;
     };
+  }, []);
+
+  useEffect(() => {
+    const applyCoverageContext = (context) => {
+      setCoverageContext(context);
+      if (context?.area) {
+        setAddress((current) => current || context.area);
+      }
+    };
+
+    applyCoverageContext(getCoverageContext());
+
+    const handleCoverageUpdated = (event) => {
+      applyCoverageContext(event.detail || getCoverageContext());
+    };
+
+    window.addEventListener('aquabrillo:coverage-updated', handleCoverageUpdated);
+    return () => window.removeEventListener('aquabrillo:coverage-updated', handleCoverageUpdated);
   }, []);
 
   useEffect(() => {
@@ -207,9 +227,12 @@ const BookingMvp = () => {
     `Precio estimado: ${estimate.price ? currency.format(estimate.price) : 'Por calcular'}`,
     `Duracion estimada: ${minutesToLabel(estimate.minutes)}`,
     `Direccion: ${address || '[Escribir direccion]'}`,
+    coverageContext ? `Cobertura: ${coverageContext.status} (${coverageContext.tier})` : '',
+    coverageContext?.distanceKm ? `Distancia estimada a base: ${Number(coverageContext.distanceKm).toFixed(1)} km` : '',
+    coverageContext?.activeZone ? `Zona seleccionada: ${coverageContext.activeZone}` : '',
     '',
     'Quiero confirmar disponibilidad y detalles de mi preagenda.',
-  ].join('\n');
+  ].filter((line) => line !== '').join('\n');
 
   const toggleService = (serviceId) => {
     setSelectedServices((current) =>
@@ -270,6 +293,7 @@ const BookingMvp = () => {
       time: selectedTime,
       estimate,
       address,
+      coverage: coverageContext,
       message: whatsappMessage,
     });
 
@@ -493,6 +517,12 @@ const BookingMvp = () => {
 
               <label className="mb-5 block">
                 <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">Direccion</span>
+                {coverageContext && (
+                  <div className="mb-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 px-4 py-3 text-xs font-bold text-cyan-100">
+                    Cobertura: {coverageContext.status} ({coverageContext.tier})
+                    {coverageContext.distanceKm ? ` | ${Number(coverageContext.distanceKm).toFixed(1)} km de base` : ''}
+                  </div>
+                )}
                 <textarea
                   value={address}
                   onChange={(event) => setAddress(event.target.value)}

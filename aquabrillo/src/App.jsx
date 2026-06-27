@@ -11,6 +11,7 @@ import BookingMvp from './components/BookingMvp';
 import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
 import ScrollReveal from './components/ui/ScrollReveal';
+import { saveCoverageContext } from './config/booking';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
@@ -1146,6 +1147,17 @@ const CoverageMap = () => {
       ? `Hola, quiero confirmar cobertura AQUABRILLO. ${coverageResult.label} (${coverageResult.tier}). Estoy aproximadamente a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}, CP ${serviceBase.postalCode}.`
     : WHATSAPP_CAMPAIGNS.coverage;
 
+  const persistCoverageContext = (overrides = {}) => saveCoverageContext({
+    area: coverageArea.trim(),
+    baseName: serviceBase.shortName,
+    postalCode: serviceBase.postalCode,
+    status: coverageResult.label,
+    tier: coverageResult.tier,
+    distanceKm: userDistanceKm,
+    activeZone: zonaActiva?.label || zonaActiva?.nombre || '',
+    ...overrides,
+  });
+
   const handleUseLocation = () => {
     if (!navigator.geolocation) {
       setLocationStatus('unsupported');
@@ -1164,6 +1176,18 @@ const CoverageMap = () => {
         );
         setUserDistanceKm(distance);
         setLocationStatus('ready');
+        const nextResult = (() => {
+          if (distance <= serviceBase.priorityRadiusKm) return { label: 'Cobertura prioritaria', tier: '0-5 km' };
+          if (distance <= serviceBase.mainRadiusKm) return { label: 'Cobertura principal', tier: '5-10 km' };
+          if (distance <= serviceBase.extendedRadiusKm) return { label: 'Cobertura extendida', tier: '10-15 km' };
+          if (distance <= serviceBase.consultRadiusKm) return { label: 'Zona bajo consulta', tier: '15-20 km' };
+          return { label: 'Fuera de zona principal', tier: '+20 km' };
+        })();
+        persistCoverageContext({
+          status: nextResult.label,
+          tier: nextResult.tier,
+          distanceKm: distance,
+        });
       },
       () => setLocationStatus('error'),
       {
@@ -1557,7 +1581,19 @@ const CoverageMap = () => {
                 <input
                   type="text"
                   value={coverageArea}
-                  onChange={(event) => setCoverageArea(event.target.value)}
+                  onChange={(event) => {
+                    const nextArea = event.target.value;
+                    setCoverageArea(nextArea);
+                    saveCoverageContext({
+                      area: nextArea.trim(),
+                      baseName: serviceBase.shortName,
+                      postalCode: serviceBase.postalCode,
+                      status: coverageResult.label,
+                      tier: coverageResult.tier,
+                      distanceKm: userDistanceKm,
+                      activeZone: zonaActiva?.label || zonaActiva?.nombre || '',
+                    });
+                  }}
                   placeholder="Ej. Santa Fe, Xochitepec Centro, Alpuyeca"
                   className="w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/50"
                 />
@@ -1567,6 +1603,7 @@ const CoverageMap = () => {
                 href={WHATSAPP_LINK(coverageWhatsAppMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
+                onClick={() => persistCoverageContext()}
                 className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-lg hover:shadow-[#25D366]/25"
               >
                 <MessageCircle className="w-5 h-5" />

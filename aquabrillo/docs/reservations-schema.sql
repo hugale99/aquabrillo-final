@@ -13,6 +13,7 @@ create table if not exists public.reservations (
   estimate_price numeric not null default 0,
   estimate_minutes integer not null default 0,
   address text,
+  coverage jsonb not null default '{}'::jsonb,
   message text,
   source text not null default 'web',
   created_at timestamptz not null default now(),
@@ -24,6 +25,9 @@ create index if not exists reservations_date_time_idx
 
 create index if not exists reservations_status_idx
   on public.reservations (status);
+
+alter table public.reservations
+  add column if not exists coverage jsonb not null default '{}'::jsonb;
 
 drop index if exists reservations_active_slot_unique_idx;
 
@@ -86,6 +90,7 @@ begin
     estimate_price,
     estimate_minutes,
     address,
+    coverage,
     message,
     source
   )
@@ -103,6 +108,7 @@ begin
     coalesce((reservation_payload->>'estimate_price')::numeric, 0),
     coalesce((reservation_payload->>'estimate_minutes')::integer, 0),
     reservation_payload->>'address',
+    coalesce(reservation_payload->'coverage', '{}'::jsonb),
     reservation_payload->>'message',
     coalesce(reservation_payload->>'source', 'web')
   )
