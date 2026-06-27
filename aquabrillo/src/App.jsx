@@ -231,11 +231,8 @@ const Services = () => {
           <div className="text-center mb-16">
             <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Nuestros Servicios</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Cada detalle, <span className="text-slate-400">una obra de arte</span></h2>
-            <p className="mx-auto max-w-2xl text-[0px] text-transparent">
-              <span className="text-lg text-slate-400">
-                Consulta las zonas donde operamos y confirma tu ubicacion por WhatsApp antes de agendar.
-              </span>
-              Servicios diseñados para quienes entienden que un auto impecable 
+            <p className="mx-auto max-w-2xl text-lg text-slate-400">
+              Servicios diseñados para quienes entienden que un auto impecable
               es una extensión de su estilo de vida.
             </p>
           </div>
@@ -377,7 +374,7 @@ const Benefits = () => {
 };
 
 // ============================================================
-// CARRUSEL DE RESULTADOS — ANTES Y DESPUÉS PREMIUM
+// CARRUSEL DE RESULTADOS - ANTES Y DESPUES PREMIUM
 // ============================================================
 
 const ResultsCarousel = () => {
@@ -551,8 +548,7 @@ const ResultsCarousel = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <ScrollReveal>
           <div className="text-center mb-12">
-            <span className="mb-4 block text-[0px] font-semibold uppercase tracking-wider text-transparent">
-              <span className="text-sm text-cyan-400">Radar de Cobertura</span>
+            <span className="mb-4 block text-sm font-semibold uppercase tracking-wider text-cyan-400">
               Galería de Resultados
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
@@ -950,6 +946,7 @@ const HowItWorks = () => {
 
 const CoverageMap = () => {
   const [activeZone, setActiveZone] = useState("santa-fe");
+  const [coverageArea, setCoverageArea] = useState("");
 
   const zonas = [
     {
@@ -1044,22 +1041,17 @@ const CoverageMap = () => {
     { nombre: "Acceso Santa Fe Lifestyle", path: "M 250,100 Q 280,140 280,180" }
   ];
 
-  const referencias = [
-    { icon: "🛣️", text: "Autopista México-Cuernavaca" },
-    { icon: "🎓", text: "Cerca de UAEM" },
-    { icon: "📍", text: "Cercano a Centro de Convenciones Morelos" },
-    { icon: "📍", text: "Carretera Federal 95D" }
-  ];
-
-  const referenciasLegibles = [
+  const referenciasLimpias = [
     { icon: "95D", text: "Autopista Mexico-Cuernavaca" },
     { icon: "SF", text: "Santa Fe Lifestyle como zona base" },
     { icon: "CV", text: "Cercano a Centro de Convenciones Morelos" },
     { icon: "MX", text: "Rutas hacia Xochitepec y zonas aledanas" }
   ];
-  const referenciasLimpias = referencias.map((_, index) => referenciasLegibles[index]);
 
   const zonaActiva = zonas.find(z => z.id === activeZone);
+  const coverageWhatsAppMessage = coverageArea.trim()
+    ? `Hola, vivo en ${coverageArea.trim()}. ¿Tienen cobertura para un servicio AQUABRILLO?`
+    : WHATSAPP_CAMPAIGNS.coverage;
 
   return (
     <section id="cobertura" className="py-24 bg-slate-950 relative overflow-hidden">
@@ -1071,9 +1063,8 @@ const CoverageMap = () => {
       <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
         <ScrollReveal>
           <div className="text-center mb-16">
-            <span className="mb-4 block text-[0px] font-semibold uppercase tracking-wider text-transparent">
-              <span className="text-sm text-cyan-400">Radar de Cobertura</span>
-              Área de Cobertura
+            <span className="mb-4 block text-sm font-semibold uppercase tracking-wider text-cyan-400">
+              Radar de Cobertura
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
               Servicio a Domicilio en <br />
@@ -1081,12 +1072,8 @@ const CoverageMap = () => {
                 Santa Fe Lifestyle y alrededores
               </span>
             </h2>
-            <p className="mx-auto max-w-2xl text-[0px] text-transparent">
-              <span className="text-lg text-slate-400">
-                Consulta las zonas donde operamos y confirma tu ubicacion por WhatsApp antes de agendar.
-              </span>
-              Mapa interactivo de nuestras zonas de servicio. Selecciona una ubicación 
-              para ver disponibilidad.
+            <p className="mx-auto max-w-2xl text-lg text-slate-400">
+              Consulta las zonas donde operamos y confirma tu ubicación por WhatsApp antes de agendar.
             </p>
           </div>
         </ScrollReveal>
@@ -1254,19 +1241,19 @@ const CoverageMap = () => {
                 </svg>
 
                 {zonaActiva && (
-                  <div className="absolute bottom-4 left-4 right-4 bg-slate-900/95 backdrop-blur-xl border border-white/10 rounded-xl p-4 animate-in fade-in slide-in-from-bottom-2 duration-200">
-                    <div className="flex items-center gap-3">
+                  <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-slate-900/95 p-3 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200 sm:bottom-4 sm:left-4 sm:right-4 sm:p-4">
+                    <div className="flex items-center gap-2 sm:gap-3">
                       <div 
-                        className="w-10 h-10 rounded-lg flex items-center justify-center"
+                        className="flex h-9 w-9 flex-none items-center justify-center rounded-lg sm:h-10 sm:w-10"
                         style={{ backgroundColor: `${zonaActiva.color}20` }}
                       >
                         <zonaActiva.icon className="w-5 h-5" style={{ color: zonaActiva.color }} />
                       </div>
-                      <div className="flex-grow">
+                      <div className="min-w-0 flex-grow">
                         <h4 className="text-white font-bold text-sm">{zonaActiva.label || zonaActiva.nombre}</h4>
-                        <p className="text-slate-400 text-xs">{zonaActiva.descripcion}</p>
+                        <p className="line-clamp-2 text-xs text-slate-400">{zonaActiva.descripcion}</p>
                       </div>
-                      <div className="text-right">
+                      <div className="flex-none text-right">
                         <span className="text-xs text-slate-500 block">Estado</span>
                         <span className="text-cyan-400 font-bold text-sm">{zonaActiva.badge}</span>
                       </div>
@@ -1278,7 +1265,7 @@ const CoverageMap = () => {
               <div className="flex flex-wrap items-center gap-4 mt-4 text-xs">
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-cyan-500" />
-                  <span className="text-slate-400">Zona Principal</span>
+                  <span className="text-slate-400">Cobertura principal</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-violet-500" />
@@ -1286,11 +1273,11 @@ const CoverageMap = () => {
                 </div>
                 <div className="flex items-center gap-2">
                   <div className="w-3 h-3 rounded-full bg-slate-500" />
-                  <span className="text-slate-400">Zona de Expansión</span>
+                  <span className="text-slate-400">Zona bajo consulta</span>
                 </div>
                 <div className="flex items-center gap-2 ml-auto">
                   <div className="w-8 h-0.5 bg-slate-600 border-dashed" style={{ borderTop: "1px dashed rgba(100,116,139,0.5)" }} />
-                  <span className="text-slate-500">Vía de acceso</span>
+                  <span className="text-slate-500">Ruta de acceso</span>
                 </div>
               </div>
             </div>
@@ -1304,11 +1291,11 @@ const CoverageMap = () => {
                   Zonas Cubiertas
                 </h3>
                 
-                <div className="space-y-3">
+                <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-3 lg:overflow-visible lg:px-0 lg:pb-0">
                   {zonas.map((zona) => (
                     <div 
                       key={zona.id}
-                      className={`flex items-center gap-3 p-3 rounded-xl transition-all duration-300 cursor-pointer ${
+                      className={`flex min-w-[16rem] cursor-pointer items-center gap-3 rounded-xl p-3 transition-all duration-300 lg:min-w-0 ${
                         activeZone === zona.id 
                           ? 'bg-cyan-500/10 border border-cyan-500/20' 
                           : 'bg-white/5 border border-transparent hover:bg-white/[0.03]'
@@ -1324,7 +1311,7 @@ const CoverageMap = () => {
                         <p className="text-white text-sm font-medium">{zona.label || zona.nombre}</p>
                         <p className="text-slate-500 text-xs">{zona.tipo}</p>
                       </div>
-                      <span className="rounded-full border border-cyan-300/15 bg-cyan-300/10 px-2.5 py-1 text-[0.65rem] font-bold text-cyan-100">
+                      <span className="max-w-[6.75rem] rounded-full border border-cyan-300/15 bg-cyan-300/10 px-2.5 py-1 text-center text-[0.62rem] font-bold leading-tight text-cyan-100">
                         {zona.disponibilidad}
                       </span>
                     </div>
@@ -1333,7 +1320,7 @@ const CoverageMap = () => {
               </div>
 
               <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
-                <h3 className="text-white font-bold mb-4 text-sm">Referencias Geográficas</h3>
+                <h3 className="mb-4 text-sm font-bold text-white">Referencias de ruta</h3>
                 <div className="space-y-3">
                   {referenciasLimpias.map((ref, i) => (
                     <div key={i} className="flex items-center gap-3">
@@ -1344,14 +1331,26 @@ const CoverageMap = () => {
                 </div>
               </div>
 
+              <label className="block rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4">
+                <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-cyan-100">
+                  Tu colonia o fraccionamiento
+                </span>
+                <input
+                  type="text"
+                  value={coverageArea}
+                  onChange={(event) => setCoverageArea(event.target.value)}
+                  placeholder="Ej. Santa Fe, Xochitepec Centro, Alpuyeca"
+                  className="w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/50"
+                />
+              </label>
+
               <a
-                href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.coverage)}
+                href={WHATSAPP_LINK(coverageWhatsAppMessage)}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 text-[0px] font-semibold text-transparent transition-all duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-lg hover:shadow-[#25D366]/25"
+                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-lg hover:shadow-[#25D366]/25"
               >
-                <MessageCircle className="w-5 h-5 text-white" />
-                <span className="text-base text-white">Verificar mi ubicacion</span>
+                <MessageCircle className="w-5 h-5" />
                 Verificar mi ubicación
               </a>
             </div>
@@ -1362,12 +1361,10 @@ const CoverageMap = () => {
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
               { valor: "6+", label: "Zonas cubiertas", icon: MapPin },
-              { valor: "WA", label: "Confirmacion directa", icon: Clock },
+              { valor: "WA", label: "Confirmación directa", icon: Clock },
               { valor: "$0", label: "Traslado base", icon: Home },
-              { valor: "100%", label: "Satisfacción", icon: Award }
+              { valor: "Ruta", label: "Agenda flexible", icon: Award }
             ].map((stat, i) => (
-              i === 3 ? { valor: "Ruta", label: "Agenda flexible", icon: stat.icon } : stat
-            )).map((stat, i) => (
               <div key={i} className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                 <stat.icon className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
                 <p className="text-2xl font-bold text-white mb-1">{stat.valor}</p>
@@ -1382,7 +1379,7 @@ const CoverageMap = () => {
 };
 
 // ============================================================
-// SECCIÓN B2B — SERVICIOS PARA AGENCIAS Y EXPOSICIONES
+// SECCION B2B - SERVICIOS PARA AGENCIAS Y EXPOSICIONES
 // ============================================================
 
 const B2BServices = () => {
@@ -1523,7 +1520,7 @@ const B2BServices = () => {
               </div>
               <div>
                 <p className="text-white font-bold">Contacto directo para agencias</p>
-                <p className="text-slate-400 text-sm">Hugo Franco — Especialista en Detallado Automotriz</p>
+                <p className="text-slate-400 text-sm">Hugo Franco - Especialista en Detallado Automotriz</p>
               </div>
             </div>
             <div className="flex items-center gap-4">
