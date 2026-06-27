@@ -959,6 +959,7 @@ const CoverageMap = () => {
       badge: "Principal",
      /* tiempo: "30-45 min",*/
       coordenadas: { cx: 280, cy: 180, r: 35 },
+      mobilePosition: { left: "58%", top: "45%" },
       color: "#06b6d4",
       glowColor: "rgba(6, 182, 212, 0.4)",
       icon: Home
@@ -973,6 +974,7 @@ const CoverageMap = () => {
       badge: "Principal",
       /* tiempo: "10-15 min", */
       coordenadas: { cx: 220, cy: 220, r: 30 },
+      mobilePosition: { left: "43%", top: "56%" },
       color: "#3b82f6",
       glowColor: "rgba(59, 130, 246, 0.4)",
       icon: MapPin
@@ -987,6 +989,7 @@ const CoverageMap = () => {
       badge: "Ruta",
       /* tiempo: "15-25 min", */
       coordenadas: { cx: 320, cy: 140, r: 25 },
+      mobilePosition: { left: "67%", top: "29%" },
       color: "#8b5cf6",
       glowColor: "rgba(139, 92, 246, 0.3)",
       icon: Home
@@ -1001,6 +1004,7 @@ const CoverageMap = () => {
       badge: "Ruta",
       /* tiempo: "10-20 min", */
       coordenadas: { cx: 180, cy: 200, r: 22 },
+      mobilePosition: { left: "31%", top: "50%" },
       color: "#10b981",
       glowColor: "rgba(16, 185, 129, 0.3)",
       icon: MapPin
@@ -1015,6 +1019,7 @@ const CoverageMap = () => {
       badge: "Residencial",
       /* tiempo: "20-30 min", */
       coordenadas: { cx: 340, cy: 240, r: 25 },
+      mobilePosition: { left: "72%", top: "63%" },
       color: "#f59e0b",
       glowColor: "rgba(245, 158, 11, 0.3)",
       icon: Home
@@ -1029,6 +1034,7 @@ const CoverageMap = () => {
       badge: "Expansion",
       /* tiempo: "Consultar", */
       coordenadas: { cx: 200, cy: 280, r: 28 },
+      mobilePosition: { left: "38%", top: "75%" },
       color: "#64748b",
       glowColor: "rgba(100, 116, 139, 0.3)",
       icon: Clock
@@ -1079,7 +1085,7 @@ const CoverageMap = () => {
         </ScrollReveal>
 
         <div className="grid gap-5 lg:grid-cols-5 lg:gap-8 lg:items-start">
-          <ScrollReveal className="lg:col-span-3">
+          <ScrollReveal className="order-2 lg:order-1 lg:col-span-3">
             <div className="relative overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-900/55 p-3 shadow-2xl shadow-cyan-950/20 sm:p-6">
               <div className="mb-3 flex items-center justify-between sm:mb-4">
                 <h3 className="text-white font-semibold flex items-center gap-2">
@@ -1092,10 +1098,56 @@ const CoverageMap = () => {
               </div>
 
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-900/50">
-                <div className="h-[18rem] overflow-x-auto overflow-y-hidden sm:h-auto sm:overflow-visible">
+                <div className="relative h-[17rem] sm:hidden">
+                  <div className="absolute inset-4 rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.35)_42%,_rgba(15,23,42,0.75)_100%)]" />
+                  <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+                  <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+                  <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
+                  <div className="absolute left-[12%] right-[12%] top-1/2 h-px bg-cyan-300/10" />
+                  <div className="absolute bottom-[12%] top-[12%] left-1/2 w-px bg-cyan-300/10" />
+
+                  {zonas.map((zona) => {
+                    const isActive = activeZone === zona.id;
+
+                    return (
+                      <button
+                        key={`mobile-${zona.id}`}
+                        type="button"
+                        onClick={() => setActiveZone(zona.id)}
+                        className="absolute -translate-x-1/2 -translate-y-1/2"
+                        style={{
+                          left: zona.mobilePosition.left,
+                          top: zona.mobilePosition.top,
+                        }}
+                        aria-label={`Seleccionar ${zona.label || zona.nombre}`}
+                      >
+                        <span
+                          className={`block rounded-full border transition-all duration-300 ${
+                            isActive ? 'h-10 w-10 border-white shadow-2xl' : 'h-7 w-7 border-white/30 opacity-80'
+                          }`}
+                          style={{
+                            backgroundColor: zona.color,
+                            boxShadow: isActive ? `0 0 28px ${zona.glowColor}` : `0 0 14px ${zona.glowColor}`,
+                          }}
+                        />
+                        {isActive && (
+                          <span className="absolute left-1/2 top-full mt-2 w-28 -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-bold text-white shadow-xl">
+                            {zona.label || zona.nombre}
+                          </span>
+                        )}
+                      </button>
+                    );
+                  })}
+
+                  <div className="absolute left-3 top-3 rounded-full border border-cyan-300/15 bg-slate-950/75 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-cyan-100">
+                    Toque una zona
+                  </div>
+                </div>
+
+                <div className="hidden sm:block">
                 <svg 
                   viewBox="0 0 500 400" 
-                  className="h-full min-w-[31rem] sm:aspect-[4/3] sm:h-auto sm:min-w-0 sm:w-full"
+                  className="aspect-[4/3] h-auto w-full"
                   style={{ filter: "drop-shadow(0 0 30px rgba(6,182,212,0.1))" }}
                 >
                   <defs>
@@ -1243,7 +1295,7 @@ const CoverageMap = () => {
                 </div>
 
                 {zonaActiva && (
-                  <div className="absolute bottom-3 left-3 right-3 rounded-xl border border-white/10 bg-slate-900/95 p-3 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200 sm:bottom-4 sm:left-4 sm:right-4 sm:p-4">
+                  <div className="m-3 rounded-xl border border-white/10 bg-slate-900/95 p-3 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200 sm:absolute sm:bottom-4 sm:left-4 sm:right-4 sm:m-0 sm:p-4">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div 
                         className="flex h-9 w-9 flex-none items-center justify-center rounded-lg sm:h-10 sm:w-10"
@@ -1285,7 +1337,7 @@ const CoverageMap = () => {
             </div>
           </ScrollReveal>
 
-          <ScrollReveal delay={200} className="lg:col-span-2">
+          <ScrollReveal delay={200} className="order-1 lg:order-2 lg:col-span-2">
             <div className="space-y-6">
               <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
                 <h3 className="text-white font-bold mb-4 flex items-center gap-2">
