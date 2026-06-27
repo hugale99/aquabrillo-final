@@ -536,9 +536,9 @@ const PromoCard = ({ promo }) => {
 
         <div className="my-8">
           <div className="flex items-end gap-1">
-            <span className="pb-1 text-lg font-semibold text-slate-400">$</span>
-            <span className="text-6xl font-semibold tracking-tight text-white">{promo.price}</span>
-            <span className="pb-2 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">MXN</span>
+            {!isNaN(promo.price) && <span className="pb-1 text-lg font-semibold text-slate-400">$</span>}
+            <span className={`${isNaN(promo.price) ? 'text-4xl' : 'text-6xl'} font-semibold tracking-tight text-white`}>{promo.price}</span>
+            {!isNaN(promo.price) && <span className="pb-2 text-sm font-semibold uppercase tracking-[0.2em] text-slate-500">MXN</span>}
           </div>
           <p className="mt-2 text-sm text-slate-500">{promo.note}</p>
         </div>

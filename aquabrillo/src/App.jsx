@@ -3,7 +3,7 @@ import {
   Phone, MapPin, Instagram, Facebook, ChevronRight,
   Shield, Sparkles, Clock, Home, Award, Droplets,
   CheckCircle2, ArrowRight, Star, Quote, Car,
-  Paintbrush, Gem, Zap, MessageCircle
+  Paintbrush, Gem, Zap, MessageCircle, LocateFixed
 } from 'lucide-react';
 import Navbar from './components/layout/Navbar';
 import AdminReservationsSection from './components/AdminReservationsSection';
@@ -14,6 +14,34 @@ import ScrollReveal from './components/ui/ScrollReveal';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
+
+const getDistanceKm = (origin, destination) => {
+  const earthRadiusKm = 6371;
+  const toRadians = (value) => (value * Math.PI) / 180;
+  const deltaLat = toRadians(destination.lat - origin.lat);
+  const deltaLng = toRadians(destination.lng - origin.lng);
+  const lat1 = toRadians(origin.lat);
+  const lat2 = toRadians(destination.lat);
+  const a = Math.sin(deltaLat / 2) ** 2
+    + Math.cos(lat1) * Math.cos(lat2) * Math.sin(deltaLng / 2) ** 2;
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+};
+
+const COVERAGE_BASE = {
+  name: 'Lote Lifestyle, Colinas de Santa Fe',
+  shortName: 'Santa Fe Life',
+  postalCode: '62790',
+  address: 'Lote Lifestyle, Colinas de, 62790 Santa Fe, Morelos',
+  lat: 18.746252663889244,
+  lng: -99.2357657057617,
+  priorityRadiusKm: 5,
+  mainRadiusKm: 10,
+  extendedRadiusKm: 15,
+  consultRadiusKm: 20,
+  mapsUrl: 'https://maps.app.goo.gl/w6oiZJE98n3tHcZA7',
+};
 
 // ============================================================
 // COMPONENTES DEL SITIO
@@ -947,6 +975,10 @@ const HowItWorks = () => {
 const CoverageMap = () => {
   const [activeZone, setActiveZone] = useState("santa-fe");
   const [coverageArea, setCoverageArea] = useState("");
+  const [userDistanceKm, setUserDistanceKm] = useState(null);
+  const [locationStatus, setLocationStatus] = useState('idle');
+
+  const serviceBase = COVERAGE_BASE;
 
   const zonas = [
     {
@@ -954,9 +986,9 @@ const CoverageMap = () => {
       nombre: "Santa Fe Lifestyle y alrededores",
       label: "Santa Fe Lifestyle y alrededores",
       tipo: "Principal",
-      descripcion: "Fraccionamiento residencial con acceso directo",
-      disponibilidad: "Cobertura activa",
-      badge: "Principal",
+      descripcion: "Zona base y cobertura prioritaria de 0 a 5 km.",
+      disponibilidad: "0-5 km",
+      badge: "Prioritaria",
      /* tiempo: "30-45 min",*/
       coordenadas: { cx: 280, cy: 180, r: 35 },
       mobilePosition: { left: "58%", top: "45%" },
@@ -969,8 +1001,8 @@ const CoverageMap = () => {
       nombre: "Xochitepec Centro",
       label: "Xochitepec Centro",
       tipo: "Principal",
-      descripcion: "Zona urbana y comercial del municipio",
-      disponibilidad: "Cobertura activa",
+      descripcion: "Cobertura principal de 5 a 10 km sujeta a agenda.",
+      disponibilidad: "5-10 km",
       badge: "Principal",
       /* tiempo: "10-15 min", */
       coordenadas: { cx: 220, cy: 220, r: 30 },
@@ -984,9 +1016,9 @@ const CoverageMap = () => {
       nombre: "Alpuyeca",
       label: "Alpuyeca",
       tipo: "Urbana",
-      descripcion: "Zona habitacional cercana",
-      disponibilidad: "Confirmar por WhatsApp",
-      badge: "Ruta",
+      descripcion: "Cobertura extendida de 10 a 15 km con confirmación de ruta.",
+      disponibilidad: "10-15 km",
+      badge: "Extendida",
       /* tiempo: "15-25 min", */
       coordenadas: { cx: 320, cy: 140, r: 25 },
       mobilePosition: { left: "67%", top: "29%" },
@@ -999,8 +1031,8 @@ const CoverageMap = () => {
       label: "Col. Benito Juarez",
       nombre: "Col. Benito Juárez",
       tipo: "Urbana",
-      descripcion: "Sector céntrico de Xochitepec",
-      disponibilidad: "Confirmar por WhatsApp",
+      descripcion: "Cobertura principal o extendida según ubicación exacta.",
+      disponibilidad: "5-15 km",
       badge: "Ruta",
       /* tiempo: "10-20 min", */
       coordenadas: { cx: 180, cy: 200, r: 22 },
@@ -1014,8 +1046,8 @@ const CoverageMap = () => {
       nombre: "Fracc. Jardines",
       label: "Fracc. Jardines",
       tipo: "Residencial",
-      descripcion: "Zona habitacional con acceso controlado",
-      disponibilidad: "Confirmar acceso",
+      descripcion: "Residencial con acceso controlado; confirmar caseta y horario.",
+      disponibilidad: "Confirmar",
       badge: "Residencial",
       /* tiempo: "20-30 min", */
       coordenadas: { cx: 340, cy: 240, r: 25 },
@@ -1029,8 +1061,8 @@ const CoverageMap = () => {
       nombre: "Cuernavaca",
       label: "Cuernavaca",
       tipo: "Expansión",
-      descripcion: "Agencias de autos y zona habitacional",
-      disponibilidad: "Consulta especial",
+      descripcion: "Cuernavaca se atiende como ruta programada o servicio especial.",
+      disponibilidad: "Programada",
       badge: "Expansion",
       /* tiempo: "Consultar", */
       coordenadas: { cx: 200, cy: 280, r: 28 },
@@ -1048,16 +1080,99 @@ const CoverageMap = () => {
   ];
 
   const referenciasLimpias = [
-    { icon: "95D", text: "Autopista Mexico-Cuernavaca" },
-    { icon: "SF", text: "Santa Fe Lifestyle como zona base" },
-    { icon: "CV", text: "Cercano a Centro de Convenciones Morelos" },
-    { icon: "MX", text: "Rutas hacia Xochitepec y zonas aledanas" }
+    { icon: "CP", text: "Código postal base 62790" },
+    { icon: "5", text: "Cobertura prioritaria hasta 5 km" },
+    { icon: "15", text: "Cobertura extendida hasta 15 km" },
+    { icon: "CV", text: "Cuernavaca bajo ruta programada" }
   ];
 
   const zonaActiva = zonas.find(z => z.id === activeZone);
+  const coverageResult = (() => {
+    if (userDistanceKm === null) {
+      return {
+        label: 'Verifica cobertura',
+        description: 'Usa tu ubicación o escribe tu colonia para confirmar la zona de servicio.',
+        color: 'text-cyan-100',
+        tier: 'Sin validar',
+      };
+    }
+
+    if (userDistanceKm <= serviceBase.priorityRadiusKm) {
+      return {
+        label: 'Cobertura prioritaria',
+        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}.`,
+        color: 'text-emerald-300',
+        tier: '0-5 km',
+      };
+    }
+
+    if (userDistanceKm <= serviceBase.mainRadiusKm) {
+      return {
+        label: 'Cobertura principal',
+        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Servicio sujeto a agenda disponible.`,
+        color: 'text-cyan-200',
+        tier: '5-10 km',
+      };
+    }
+
+    if (userDistanceKm <= serviceBase.extendedRadiusKm) {
+      return {
+        label: 'Cobertura extendida',
+        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Confirmamos ruta y horario por WhatsApp.`,
+        color: 'text-amber-200',
+        tier: '10-15 km',
+      };
+    }
+
+    if (userDistanceKm <= serviceBase.consultRadiusKm) {
+      return {
+        label: 'Zona bajo consulta',
+        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Revisamos disponibilidad especial.`,
+        color: 'text-orange-200',
+        tier: '15-20 km',
+      };
+    }
+
+    return {
+      label: 'Fuera de zona principal',
+      description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Podemos revisar servicio programado.`,
+      color: 'text-slate-300',
+      tier: '+20 km',
+    };
+  })();
   const coverageWhatsAppMessage = coverageArea.trim()
-    ? `Hola, vivo en ${coverageArea.trim()}. ¿Tienen cobertura para un servicio AQUABRILLO?`
+    ? `Hola, vivo en ${coverageArea.trim()}. ¿Tienen cobertura para un servicio AQUABRILLO cerca de ${serviceBase.shortName}, CP ${serviceBase.postalCode}?`
+    : userDistanceKm !== null
+      ? `Hola, quiero confirmar cobertura AQUABRILLO. ${coverageResult.label} (${coverageResult.tier}). Estoy aproximadamente a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}, CP ${serviceBase.postalCode}.`
     : WHATSAPP_CAMPAIGNS.coverage;
+
+  const handleUseLocation = () => {
+    if (!navigator.geolocation) {
+      setLocationStatus('unsupported');
+      return;
+    }
+
+    setLocationStatus('loading');
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const distance = getDistanceKm(
+          { lat: serviceBase.lat, lng: serviceBase.lng },
+          {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude,
+          }
+        );
+        setUserDistanceKm(distance);
+        setLocationStatus('ready');
+      },
+      () => setLocationStatus('error'),
+      {
+        enableHighAccuracy: true,
+        maximumAge: 60000,
+        timeout: 10000,
+      }
+    );
+  };
 
   return (
     <section id="cobertura" className="py-24 bg-slate-950 relative overflow-hidden">
@@ -1073,24 +1188,24 @@ const CoverageMap = () => {
               Radar de Cobertura
             </span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Servicio a Domicilio en <br />
+              Cobertura desde <br />
               <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Santa Fe Lifestyle y alrededores
+                Santa Fe, CP 62790
               </span>
             </h2>
             <p className="mx-auto max-w-2xl text-lg text-slate-400">
-              Consulta las zonas donde operamos y confirma tu ubicación por WhatsApp antes de agendar.
+              Verifica si estás dentro del radio principal de servicio y confirma disponibilidad por WhatsApp.
             </p>
           </div>
         </ScrollReveal>
 
         <div className="grid gap-5 lg:grid-cols-5 lg:gap-8 lg:items-start">
-          <ScrollReveal className="order-2 lg:order-1 lg:col-span-3">
+          <ScrollReveal className="hidden lg:order-1 lg:col-span-3 lg:block">
             <div className="relative overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-900/55 p-3 shadow-2xl shadow-cyan-950/20 sm:p-6">
               <div className="mb-3 flex items-center justify-between sm:mb-4">
                 <h3 className="text-white font-semibold flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-cyan-400" />
-                  Radar AQUABRILLO
+                  Mapa de referencia
                 </h3>
                 <span className="text-xs text-slate-500 bg-white/5 px-3 py-1 rounded-full">
                   Xochitepec, Morelos
@@ -1098,53 +1213,7 @@ const CoverageMap = () => {
               </div>
 
               <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-900/50">
-                <div className="relative h-[17rem] sm:hidden">
-                  <div className="absolute inset-4 rounded-[2rem] border border-cyan-300/15 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.14),_rgba(15,23,42,0.35)_42%,_rgba(15,23,42,0.75)_100%)]" />
-                  <div className="absolute left-1/2 top-1/2 h-40 w-40 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
-                  <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
-                  <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/10" />
-                  <div className="absolute left-[12%] right-[12%] top-1/2 h-px bg-cyan-300/10" />
-                  <div className="absolute bottom-[12%] top-[12%] left-1/2 w-px bg-cyan-300/10" />
-
-                  {zonas.map((zona) => {
-                    const isActive = activeZone === zona.id;
-
-                    return (
-                      <button
-                        key={`mobile-${zona.id}`}
-                        type="button"
-                        onClick={() => setActiveZone(zona.id)}
-                        className="absolute -translate-x-1/2 -translate-y-1/2"
-                        style={{
-                          left: zona.mobilePosition.left,
-                          top: zona.mobilePosition.top,
-                        }}
-                        aria-label={`Seleccionar ${zona.label || zona.nombre}`}
-                      >
-                        <span
-                          className={`block rounded-full border transition-all duration-300 ${
-                            isActive ? 'h-10 w-10 border-white shadow-2xl' : 'h-7 w-7 border-white/30 opacity-80'
-                          }`}
-                          style={{
-                            backgroundColor: zona.color,
-                            boxShadow: isActive ? `0 0 28px ${zona.glowColor}` : `0 0 14px ${zona.glowColor}`,
-                          }}
-                        />
-                        {isActive && (
-                          <span className="absolute left-1/2 top-full mt-2 w-28 -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/90 px-2 py-1 text-[0.62rem] font-bold text-white shadow-xl">
-                            {zona.label || zona.nombre}
-                          </span>
-                        )}
-                      </button>
-                    );
-                  })}
-
-                  <div className="absolute left-3 top-3 rounded-full border border-cyan-300/15 bg-slate-950/75 px-3 py-1 text-[0.65rem] font-bold uppercase tracking-[0.12em] text-cyan-100">
-                    Toque una zona
-                  </div>
-                </div>
-
-                <div className="hidden sm:block">
+                <div>
                 <svg 
                   viewBox="0 0 500 400" 
                   className="aspect-[4/3] h-auto w-full"
@@ -1189,10 +1258,10 @@ const CoverageMap = () => {
                     </g>
                   ))}
 
-                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter" className="hidden sm:block">
+                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
                     Autopista México-Cuernavaca
                   </text>
-                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter" className="hidden sm:block">
+                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
                     Carretera 95D
                   </text>
 
@@ -1267,7 +1336,7 @@ const CoverageMap = () => {
                         fontSize="9"
                         fontWeight={activeZone === zona.id ? "600" : "400"}
                         fontFamily="Inter"
-                        className="hidden transition-all duration-300 sm:block"
+                        className="transition-all duration-300"
                       >
                         {zona.label || zona.nombre}
                       </text>
@@ -1295,7 +1364,7 @@ const CoverageMap = () => {
                 </div>
 
                 {zonaActiva && (
-                  <div className="m-3 rounded-xl border border-white/10 bg-slate-900/95 p-3 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200 sm:absolute sm:bottom-4 sm:left-4 sm:right-4 sm:m-0 sm:p-4">
+                  <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/10 bg-slate-900/95 p-4 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
                     <div className="flex items-center gap-2 sm:gap-3">
                       <div 
                         className="flex h-9 w-9 flex-none items-center justify-center rounded-lg sm:h-10 sm:w-10"
@@ -1339,19 +1408,97 @@ const CoverageMap = () => {
 
           <ScrollReveal delay={200} className="order-1 lg:order-2 lg:col-span-2">
             <div className="space-y-6">
-              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
-                <h3 className="text-white font-bold mb-4 flex items-center gap-2">
+              <div className="rounded-2xl border border-cyan-300/15 bg-slate-900/70 p-4 shadow-2xl shadow-cyan-950/20 sm:p-6">
+                <div className="mb-4 flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-100/70">Zona base</p>
+                    <h3 className="mt-1 text-lg font-black text-white">{serviceBase.shortName}</h3>
+                    <p className="mt-1 text-xs text-slate-500">{serviceBase.address}</p>
+                  </div>
+                  <span className="rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-100">
+                    5 / 10 / 15 km
+                  </span>
+                </div>
+
+                <div className="relative mb-4 h-44 overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.18),_rgba(15,23,42,0.35)_38%,_rgba(15,23,42,0.92)_100%)] lg:hidden">
+                  <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/30 bg-cyan-300/5" />
+                  <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" />
+                  <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#25D366] shadow-[0_0_28px_rgba(37,211,102,0.45)]">
+                    <MapPin className="h-6 w-6 text-white" />
+                  </div>
+                  <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[0.68rem] font-bold text-white">
+                    Santa Fe Life
+                  </span>
+                </div>
+
+                <div className="rounded-xl border border-white/10 bg-slate-950/55 p-4">
+                  <div className="mb-2 flex items-center justify-between gap-3">
+                    <p className={`text-sm font-black ${coverageResult.color}`}>{coverageResult.label}</p>
+                    <span className="rounded-full bg-white/5 px-2.5 py-1 text-[0.65rem] font-bold text-slate-300">
+                      {coverageResult.tier}
+                    </span>
+                  </div>
+                  <p className="mt-1 text-sm leading-relaxed text-slate-400">{coverageResult.description}</p>
+                </div>
+
+                <div className="mt-4 grid grid-cols-2 gap-2 text-[0.68rem] font-bold text-slate-300">
+                  {[
+                    ['0-5 km', 'Prioritaria'],
+                    ['5-10 km', 'Principal'],
+                    ['10-15 km', 'Extendida'],
+                    ['15-20 km', 'Consulta'],
+                  ].map(([range, label]) => (
+                    <div key={range} className="rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2">
+                      <span className="block text-cyan-100">{range}</span>
+                      <span className="text-slate-500">{label}</span>
+                    </div>
+                  ))}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={handleUseLocation}
+                  disabled={locationStatus === 'loading'}
+                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <LocateFixed className="h-5 w-5" />
+                  {locationStatus === 'loading' ? 'Detectando ubicación...' : 'Usar mi ubicación'}
+                </button>
+                <a
+                  href={serviceBase.mapsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-5 py-3 text-sm font-bold text-slate-200 transition hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-white"
+                >
+                  <MapPin className="h-4 w-4 text-cyan-200" />
+                  Ver punto base en Maps
+                </a>
+                {locationStatus === 'error' && (
+                  <p className="mt-3 text-xs font-bold text-amber-200">
+                    No pudimos acceder a tu ubicación. Puedes escribir tu colonia abajo.
+                  </p>
+                )}
+                {locationStatus === 'unsupported' && (
+                  <p className="mt-3 text-xs font-bold text-amber-200">
+                    Tu navegador no permite geolocalización. Escribe tu colonia para confirmar.
+                  </p>
+                )}
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-6">
+                <h3 className="mb-4 flex items-center gap-2 text-white font-bold">
                   <Shield className="w-5 h-5 text-cyan-400" />
                   Zonas Cubiertas
                 </h3>
                 
-                <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-2 lg:mx-0 lg:block lg:space-y-3 lg:overflow-visible lg:px-0 lg:pb-0">
+                <div className="grid gap-3 sm:grid-cols-2 lg:block lg:space-y-3">
                   {zonas.map((zona) => (
-                    <div 
+                    <button
                       key={zona.id}
-                      className={`flex min-w-[16rem] cursor-pointer items-center gap-3 rounded-xl p-3 transition-all duration-300 lg:min-w-0 ${
+                      type="button"
+                      className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
                         activeZone === zona.id 
-                          ? 'bg-cyan-500/10 border border-cyan-500/20' 
+                          ? 'bg-cyan-500/10 border border-cyan-500/25 shadow-lg shadow-cyan-950/20' 
                           : 'bg-white/5 border border-transparent hover:bg-white/[0.03]'
                       }`}
                       onMouseEnter={() => setActiveZone(zona.id)}
@@ -1368,12 +1515,30 @@ const CoverageMap = () => {
                       <span className="max-w-[6.75rem] rounded-full border border-cyan-300/15 bg-cyan-300/10 px-2.5 py-1 text-center text-[0.62rem] font-bold leading-tight text-cyan-100">
                         {zona.disponibilidad}
                       </span>
-                    </div>
+                    </button>
                   ))}
                 </div>
               </div>
 
-              <div className="bg-white/[0.02] border border-white/10 rounded-2xl p-6">
+              {zonaActiva && (
+                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4 lg:hidden">
+                  <div className="mb-3 flex items-center gap-3">
+                    <div
+                      className="flex h-11 w-11 flex-none items-center justify-center rounded-xl"
+                      style={{ backgroundColor: `${zonaActiva.color}20` }}
+                    >
+                      <zonaActiva.icon className="h-5 w-5" style={{ color: zonaActiva.color }} />
+                    </div>
+                    <div>
+                      <p className="text-sm font-black text-white">{zonaActiva.label || zonaActiva.nombre}</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-cyan-100/70">{zonaActiva.badge}</p>
+                    </div>
+                  </div>
+                  <p className="text-sm leading-relaxed text-slate-400">{zonaActiva.descripcion}</p>
+                </div>
+              )}
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-6">
                 <h3 className="mb-4 text-sm font-bold text-white">Referencias de ruta</h3>
                 <div className="space-y-3">
                   {referenciasLimpias.map((ref, i) => (
@@ -1414,10 +1579,10 @@ const CoverageMap = () => {
         <ScrollReveal delay={300}>
           <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
             {[
-              { valor: "6+", label: "Zonas cubiertas", icon: MapPin },
-              { valor: "WA", label: "Confirmación directa", icon: Clock },
-              { valor: "$0", label: "Traslado base", icon: Home },
-              { valor: "Ruta", label: "Agenda flexible", icon: Award }
+              { valor: "62790", label: "Código postal base", icon: MapPin },
+              { valor: "5 km", label: "Prioritaria", icon: Clock },
+              { valor: "15 km", label: "Extendida", icon: Home },
+              { valor: "20 km", label: "Bajo consulta", icon: Award }
             ].map((stat, i) => (
               <div key={i} className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5">
                 <stat.icon className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
