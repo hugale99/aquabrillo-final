@@ -1,27 +1,54 @@
 import { useEffect, useState } from 'react';
-import { ChevronRight, Droplets, Menu, Phone, X } from 'lucide-react';
+import {
+  CalendarDays,
+  Car,
+  ChevronRight,
+  Droplets,
+  Gauge,
+  MapPin,
+  Menu,
+  MessageCircle,
+  Phone,
+  Shield,
+  Sparkles,
+  Star,
+  X,
+} from 'lucide-react';
 import { getWhatsAppLink, IMAGES, WHATSAPP_CAMPAIGNS } from '../../config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
 
 const navLinks = [
-  { name: 'Inicio', href: '#inicio' },
-  { name: 'Servicios', href: '#servicios' },
-  { name: 'Beneficios', href: '#beneficios' },
-  { name: 'Resultados', href: '#resultados' },
-  { name: 'Cobertura', href: '#cobertura' },
-  { name: 'Para Agencias', href: '#b2b' },
-  { name: 'Testimonios', href: '#testimonios' },
-  { name: 'Contacto', href: '#contacto' },
+  { name: 'Inicio', href: '#inicio', icon: Gauge },
+  { name: 'Servicios', href: '#servicios', icon: Droplets },
+  { name: 'Cotizador', href: '#cotizador', icon: CalendarDays },
+  { name: 'Beneficios', href: '#beneficios', icon: Shield },
+  { name: 'Resultados', href: '#resultados', icon: Sparkles },
+  { name: 'Cobertura', href: '#cobertura', icon: MapPin },
+  { name: 'Agencias', href: '#b2b', icon: Car },
+  { name: 'Opiniones', href: '#testimonios', icon: Star },
+  { name: 'Contacto', href: '#contacto', icon: MessageCircle },
 ];
+
+const desktopNavLinks = navLinks.filter((link) => (
+  ['#inicio', '#servicios', '#cotizador', '#resultados', '#cobertura', '#b2b'].includes(link.href)
+));
+
+const secondaryNavLinks = navLinks.filter((link) => (
+  ['#beneficios', '#testimonios', '#contacto'].includes(link.href)
+));
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isMoreOpen, setIsMoreOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeHref, setActiveHref] = useState('#inicio');
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 50);
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 50);
+      setIsMoreOpen(false);
+    };
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
     return () => window.removeEventListener('scroll', handleScroll);
@@ -54,6 +81,7 @@ const Navbar = () => {
 
   const scrollToSection = (href) => {
     setIsOpen(false);
+    setIsMoreOpen(false);
     setActiveHref(href);
     const element = document.querySelector(href);
     if (element) element.scrollIntoView({ behavior: 'smooth' });
@@ -61,46 +89,54 @@ const Navbar = () => {
 
   return (
     <nav className="fixed left-0 right-0 top-0 z-50 px-3 pt-3 transition-all duration-500 sm:px-6">
-      <div className={`relative mx-auto max-w-7xl overflow-hidden rounded-2xl border transition-all duration-500 ${
+      <div className={`relative mx-auto max-w-7xl overflow-hidden rounded-[1.35rem] border transition-all duration-500 ${
         scrolled
-          ? 'border-cyan-300/20 bg-slate-950/88 shadow-2xl shadow-cyan-950/30 backdrop-blur-2xl'
-          : 'border-white/10 bg-slate-950/38 shadow-xl shadow-black/10 backdrop-blur-xl'
+          ? 'border-cyan-200/25 bg-slate-950/90 shadow-2xl shadow-cyan-950/35 backdrop-blur-2xl'
+          : 'border-white/10 bg-slate-950/44 shadow-xl shadow-black/15 backdrop-blur-xl'
       }`}>
-        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/70 to-transparent" />
-        <div className="flex h-20 items-center justify-between px-4 sm:px-5 lg:px-6">
-          <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="group flex min-w-0 items-center gap-3">
-            <div className="relative flex h-12 w-12 flex-none items-center justify-center rounded-2xl border border-cyan-200/20 bg-white/[0.06] shadow-lg shadow-cyan-500/10 transition duration-300 group-hover:border-cyan-200/40 group-hover:shadow-cyan-400/20">
-              <img src={IMAGES.logo} alt="AQUABRILLO" className="h-8 w-auto" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
-              <div className="hidden h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-300 to-blue-600 text-white">
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.08),transparent_22%,rgba(34,211,238,0.08)_52%,transparent_78%)]" />
+        <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-cyan-200/80 to-transparent" />
+        <div className="pointer-events-none absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-sky-400/30 to-transparent" />
+        <div className="pointer-events-none absolute -left-16 top-1/2 h-24 w-24 -translate-y-1/2 rounded-full bg-cyan-300/10 blur-2xl" />
+        <div className="pointer-events-none absolute -right-10 top-0 h-28 w-28 rounded-full bg-emerald-300/10 blur-2xl" />
+
+        <div className="relative flex h-[4.7rem] items-center justify-between gap-3 px-3 sm:px-4 lg:px-5">
+          <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="group flex min-w-0 flex-none items-center gap-2 sm:gap-3">
+            <div className="relative flex h-11 w-11 flex-none items-center justify-center rounded-[1.05rem] border border-cyan-200/25 bg-slate-900/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_36px_rgba(8,145,178,0.14)] transition duration-300 group-hover:border-cyan-100/45 group-hover:shadow-cyan-400/20 sm:h-12 sm:w-12">
+              <img src={IMAGES.logo} alt="AQUABRILLO" className="h-7 w-auto sm:h-8" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
+              <div className="hidden h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-300 to-blue-600 text-white sm:h-8 sm:w-8">
                 <Droplets className="h-4 w-4" />
               </div>
-              <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(103,232,249,0.9)]" />
+              <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-emerald-300 shadow-[0_0_18px_rgba(110,231,183,0.95)]" />
+              <span className="absolute -bottom-1 left-2 h-1 w-7 rounded-full bg-gradient-to-r from-cyan-300 via-white to-blue-400 opacity-70 blur-[1px]" />
             </div>
-            <div className="min-w-0">
-              <span className="block text-lg font-black tracking-tight text-white sm:text-xl">
+            <div className="min-w-0 max-w-[9.5rem] sm:max-w-[11rem]">
+              <span className="block truncate text-base font-black tracking-tight text-white sm:text-xl">
                 AQUA<span className="text-cyan-300">BRILLO</span>
               </span>
-              <span className="hidden text-[0.62rem] font-bold uppercase tracking-[0.24em] text-cyan-100/60 sm:block">
-                Detailing Lab
+              <span className="hidden text-[0.58rem] font-bold uppercase tracking-[0.24em] text-cyan-100/60 sm:block">
+                Detailing cockpit
               </span>
             </div>
           </a>
 
-          <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-white/[0.035] p-1 lg:flex">
-            {navLinks.map((link) => {
+          <div className="hidden items-center gap-1 rounded-full border border-cyan-100/10 bg-slate-950/55 p-1 shadow-inner shadow-cyan-950/30 xl:flex">
+            {desktopNavLinks.map((link) => {
               const isActive = activeHref === link.href;
+              const Icon = link.icon;
 
               return (
                 <button
                   key={link.name}
                   onClick={() => scrollToSection(link.href)}
                   aria-current={isActive ? 'page' : undefined}
-                  className={`group relative rounded-full px-3.5 py-2 text-xs font-bold uppercase tracking-[0.12em] transition duration-300 ${
+                  className={`group relative inline-flex items-center gap-1.5 rounded-full px-3 py-2 text-[0.66rem] font-black uppercase tracking-[0.1em] transition duration-300 xl:px-3.5 ${
                     isActive
-                      ? 'bg-cyan-300/12 text-white shadow-inner shadow-cyan-300/10'
+                      ? 'bg-cyan-300/14 text-white shadow-inner shadow-cyan-300/10'
                       : 'text-slate-300 hover:bg-cyan-300/10 hover:text-white'
                   }`}
                 >
+                  <Icon className={`h-3.5 w-3.5 ${isActive ? 'text-cyan-200' : 'text-cyan-200/50 group-hover:text-cyan-200'}`} />
                   {link.name}
                   <span className={`absolute inset-x-3 bottom-1 h-px bg-gradient-to-r from-transparent via-cyan-300 to-transparent transition-transform duration-300 ${
                     isActive ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100'
@@ -108,21 +144,74 @@ const Navbar = () => {
                 </button>
               );
             })}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsMoreOpen((current) => !current)}
+                aria-expanded={isMoreOpen}
+                aria-haspopup="menu"
+                className={`group relative inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[0.66rem] font-black uppercase tracking-[0.1em] transition duration-300 ${
+                  secondaryNavLinks.some((link) => activeHref === link.href)
+                    ? 'bg-cyan-300/14 text-white shadow-inner shadow-cyan-300/10'
+                    : 'text-slate-300 hover:bg-cyan-300/10 hover:text-white'
+                }`}
+              >
+                <Sparkles className="h-3.5 w-3.5 text-cyan-200/60 group-hover:text-cyan-200" />
+                Mas
+                <ChevronRight className={`h-3.5 w-3.5 text-cyan-200/60 transition-transform duration-300 ${isMoreOpen ? 'rotate-90' : ''}`} />
+              </button>
+              <div
+                role="menu"
+                className={`absolute right-0 top-[calc(100%+0.75rem)] w-56 overflow-hidden rounded-2xl border border-cyan-200/15 bg-slate-950/95 p-2 shadow-2xl shadow-cyan-950/35 backdrop-blur-2xl transition-all duration-300 ${
+                  isMoreOpen
+                    ? 'translate-y-0 opacity-100'
+                    : 'pointer-events-none -translate-y-2 opacity-0'
+                }`}
+              >
+                {secondaryNavLinks.map((link) => {
+                  const isActive = activeHref === link.href;
+                  const Icon = link.icon;
+
+                  return (
+                    <button
+                      key={link.name}
+                      type="button"
+                      role="menuitem"
+                      onClick={() => scrollToSection(link.href)}
+                      className={`flex w-full items-center justify-between rounded-xl px-3 py-3 text-left text-sm font-bold transition duration-300 ${
+                        isActive
+                          ? 'bg-cyan-300/12 text-white'
+                          : 'text-slate-300 hover:bg-cyan-300/10 hover:text-white'
+                      }`}
+                    >
+                      <span className="flex items-center gap-2">
+                        <Icon className="h-4 w-4 text-cyan-200/70" />
+                        {link.name}
+                      </span>
+                      <ChevronRight className="h-4 w-4 text-cyan-200/55" />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
           <a
             href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.generalQuote)}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden items-center gap-2 rounded-full border border-emerald-200/20 bg-[#25D366] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#25D366]/20 transition duration-300 hover:-translate-y-0.5 hover:bg-[#1EBE5D] hover:shadow-[#25D366]/35 lg:flex"
+            className="hidden flex-none items-center gap-2 rounded-full border border-emerald-200/25 bg-[#25D366] px-5 py-3 text-sm font-black text-white shadow-lg shadow-[#25D366]/20 transition duration-300 hover:-translate-y-0.5 hover:bg-[#1EBE5D] hover:shadow-[#25D366]/35 xl:flex"
           >
-            <Phone className="w-4 h-4" />
-            WhatsApp
+            <Phone className="h-4 w-4" />
+            <span>WhatsApp</span>
           </a>
 
           <button
-            onClick={() => setIsOpen(!isOpen)}
-            className="inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.06] text-white shadow-lg shadow-black/20 transition duration-300 hover:border-cyan-300/30 hover:bg-cyan-300/10 lg:hidden"
+            onClick={() => {
+              setIsMoreOpen(false);
+              setIsOpen(!isOpen);
+            }}
+            className="inline-flex h-11 w-11 flex-none items-center justify-center rounded-[1rem] border border-cyan-200/20 bg-slate-900/75 text-white shadow-lg shadow-black/20 transition duration-300 hover:border-cyan-300/35 hover:bg-cyan-300/10 xl:hidden"
             aria-label={isOpen ? 'Cerrar menu' : 'Abrir menu'}
             aria-expanded={isOpen}
             aria-controls="mobile-navigation"
@@ -132,12 +221,13 @@ const Navbar = () => {
         </div>
       </div>
 
-      <div id="mobile-navigation" className={`mx-auto max-w-7xl overflow-hidden px-1 transition-all duration-500 lg:hidden ${
+      <div id="mobile-navigation" className={`mx-auto max-w-7xl overflow-hidden px-1 transition-all duration-500 xl:hidden ${
         isOpen ? 'max-h-[calc(100vh-5rem)] opacity-100' : 'max-h-0 opacity-0'
       }`}>
-        <div className="mt-2 max-h-[calc(100vh-6.5rem)] space-y-2 overflow-y-auto rounded-2xl border border-cyan-300/15 bg-slate-950/94 p-3 shadow-2xl shadow-cyan-950/30 backdrop-blur-2xl">
+        <div className="mt-2 max-h-[calc(100vh-6.5rem)] space-y-2 overflow-y-auto rounded-[1.35rem] border border-cyan-300/15 bg-slate-950/94 p-3 shadow-2xl shadow-cyan-950/30 backdrop-blur-2xl">
           {navLinks.map((link) => {
             const isActive = activeHref === link.href;
+            const Icon = link.icon;
 
             return (
               <button
@@ -150,7 +240,10 @@ const Navbar = () => {
                     : 'border-white/5 bg-white/[0.035] text-slate-200 hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-white'
                 }`}
               >
-                <span>{link.name}</span>
+                <span className="flex items-center gap-3">
+                  <Icon className="h-4 w-4 text-cyan-200/70" />
+                  {link.name}
+                </span>
                 <ChevronRight className="h-4 w-4 text-cyan-200/70" />
               </button>
             );

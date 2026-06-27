@@ -1,0 +1,15 @@
+﻿tipo,id,nombre,categoria,precio_mxn,duracion_min,multiplicador,extra_mxn,extra_min,activo,orden,seleccion_default,notas
+vehiculo,Auto,Auto,vehiculo,,,,,,si,1,si,autos compactos y sedan
+vehiculo,Camioneta chica,SUV,vehiculo,,,,,,si,2,no,camioneta compacta y suv
+vehiculo,Camioneta,Camioneta Grande,vehiculo,,,,,,si,3,no,camioneta grande 3 filas de asientos
+servicio,lavado,Lavado auto,lavado,150,90,,,,si,1,si,Precio autos compactos sedan
+servicio,lavado,Lavado camioneta/suv,lavado,170,120,,,,,,,Precio camioneta chica Suv
+servicio,lavado,Lavado Grande,lavado,200,120,,,,,,,"Precio camioneta grande 3 filas de asientos, batea grande"
+servicio,encerado,Encerado protector,proteccion,450,80,,,,si,2,no,Proteccion ligera con brillo
+servicio,interior,Detallado interior,interior,650,120,,,,si,3,no,Limpieza profunda de habitaculo
+servicio,exterior,Detallado exterior,exterior,650,120,,,,si,4,no,Limpieza y acabado exterior
+servicio,paquete_brillo,Paquete brillo express,paquete,850,140,,,,si,5,no,Lavado premium mas encerado protector
+servicio,paquete_rescate,Paquete rescate interior,paquete,980,180,,,,si,6,no,Lavado premium mas detallado interior
+servicio,Pulido,Correccion de pintura,especializado,1200,180,,,,si,7,no,Pulido y mejora de pintura
+servicio,faros,Restauracion de faros,especializado,450,90,,,,si,9,no,Recuperacion visual de mica opaca
+servicio,ceramico,Recubrimiento ceramico,proteccion,2500,300,,,,si,10,no,Proteccion premium

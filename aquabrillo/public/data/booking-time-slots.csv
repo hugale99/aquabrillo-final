@@ -1,0 +1,31 @@
+dia,hora_inicio,activo,capacidad,notas
+lunes,09:00,si,1,Horario base
+lunes,11:00,si,1,Horario base
+lunes,13:00,si,1,Horario base
+lunes,15:00,si,1,Horario base
+lunes,17:00,si,1,Horario base
+martes,09:00,si,1,Horario base
+martes,11:00,si,1,Horario base
+martes,13:00,si,1,Horario base
+martes,15:00,si,1,Horario base
+martes,17:00,si,1,Horario base
+miercoles,09:00,si,1,Horario base
+miercoles,11:00,si,1,Horario base
+miercoles,13:00,si,1,Horario base
+miercoles,15:00,si,1,Horario base
+miercoles,17:00,si,1,Horario base
+jueves,09:00,si,1,Horario base
+jueves,11:00,si,1,Horario base
+jueves,13:00,si,1,Horario base
+jueves,15:00,si,1,Horario base
+jueves,17:00,si,1,Horario base
+viernes,09:00,si,1,Horario base
+viernes,11:00,si,1,Horario base
+viernes,13:00,si,1,Horario base
+viernes,15:00,si,1,Horario base
+viernes,17:00,si,1,Horario base
+sabado,09:00,si,1,Alta demanda
+sabado,11:00,si,1,Alta demanda
+sabado,13:00,si,1,Alta demanda
+sabado,15:00,si,1,Alta demanda
+domingo,10:00,no,0,Activar solo por campana
