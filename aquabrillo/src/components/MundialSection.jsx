@@ -223,6 +223,47 @@ const makeMatch = (
   reward
 });
 
+const makeTeamFromEspn = (competitor) => {
+  const abbreviation = normalizeTeamCode(competitor?.team?.abbreviation);
+  const localTeam = abbreviation ? TEAMS[abbreviation] : null;
+
+  if (localTeam) return localTeam;
+
+  return {
+    name: competitor?.team?.displayName || competitor?.team?.shortDisplayName || abbreviation || 'Equipo',
+    code: abbreviation || competitor?.team?.abbreviation || 'TBD',
+    flag: null
+  };
+};
+
+const buildLiveMatchFromEvent = (event) => {
+  const competition = event.competitions?.[0];
+  const competitors = competition?.competitors ?? [];
+  const home = competitors.find((competitor) => competitor.homeAway === 'home');
+  const away = competitors.find((competitor) => competitor.homeAway === 'away');
+  const status = getEspnMatchStatus(event.status?.type?.name);
+  const shouldShowScore = status === 'En vivo' || status === 'Final';
+
+  if (!home?.team?.abbreviation || !away?.team?.abbreviation || !event.date) return null;
+
+  const homeTeam = makeTeamFromEspn(home);
+  const awayTeam = makeTeamFromEspn(away);
+
+  return {
+    id: `${new Date(event.date).toISOString()}-${homeTeam.code}-${awayTeam.code}`,
+    kickoff: event.date,
+    stage: event.season?.slug || competition?.type?.text || 'Mundial 2026',
+    venue: competition?.venue?.fullName || competition?.venue?.address?.city || 'Sede Mundial 2026',
+    home: homeTeam,
+    away: awayTeam,
+    homeScore: shouldShowScore ? Number(home.score) : null,
+    awayScore: shouldShowScore ? Number(away.score) : null,
+    liveStatus: status,
+    featured: false,
+    reward: 'Participa por una recompensa mundialista AQUABRILLO'
+  };
+};
+
 const MATCHES = [
   makeMatch('2026-06-11T13:00:00-06:00', 'Grupo A', 'Ciudad de Mexico', 'MEX', 'RSA', true, 'Si le atinas al equipo ganador: Descontaminado gratis de cristales', 2, 0, 'Final'),
   makeMatch('2026-06-11T20:00:00-06:00', 'Grupo A', 'Guadalajara', 'KOR', 'CZE'),
@@ -420,6 +461,24 @@ const applyLiveScore = (match, liveScores) => {
     awayScore: Number.isInteger(liveScore.awayScore) ? liveScore.awayScore : match.awayScore,
     liveStatus: liveScore.status || match.liveStatus
   };
+};
+
+const mergeLiveMatches = (localMatches, liveScores) => {
+  const localMatchKeys = new Set(
+    localMatches.flatMap((match) => [
+      match.id,
+      getMatchupKey(match.kickoff, match.home.code, match.away.code),
+      getReverseMatchupKey(match.kickoff, match.home.code, match.away.code)
+    ])
+  );
+
+  const feedMatches = (liveScores.matches ?? []).filter((match) => {
+    const matchupKey = getMatchupKey(match.kickoff, match.home.code, match.away.code);
+    const reverseMatchupKey = getReverseMatchupKey(match.kickoff, match.home.code, match.away.code);
+    return !localMatchKeys.has(match.id) && !localMatchKeys.has(matchupKey) && !localMatchKeys.has(reverseMatchupKey);
+  });
+
+  return [...localMatches, ...feedMatches].sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
 };
 
 const getFeaturedMatch = (matches) => {
@@ -714,7 +773,7 @@ const MundialSection = () => {
   const sectionRef = useRef(null);
 
   const matchesWithLiveScores = useMemo(
-    () => MATCHES.map((match) => applyLiveScore(match, liveScores)),
+    () => mergeLiveMatches(MATCHES.map((match) => applyLiveScore(match, liveScores)), liveScores),
     [liveScores]
   );
   const featuredMatches = useMemo(() => getFeaturedMatches(matchesWithLiveScores), [matchesWithLiveScores]);
@@ -750,6 +809,7 @@ const MundialSection = () => {
           const away = competitors.find((competitor) => competitor.homeAway === 'away');
           const status = getEspnMatchStatus(event.status?.type?.name);
           const shouldShowScore = status === 'En vivo' || status === 'Final';
+          const liveMatch = buildLiveMatchFromEvent(event);
 
           if (!home?.team?.abbreviation || !away?.team?.abbreviation || !event.date) {
             return scoreMap;
@@ -781,9 +841,10 @@ const MundialSection = () => {
               ...scoreMap.byMatchup,
               [matchupKey]: score,
               [reverseMatchupKey]: reverseScore
-            }
+            },
+            matches: liveMatch ? [...scoreMap.matches, liveMatch] : scoreMap.matches
           };
-        }, { byId: {}, byMatchup: {} }));
+        }, { byId: {}, byMatchup: {}, matches: [] }));
       } catch {
         // Keep the local schedule if the live score feed is unavailable.
       }
