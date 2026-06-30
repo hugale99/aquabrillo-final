@@ -2029,6 +2029,18 @@ const Testimonials = () => {
             <TestimonialCard key={index} item={item} index={index} />
           ))}
         </div>
+        <ScrollReveal delay={250}>
+          <div className="mt-10 flex justify-center">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent('aquabrillo:open-review-form'))}
+              className="inline-flex items-center gap-3 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-6 py-3 text-sm font-black uppercase tracking-[0.12em] text-orange-100 transition hover:border-brand-orange/45 hover:bg-brand-orange/15"
+            >
+              <Quote className="h-4 w-4 text-brand-orange" />
+              Dejar mi opinión
+            </button>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

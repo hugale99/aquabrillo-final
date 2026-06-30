@@ -1,15 +1,14 @@
-﻿import { useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLe_ChBO2ulwpZtTRvl-4CU-nmqVeTt3d3cTw9MgMkMsRyO9hMGg5n_-fFSM-ifeUC/exec';
 const defaultFormData = {
   nombre: '',
   correo: '',
-  frecuencia: '',
-  valor: '',
-  suscripcion: '',
-  modalidad: '',
-  servicio: [],
-  comentarios: ''
+  vehiculo: '',
+  servicio: '',
+  calificacion: '5',
+  comentarios: '',
+  publicacion: 'Sí'
 };
 
 const PreferencesForm = () => {
@@ -25,8 +24,13 @@ const PreferencesForm = () => {
     return pattern.test(email);
   };
 
-  const handleToggle = () => setIsOpen((prev) => !prev);
   const closePanel = () => setIsOpen(false);
+
+  useEffect(() => {
+    const openPanel = () => setIsOpen(true);
+    window.addEventListener('aquabrillo:open-review-form', openPanel);
+    return () => window.removeEventListener('aquabrillo:open-review-form', openPanel);
+  }, []);
 
   const validateForm = () => {
     const newErrors = {};
@@ -35,11 +39,9 @@ const PreferencesForm = () => {
       newErrors.correo = 'Por favor ingresa un correo válido o deja el campo vacío.';
     }
 
-    if (!formData.frecuencia) newErrors.frecuencia = true;
-    if (!formData.valor) newErrors.valor = true;
-    if (!formData.suscripcion) newErrors.suscripcion = true;
-    if (!formData.modalidad) newErrors.modalidad = true;
-    if (formData.servicio.length === 0) newErrors.servicio = true;
+    if (!formData.nombre.trim()) newErrors.nombre = true;
+    if (!formData.servicio.trim()) newErrors.servicio = true;
+    if (!formData.comentarios.trim()) newErrors.comentarios = true;
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -48,19 +50,10 @@ const PreferencesForm = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    if (type === 'checkbox') {
-      setFormData((prev) => ({
-        ...prev,
-        servicio: checked
-          ? [...prev.servicio, value]
-          : prev.servicio.filter((item) => item !== value)
-      }));
-    } else {
-      setFormData((prev) => ({
-        ...prev,
-        [name]: value
-      }));
-    }
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value
+    }));
 
     if (errors[name]) {
       setErrors((prev) => ({
@@ -82,17 +75,21 @@ const PreferencesForm = () => {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          tipo: 'opinion_cliente',
+          fecha: new Date().toISOString()
+        })
       });
 
       setFeedback({
-        message: '✅ ¡Gracias por compartir tu opinión! Tus respuestas nos ayudan a mejorar la experiencia AQUABRILLO.',
+        message: 'Gracias por compartir tu opinión. Tu experiencia ayuda a otros clientes a conocer AQUABRILLO.',
         type: 'success'
       });
       setFormData(defaultFormData);
     } catch {
       setFeedback({
-        message: '⚠️ No se pudo enviar tu respuesta. Intenta nuevamente en unos segundos.',
+        message: 'No se pudo enviar tu opinión. Intenta nuevamente en unos segundos.',
         type: 'error'
       });
     } finally {
@@ -343,65 +340,6 @@ const PreferencesForm = () => {
         .pref-message.success{border:1px solid rgba(51,214,159,.35);background:rgba(51,214,159,.12);color:#d9fff2}
         .pref-message.error{border:1px solid rgba(239,68,68,.35);background:rgba(239,68,68,.12);color:#ffe3e3}
 
-        .pref-widget-fixed {
-          position: fixed;
-          right: 20px;
-          top: 50%;
-          transform: translateY(-50%);
-          z-index: 40;
-          display: inline-flex;
-          align-items: center;
-          gap: 10px;
-          padding: 12px 16px;
-          min-width: 220px;
-          border-radius: 999px;
-          background: rgba(15,23,42,0.95);
-          border: 1px solid rgba(255,255,255,0.08);
-          box-shadow: 0 18px 40px rgba(0,0,0,0.25);
-          cursor: pointer;
-          transition: transform 0.18s ease, background 0.18s ease;
-        }
-
-        .pref-widget-fixed:hover {
-          transform: translateY(-50%) scale(1.02);
-          background: rgba(15,23,42,1);
-        }
-
-        .pref-widget-icon {
-          width: 32px;
-          height: 32px;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          border-radius: 50%;
-          background: rgba(255,255,255,0.08);
-          color: #ffffff;
-          font-size: 18px;
-          transition: transform 0.2s ease, background 0.2s ease;
-          animation: prefWidgetPulse 6s ease-in-out infinite;
-        }
-
-        .pref-widget-fixed:hover .pref-widget-icon {
-          transform: scale(1.08);
-          background: rgba(255,255,255,0.14);
-        }
-
-        .pref-widget-fixed span {
-          font-size: 14px;
-          font-weight: 700;
-          color: #fff;
-          line-height: 1.2;
-        }
-
-        @keyframes prefWidgetPulse {
-          0%, 100% {
-            transform: scale(1);
-          }
-          50% {
-            transform: scale(1.04);
-          }
-        }
-
         @keyframes slideIn {
           from {
             opacity: 0;
@@ -410,12 +348,6 @@ const PreferencesForm = () => {
           to {
             opacity: 1;
             transform: translateY(0);
-          }
-        }
-
-        @media (max-width: 1024px) {
-          .pref-widget-fixed {
-            right: 12px;
           }
         }
 
@@ -437,37 +369,8 @@ const PreferencesForm = () => {
             font-size: 18px;
           }
 
-          .pref-widget-fixed {
-            right: 16px;
-            left: auto;
-            top: 90px;
-            bottom: auto;
-            transform: translateY(0);
-            width: auto;
-            min-width: unset;
-            padding: 10px 14px;
-            gap: 8px;
-            box-shadow: 0 24px 50px rgba(0, 0, 0, 0.35);
-          }
-
-          .pref-widget-icon {
-            width: 28px;
-            height: 28px;
-            font-size: 16px;
-          }
-
-          .pref-widget-fixed span {
-            font-size: 13px;
-          }
         }
       `}</style>
-
-      <div className="pref-form-wrapper px-6 lg:px-8">
-        <button className="pref-widget-fixed" type="button" onClick={handleToggle} aria-expanded={isOpen} aria-controls="preferences-drawer">
-          <span className="pref-widget-icon">💬</span>
-          <span>Tu opinión nos interesa</span>
-        </button>
-      </div>
 
       <div className={`pref-overlay ${isOpen ? 'show' : ''}`} onClick={closePanel} />
       <div
@@ -480,8 +383,8 @@ const PreferencesForm = () => {
       >
         <div className="pref-panel-header">
           <div>
-            <h2 id="preferences-title" className="pref-panel-title">Tu opinión nos interesa</h2>
-            <p className="pref-panel-description">Tus respuestas nos ayudan a crear mejores paquetes, promociones y experiencias para ti.</p>
+            <h2 id="preferences-title" className="pref-panel-title">Comparte tu experiencia</h2>
+            <p className="pref-panel-description">Tu opinión nos ayuda a mejorar el servicio y a que otros clientes conozcan la experiencia AQUABRILLO.</p>
           </div>
           <button className="pref-drawer-close" type="button" onClick={closePanel} aria-label="Cerrar formulario de preferencias">
             ✕
@@ -490,11 +393,11 @@ const PreferencesForm = () => {
         <div className="pref-panel-inner">
           <div className="pref-form-container">
             <form className="pref-form" onSubmit={handleSubmit} noValidate>
-              <div className="pref-section-label">Datos opcionales</div>
+              <div className="pref-section-label">Opinion del cliente</div>
 
               <div className="pref-field">
                 <label className="pref-question" htmlFor="nombre">Nombre</label>
-                <div className="pref-hint">Opcional. Nos ayuda a personalizar mejor nuestras ofertas.</div>
+                <div className="pref-hint">Así podremos identificar tu opinión en nuestro equipo.</div>
                 <input
                   type="text"
                   id="nombre"
@@ -503,12 +406,14 @@ const PreferencesForm = () => {
                   placeholder="Escribe tu nombre"
                   value={formData.nombre}
                   onChange={handleChange}
+                  aria-invalid={Boolean(errors.nombre)}
                 />
+                {errors.nombre && <div className="pref-error show">Escribe tu nombre para continuar.</div>}
               </div>
 
               <div className="pref-field">
                 <label className="pref-question" htmlFor="correo">Correo electrónico</label>
-                <div className="pref-hint">Opcional. Solo lo usaremos si deseas recibir promociones o novedades.</div>
+                <div className="pref-hint">Opcional. Solo lo usaremos si necesitamos dar seguimiento a tu experiencia.</div>
                 <input
                   type="email"
                   id="correo"
@@ -523,134 +428,97 @@ const PreferencesForm = () => {
                 {errors.correo && <div id="correo-error" className="pref-error show">Por favor ingresa un correo válido o deja el campo vacío.</div>}
               </div>
 
-              <div className="pref-section-label">Preferencias de servicio</div>
+              <div className="pref-field">
+                <label className="pref-question" htmlFor="vehiculo">Vehículo atendido</label>
+                <div className="pref-hint">Opcional. Ejemplo: Jeep Renegade, BYD King, MG ONE.</div>
+                <input
+                  type="text"
+                  id="vehiculo"
+                  name="vehiculo"
+                  className="pref-input"
+                  placeholder="Marca, modelo o tipo de vehículo"
+                  value={formData.vehiculo}
+                  onChange={handleChange}
+                />
+              </div>
 
               <div className="pref-field">
-                <label className="pref-question">¿Con qué frecuencia lavas tu auto?</label>
-                <div className="pref-hint">Esto nos ayuda a entender tus hábitos de cuidado automotriz.</div>
+                <label className="pref-question" htmlFor="servicio">Servicio recibido</label>
+                <div className="pref-hint">Cuéntanos qué servicio realizamos.</div>
+                <input
+                  type="text"
+                  id="servicio"
+                  name="servicio"
+                  className="pref-input"
+                  placeholder="Lavado premium, interior, cerámico, pulido..."
+                  value={formData.servicio}
+                  onChange={handleChange}
+                  aria-invalid={Boolean(errors.servicio)}
+                />
+                {errors.servicio && <div className="pref-error show">Escribe el servicio recibido.</div>}
+              </div>
+
+              <div className="pref-field">
+                <label className="pref-question">Calificación</label>
+                <div className="pref-hint">Selecciona cómo fue tu experiencia con AQUABRILLO.</div>
                 <div className="pref-options">
-                  {['Semanal', 'Quincenal', 'Mensual'].map((opt) => (
+                  {['5', '4', '3'].map((opt) => (
                     <label key={opt} className="pref-option-card">
                       <input
                         type="radio"
-                        name="frecuencia"
+                        name="calificacion"
                         value={opt}
-                        checked={formData.frecuencia === opt}
+                        checked={formData.calificacion === opt}
                         onChange={handleChange}
                       />
                       <div className="pref-custom-control"></div>
-                      <span>{opt}</span>
+                      <span>{'★'.repeat(Number(opt))}</span>
                     </label>
                   ))}
                 </div>
-                {errors.frecuencia && <div className="pref-error show">Selecciona una opción para continuar.</div>}
               </div>
 
               <div className="pref-field">
-                <label className="pref-question">¿Qué valoras más en un autolavado?</label>
-                <div className="pref-hint">Elige el factor más importante para ti.</div>
-                <div className="pref-options">
-                  {['Rapidez', 'Calidad', 'Precio', 'Ubicación'].map((opt) => (
-                    <label key={opt} className="pref-option-card">
-                      <input
-                        type="radio"
-                        name="valor"
-                        value={opt}
-                        checked={formData.valor === opt}
-                        onChange={handleChange}
-                      />
-                      <div className="pref-custom-control"></div>
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-                {errors.valor && <div className="pref-error show">Selecciona una opción para continuar.</div>}
-              </div>
-
-              <div className="pref-field">
-                <label className="pref-question">¿Te interesaría un servicio de suscripción mensual para lavados ilimitados?</label>
-                <div className="pref-hint">Estamos evaluando nuevas opciones para clientes frecuentes.</div>
-                <div className="pref-options">
-                  {['Sí', 'No', 'Tal vez'].map((opt) => (
-                    <label key={opt} className="pref-option-card">
-                      <input
-                        type="radio"
-                        name="suscripcion"
-                        value={opt}
-                        checked={formData.suscripcion === opt}
-                        onChange={handleChange}
-                      />
-                      <div className="pref-custom-control"></div>
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-                {errors.suscripcion && <div className="pref-error show">Selecciona una opción para continuar.</div>}
-              </div>
-
-              <div className="pref-field">
-                <label className="pref-question">¿Prefieres servicios a domicilio o en punto físico?</label>
-                <div className="pref-hint">Queremos adaptar el servicio a tu estilo de vida.</div>
-                <div className="pref-options">
-                  {['A domicilio', 'Punto físico', 'Me da igual', 'Depende de la situación'].map((opt) => (
-                    <label key={opt} className="pref-option-card">
-                      <input
-                        type="radio"
-                        name="modalidad"
-                        value={opt}
-                        checked={formData.modalidad === opt}
-                        onChange={handleChange}
-                      />
-                      <div className="pref-custom-control"></div>
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-                {errors.modalidad && <div className="pref-error show">Selecciona una opción para continuar.</div>}
-              </div>
-
-              <div className="pref-field">
-                <label className="pref-question">¿Qué servicio de detallado te gustaría probar?</label>
-                <div className="pref-hint">Puedes elegir más de una opción.</div>
-                <div className="pref-options">
-                  {['Cerámico', 'Corrección de pintura', 'Detallado Interior', 'Detallado Exterior'].map((opt) => (
-                    <label key={opt} className="pref-option-card pref-checkbox">
-                      <input
-                        type="checkbox"
-                        name="servicio"
-                        value={opt}
-                        checked={formData.servicio.includes(opt)}
-                        onChange={handleChange}
-                      />
-                      <div className="pref-custom-control"></div>
-                      <span>{opt}</span>
-                    </label>
-                  ))}
-                </div>
-                {errors.servicio && <div className="pref-error show">Selecciona al menos una opción para continuar.</div>}
-              </div>
-
-              <div className="pref-field">
-                <label className="pref-question" htmlFor="comentarios">
-                  ¿Algún comentario, sugerencia o servicio que te gustaría ver?
-                </label>
-                <div className="pref-hint">Tu opinión nos ayuda a crear una mejor experiencia para ti y tu vehículo.</div>
+                <label className="pref-question" htmlFor="comentarios">Tu opinión</label>
+                <div className="pref-hint">Describe cómo fue el servicio, puntualidad, atención y resultado final.</div>
                 <textarea
                   id="comentarios"
                   name="comentarios"
                   className="pref-textarea"
-                  placeholder="Escribe aquí tu comentario..."
+                  placeholder="Escribe aquí tu experiencia..."
                   value={formData.comentarios}
                   onChange={handleChange}
+                  aria-invalid={Boolean(errors.comentarios)}
                 ></textarea>
+                {errors.comentarios && <div className="pref-error show">Escribe tu opinión para continuar.</div>}
+              </div>
+
+              <div className="pref-field">
+                <label className="pref-question">Publicación de la opinión</label>
+                <div className="pref-hint">Indícanos si podemos mostrar tu opinión en el sitio de AQUABRILLO.</div>
+                <div className="pref-options">
+                  {['Sí', 'No'].map((opt) => (
+                    <label key={opt} className="pref-option-card">
+                      <input
+                        type="radio"
+                        name="publicacion"
+                        value={opt}
+                        checked={formData.publicacion === opt}
+                        onChange={handleChange}
+                      />
+                      <div className="pref-custom-control"></div>
+                      <span>{opt === 'Sí' ? 'Sí, pueden publicarla' : 'No, sólo feedback privado'}</span>
+                    </label>
+                  ))}
+                </div>
               </div>
 
               <div className="pref-actions">
                 <button type="submit" className="pref-button" disabled={isSubmitting}>
-                  {isSubmitting ? 'Enviando respuestas...' : 'Enviar mis respuestas'}
+                  {isSubmitting ? 'Enviando opinión...' : 'Enviar mi opinión'}
                 </button>
                 <div className="pref-small-note">
-                  Al enviar este formulario aceptas que tus respuestas sean utilizadas únicamente para mejorar la oferta de servicios de AQUABRILLO.
+                  Al enviar tu opinión aceptas que AQUABRILLO la revise para mejorar el servicio y, si autorizas, pueda mostrarla como testimonio.
                 </div>
               </div>
 
@@ -668,3 +536,4 @@ const PreferencesForm = () => {
 };
 
 export default PreferencesForm;
+
