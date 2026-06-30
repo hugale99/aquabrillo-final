@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, LockKeyhole, LogOut, ShieldCheck } from 'lucide-react';
+import AdminReviewsSection from './AdminReviewsSection';
 import AdminReservationsSection from './AdminReservationsSection';
 import { getAdminUser, getStoredAdminSession, signInAdmin, signOutAdmin } from '../services/supabaseAuth';
 
@@ -162,6 +163,7 @@ const AdminPanelPage = () => {
       </div>
 
       <AdminReservationsSection defaultOpen canCollapse={false} />
+      <AdminReviewsSection />
     </main>
   );
 };

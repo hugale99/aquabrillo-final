@@ -12,6 +12,7 @@ import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
 import ScrollReveal from './components/ui/ScrollReveal';
 import { saveCoverageContext } from './config/booking';
+import { listApprovedReviews } from './services/reviewRepository';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
@@ -1987,6 +1988,7 @@ const B2BServices = () => {
 };
 
 const Testimonials = () => {
+  const [approvedReviews, setApprovedReviews] = useState([]);
   const testimonials = [
     {
       name: "Juan Manuel",
@@ -2013,6 +2015,31 @@ const Testimonials = () => {
       rating: 5,
     }
   ];
+  const visibleTestimonials = [
+    ...approvedReviews.map((review) => ({
+      name: review.name,
+      role: review.vehicle || review.service || 'Cliente AQUABRILLO',
+      text: review.text,
+      rating: review.rating || 5,
+      isDynamic: true,
+    })),
+    ...testimonials,
+  ].slice(0, 6);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadReviews = async () => {
+      const result = await listApprovedReviews();
+      if (isMounted) setApprovedReviews(result.reviews);
+    };
+
+    loadReviews();
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   return (
     <section id="testimonios" className="py-24 bg-slate-950">
@@ -2021,11 +2048,16 @@ const Testimonials = () => {
           <div className="text-center mb-16">
             <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Testimonios</span>
             <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Lo que dicen <span className="text-slate-400">nuestros clientes</span></h2>
+            <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-500">
+              {approvedReviews.length > 0
+                ? `${approvedReviews.length} opiniones aprobadas por AQUABRILLO se muestran primero.`
+                : 'Opiniones destacadas de clientes mientras se aprueban nuevas reseñas recibidas.'}
+            </p>
           </div>
         </ScrollReveal>
 
         <div className="grid md:grid-cols-3 gap-8">
-          {testimonials.map((item, index) => (
+          {visibleTestimonials.map((item, index) => (
             <TestimonialCard key={index} item={item} index={index} />
           ))}
         </div>
@@ -2048,6 +2080,7 @@ const Testimonials = () => {
 
 const TestimonialCard = ({ item, index }) => {
   const [imgError, setImgError] = useState(false);
+  const imageSrc = item.isDynamic ? null : IMAGES.testimonios[`cliente${index + 1}`];
 
   return (
     <ScrollReveal delay={index * 150}>
@@ -2063,15 +2096,17 @@ const TestimonialCard = ({ item, index }) => {
         </div>
         <div className="flex items-center gap-4 pt-4 border-t border-white/10">
           <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-cyan-500/30 to-blue-600/30 flex items-center justify-center flex-shrink-0">
-            <img 
-              src={IMAGES.testimonios[`cliente${index + 1}`]} 
-              alt={`Auto de ${item.name}`}
-              className="w-full h-full object-cover"
-              loading="lazy"
-              decoding="async"
-              onError={() => setImgError(true)}
-            />
-            <span className={`text-white font-bold text-sm ${imgError ? '' : 'hidden'}`}>
+            {imageSrc && (
+              <img
+                src={imageSrc}
+                alt={`Auto de ${item.name}`}
+                className="w-full h-full object-cover"
+                loading="lazy"
+                decoding="async"
+                onError={() => setImgError(true)}
+              />
+            )}
+            <span className={`text-white font-bold text-sm ${imgError || !imageSrc ? '' : 'hidden'}`}>
               {item.name[0]}
             </span>
           </div>

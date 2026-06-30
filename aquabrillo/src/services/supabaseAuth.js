@@ -1,4 +1,5 @@
 import { setSupabaseAccessToken } from './bookingRepository';
+import { setSupabaseReviewAccessToken } from './reviewRepository';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -48,10 +49,12 @@ export const getStoredAdminSession = () => {
     if (!session?.access_token) return null;
 
     setSupabaseAccessToken(session.access_token);
+    setSupabaseReviewAccessToken(session.access_token);
     return session;
   } catch {
     window.localStorage.removeItem(SESSION_KEY);
     setSupabaseAccessToken('');
+    setSupabaseReviewAccessToken('');
     return null;
   }
 };
@@ -64,6 +67,7 @@ export const signInAdmin = async ({ email, password }) => {
 
   window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
   setSupabaseAccessToken(session.access_token);
+  setSupabaseReviewAccessToken(session.access_token);
 
   return session;
 };
@@ -84,6 +88,7 @@ export const signOutAdmin = async () => {
 
   window.localStorage.removeItem(SESSION_KEY);
   setSupabaseAccessToken('');
+  setSupabaseReviewAccessToken('');
 };
 
 export const getAdminUser = async () => {
@@ -98,6 +103,7 @@ export const getAdminUser = async () => {
   } catch {
     window.localStorage.removeItem(SESSION_KEY);
     setSupabaseAccessToken('');
+    setSupabaseReviewAccessToken('');
     return null;
   }
 };

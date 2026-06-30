@@ -1,0 +1,141 @@
+import { useEffect, useMemo, useState } from 'react';
+import { CheckCircle2, EyeOff, RefreshCw, Star } from 'lucide-react';
+import { listAdminReviews, updateReviewStatus } from '../services/reviewRepository';
+
+const statusLabels = {
+  pending: 'Pendiente',
+  approved: 'Aprobada',
+  hidden: 'Oculta',
+};
+
+const AdminReviewsSection = () => {
+  const [reviews, setReviews] = useState([]);
+  const [storageMode, setStorageMode] = useState('supabase');
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState('');
+
+  const visibleReviews = useMemo(() => [...reviews].sort((a, b) => {
+    const priority = { pending: 0, approved: 1, hidden: 2 };
+    return (priority[a.status] ?? 9) - (priority[b.status] ?? 9);
+  }), [reviews]);
+
+  const metrics = useMemo(() => ({
+    total: reviews.length,
+    pending: reviews.filter((review) => review.status === 'pending').length,
+    approved: reviews.filter((review) => review.status === 'approved').length,
+  }), [reviews]);
+
+  const refreshReviews = async () => {
+    setIsLoading(true);
+    const result = await listAdminReviews();
+    setReviews(result.reviews);
+    setStorageMode(result.storage);
+    setLoadError(result.error ? `No se pudieron cargar las opiniones (${result.error.status || 'conexion'}).` : '');
+    setIsLoading(false);
+  };
+
+  const handleStatusChange = async ({ id, status }) => {
+    await updateReviewStatus({ id, status });
+    await refreshReviews();
+  };
+
+  useEffect(() => {
+    queueMicrotask(refreshReviews);
+  }, []);
+
+  return (
+    <section className="bg-brand-night px-5 pb-16 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl rounded-3xl border border-brand-orange/15 bg-white/[0.03] p-4 shadow-2xl shadow-black/10 sm:p-6">
+        <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <span className="text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Opiniones de clientes</span>
+            <h2 className="mt-2 text-2xl font-black text-white">Aprobacion de testimonios</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              Fuente actual: {storageMode}. Solo las opiniones aprobadas y autorizadas aparecen en el sitio.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={refreshReviews}
+            disabled={isLoading}
+            className="inline-flex items-center justify-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-orange-100 transition hover:bg-brand-orange/15 disabled:opacity-60"
+          >
+            <RefreshCw className="h-4 w-4" />
+            {isLoading ? 'Actualizando' : 'Actualizar'}
+          </button>
+        </div>
+
+        <div className="mb-5 grid gap-3 sm:grid-cols-3">
+          <div className="rounded-2xl border border-white/10 bg-brand-night/55 p-4">
+            <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Total</div>
+            <div className="mt-2 text-2xl font-black text-white">{metrics.total}</div>
+          </div>
+          <div className="rounded-2xl border border-brand-orange/20 bg-brand-orange/10 p-4">
+            <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Pendientes</div>
+            <div className="mt-2 text-2xl font-black text-white">{metrics.pending}</div>
+          </div>
+          <div className="rounded-2xl border border-brand-green/20 bg-brand-green/10 p-4">
+            <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Aprobadas</div>
+            <div className="mt-2 text-2xl font-black text-white">{metrics.approved}</div>
+          </div>
+        </div>
+
+        <div className="grid gap-3 lg:grid-cols-3">
+          {loadError && (
+            <div className="rounded-2xl border border-brand-rust/25 bg-brand-rust/10 p-5 text-sm font-bold text-orange-100 lg:col-span-3">
+              {loadError} Verifica que el usuario operativo este autenticado y que la migracion de opiniones este aplicada.
+            </div>
+          )}
+          {visibleReviews.map((review) => (
+            <article key={review.id} className="rounded-2xl border border-white/10 bg-brand-night/55 p-4">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <h3 className="truncate text-base font-black text-white">{review.name}</h3>
+                  <p className="truncate text-xs font-bold text-slate-500">{review.vehicle || review.service}</p>
+                </div>
+                <span className="rounded-full bg-brand-orange/12 px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-orange-100">
+                  {statusLabels[review.status] || review.status}
+                </span>
+              </div>
+              <div className="mb-3 flex items-center gap-1">
+                {[...Array(review.rating || 5)].map((_, index) => (
+                  <Star key={index} className="h-4 w-4 fill-brand-orange text-brand-orange" />
+                ))}
+              </div>
+              <p className="text-sm leading-6 text-slate-300">"{review.text}"</p>
+              <div className="mt-3 space-y-1 text-xs text-slate-500">
+                <p>Servicio: {review.service}</p>
+                <p>Publicacion: {review.publicationConsent ? 'Autorizada' : 'Privada'}</p>
+              </div>
+              <div className="mt-4 grid grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => handleStatusChange({ id: review.id, status: 'approved' })}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-green/25 bg-brand-green/15 px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-green-100 transition hover:bg-brand-green/25"
+                >
+                  <CheckCircle2 className="h-3.5 w-3.5" />
+                  Aprobar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => handleStatusChange({ id: review.id, status: 'hidden' })}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-brand-rust/25 bg-brand-rust/15 px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-orange-100 transition hover:bg-brand-rust/25"
+                >
+                  <EyeOff className="h-3.5 w-3.5" />
+                  Ocultar
+                </button>
+              </div>
+            </article>
+          ))}
+          {!loadError && reviews.length === 0 && (
+            <div className="rounded-2xl border border-dashed border-brand-orange/20 bg-brand-night/45 p-5 text-sm font-bold text-slate-500 lg:col-span-3">
+              Aun no hay opiniones registradas.
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
+  );
+};
+
+export default AdminReviewsSection;

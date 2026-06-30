@@ -1,4 +1,5 @@
 ﻿import { useEffect, useState } from 'react';
+import { createCustomerReview } from '../services/reviewRepository';
 
 const GOOGLE_APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLe_ChBO2ulwpZtTRvl-4CU-nmqVeTt3d3cTw9MgMkMsRyO9hMGg5n_-fFSM-ifeUC/exec';
 const defaultFormData = {
@@ -71,19 +72,23 @@ const PreferencesForm = () => {
     setIsSubmitting(true);
 
     try {
-      await fetch(GOOGLE_APPS_SCRIPT_URL, {
-        method: 'POST',
-        mode: 'no-cors',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...formData,
-          tipo: 'opinion_cliente',
-          fecha: new Date().toISOString()
-        })
-      });
+      try {
+        await createCustomerReview(formData);
+      } catch {
+        await fetch(GOOGLE_APPS_SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            ...formData,
+            tipo: 'opinion_cliente',
+            fecha: new Date().toISOString()
+          })
+        });
+      }
 
       setFeedback({
-        message: 'Gracias por compartir tu opinión. Tu experiencia ayuda a otros clientes a conocer AQUABRILLO.',
+        message: 'Gracias por compartir tu opinión. La revisaremos antes de publicarla en el sitio.',
         type: 'success'
       });
       setFormData(defaultFormData);
@@ -536,4 +541,5 @@ const PreferencesForm = () => {
 };
 
 export default PreferencesForm;
+
 
