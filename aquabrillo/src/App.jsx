@@ -6,7 +6,7 @@ import {
   Paintbrush, Gem, Zap, MessageCircle, LocateFixed
 } from 'lucide-react';
 import Navbar from './components/layout/Navbar';
-import AdminReservationsSection from './components/AdminReservationsSection';
+import AdminPanelPage from './components/AdminPanelPage';
 import BookingMvp from './components/BookingMvp';
 import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
@@ -52,11 +52,11 @@ const Hero = () => {
   const [imgError, setImgError] = useState(false);
 
   return (
-    <section id="inicio" className="relative min-h-[100svh] overflow-hidden bg-slate-950">
+    <section id="inicio" className="relative min-h-[100svh] overflow-hidden bg-brand-night">
       <div className="absolute inset-0">
-        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-blue-600/10 blur-3xl" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(2,6,23,0.8)_100%)]" />
+        <div className="absolute -top-24 left-1/4 h-80 w-80 rounded-full bg-brand-orange/12 blur-3xl" />
+        <div className="absolute bottom-0 right-1/4 h-96 w-96 rounded-full bg-brand-rust/10 blur-3xl" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_transparent_0%,_rgba(40,40,40,0.88)_100%)]" />
       </div>
       <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.02)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.02)_1px,transparent_1px)] bg-[size:64px_64px]" />
 
@@ -64,7 +64,7 @@ const Hero = () => {
         <div>
         <ScrollReveal>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-2 backdrop-blur-sm">
-            <Sparkles className="h-4 w-4 text-cyan-400" />
+            <Sparkles className="h-4 w-4 text-brand-orange" />
             <span className="text-sm font-medium text-slate-300">Lavado y Detallado a Domicilio</span>
           </div>
         </ScrollReveal>
@@ -72,7 +72,7 @@ const Hero = () => {
         <ScrollReveal delay={100}>
           <h1 className="mb-6 text-4xl font-bold leading-[0.94] tracking-tight text-white sm:text-5xl md:text-6xl xl:text-7xl">
             Tu auto <br />
-            <span className="bg-gradient-to-r from-cyan-400 via-blue-400 to-cyan-300 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-brand-orange via-orange-200 to-brand-rust bg-clip-text text-transparent">
               impecable
             </span>
             <br />
@@ -96,7 +96,7 @@ const Hero = () => {
               href={WHATSAPP_LINK(WHATSAPP_CAMPAIGNS.carService)}
               target="_blank"
               rel="noopener noreferrer"
-              className="group flex items-center justify-center gap-3 rounded-full bg-gradient-to-r from-green-500 to-green-600 px-7 py-4 text-base font-semibold text-white transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-green-500/25 sm:text-lg"
+              className="group flex items-center justify-center gap-3 rounded-full bg-[#25D366] px-7 py-4 text-base font-semibold text-white transition-all duration-300 hover:scale-105 hover:bg-[#1EBE5D] hover:shadow-2xl hover:shadow-[#25D366]/25 sm:text-lg"
             >
               <MessageCircle className="h-5 w-5" />
               Cotizar por WhatsApp
@@ -114,7 +114,7 @@ const Hero = () => {
 
         <ScrollReveal delay={400} className="w-full">
           <div className="relative">
-            <div className="relative mx-auto h-[280px] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-slate-900 shadow-2xl shadow-cyan-500/10 group sm:h-[360px] lg:h-[560px] xl:h-[620px]">
+            <div className="relative mx-auto h-[280px] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#242424] shadow-2xl shadow-brand-orange/10 group sm:h-[360px] lg:h-[560px] xl:h-[620px]">
               {!imgError ? (
                 <img 
                   src={IMAGES.hero} 
@@ -129,13 +129,13 @@ const Hero = () => {
                   <div className="text-center">
                     <Car className="w-20 h-20 text-slate-700 mx-auto mb-4" />
                     <p className="text-slate-500 text-sm font-medium">Agrega tu imagen en:</p>
-                    <p className="text-cyan-400 text-xs mt-2 font-mono">public/images/hero/hero-car.jpg</p>
+                    <p className="text-brand-orange text-xs mt-2 font-mono">public/images/hero/hero-car.jpg</p>
                     <p className="text-slate-600 text-xs mt-2">Recomendado: Auto oscuro, fondo negro, reflejos</p>
                   </div>
                 </div>
               )}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-70" />
-              <div className="absolute inset-0 bg-gradient-to-r from-slate-950/30 via-transparent to-slate-950/30" />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-night via-transparent to-transparent opacity-70" />
+              <div className="absolute inset-0 bg-gradient-to-r from-brand-night/35 via-transparent to-brand-night/35" />
               <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
             </div>
             <div className="pointer-events-none absolute bottom-4 left-4 right-4 grid grid-cols-3 gap-2 sm:bottom-5 sm:left-5 sm:right-auto sm:w-[24rem]">
@@ -146,7 +146,7 @@ const Hero = () => {
               ].map(([value, label]) => (
                 <div key={value} className="rounded-2xl border border-white/10 bg-slate-950/55 px-3 py-2 text-center backdrop-blur-xl">
                   <div className="text-sm font-black text-white">{value}</div>
-                  <div className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-cyan-100/60">{label}</div>
+                  <div className="text-[0.65rem] font-bold uppercase tracking-[0.16em] text-brand-orange/70">{label}</div>
                 </div>
               ))}
             </div>
@@ -2218,6 +2218,12 @@ const Footer = () => {
           <p className="text-slate-600 text-xs">
             Lavado y detallado premium a domicilio.
           </p>
+          <a
+            href="/admin"
+            className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600 transition hover:text-brand-orange"
+          >
+            Panel operativo
+          </a>
         </div>
       </div>
     </footer>
@@ -2250,6 +2256,10 @@ const FloatingWhatsApp = () => {
 };
 
 function App() {
+  if (window.location.pathname.startsWith('/admin')) {
+    return <AdminPanelPage />;
+  }
+
   return (
     <div className="min-h-screen bg-slate-950 text-white antialiased selection:bg-cyan-500/30 selection:text-cyan-200">
       <Navbar />
@@ -2259,7 +2269,6 @@ function App() {
       <Credibility />
       <Services />
       <BookingMvp />
-      <AdminReservationsSection />
       <Benefits />
       <ResultsCarousel />
       <CeramicCoating />

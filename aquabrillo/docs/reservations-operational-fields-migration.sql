@@ -1,47 +1,9 @@
-create table if not exists public.reservations (
-  id uuid primary key default gen_random_uuid(),
-  folio text not null unique,
-  status text not null default 'preagenda_whatsapp',
-  channel text not null default 'web_whatsapp',
-  customer_name text,
-  customer_phone text,
-  vehicle_id text,
-  vehicle_label text,
-  services jsonb not null default '[]'::jsonb,
-  service_ids text[] not null default '{}'::text[],
-  date date,
-  date_label text,
-  time text,
-  estimate_price numeric not null default 0,
-  estimate_minutes integer not null default 0,
-  address text,
-  coverage jsonb not null default '{}'::jsonb,
-  notes text,
-  payment_status text not null default 'pendiente',
-  assigned_to text,
-  message text,
-  source text not null default 'web',
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create index if not exists reservations_date_time_idx
-  on public.reservations (date, time);
-
-create index if not exists reservations_status_idx
-  on public.reservations (status);
-
-alter table public.reservations
-  add column if not exists coverage jsonb not null default '{}'::jsonb;
-
 alter table public.reservations
   add column if not exists customer_name text,
   add column if not exists customer_phone text,
   add column if not exists notes text,
   add column if not exists payment_status text not null default 'pendiente',
   add column if not exists assigned_to text;
-
-drop index if exists reservations_active_slot_unique_idx;
 
 create or replace function public.create_reservation_with_capacity(
   reservation_payload jsonb,
@@ -141,59 +103,3 @@ end;
 $$;
 
 grant execute on function public.create_reservation_with_capacity(jsonb, integer) to anon;
-
-alter table public.reservations enable row level security;
-
-create policy "Allow public prebooking inserts"
-  on public.reservations
-  for insert
-  to anon
-  with check (true);
-
-create policy "Allow public dashboard reads for MVP"
-  on public.reservations
-  for select
-  to anon
-  using (true);
-
-create policy "Allow public status updates for MVP"
-  on public.reservations
-  for update
-  to anon
-  using (true)
-  with check (true);
-
-create table if not exists public.reservation_events (
-  id uuid primary key default gen_random_uuid(),
-  reservation_folio text not null,
-  event_type text not null,
-  channel text not null default 'manual_whatsapp',
-  delivery_status text not null default 'manual_opened',
-  customer_phone text,
-  message text,
-  metadata jsonb not null default '{}'::jsonb,
-  created_at timestamptz not null default now()
-);
-
-create index if not exists reservation_events_folio_idx
-  on public.reservation_events (reservation_folio, created_at desc);
-
-create index if not exists reservation_events_type_idx
-  on public.reservation_events (event_type);
-
-create index if not exists reservation_events_delivery_status_idx
-  on public.reservation_events (delivery_status);
-
-alter table public.reservation_events enable row level security;
-
-create policy "Allow public event inserts for MVP"
-  on public.reservation_events
-  for insert
-  to anon
-  with check (true);
-
-create policy "Allow public event reads for MVP"
-  on public.reservation_events
-  for select
-  to anon
-  using (true);

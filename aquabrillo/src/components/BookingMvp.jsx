@@ -71,7 +71,10 @@ const BookingMvp = () => {
   const [selectedServices, setSelectedServices] = useState(BOOKING_DEFAULTS.serviceIds);
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedTime, setSelectedTime] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [customerPhone, setCustomerPhone] = useState('');
   const [address, setAddress] = useState('');
+  const [notes, setNotes] = useState('');
   const [lastSavedFolio, setLastSavedFolio] = useState('');
   const [reservations, setReservations] = useState([]);
   const [reservationStatus, setReservationStatus] = useState(getReservationStorageStatus);
@@ -208,7 +211,9 @@ const BookingMvp = () => {
       .sort((a, b) => a.time.localeCompare(b.time))
   ), [estimate.minutes, reservations, schedule, selectedDate, selectedDayKey, selectedServiceItems]);
   const selectedSlotIsAvailable = availableSlots.some((slot) => slot.time === selectedTime && slot.available);
-  const canPrebook = selectedServices.length > 0 && selectedDate && selectedTime && selectedSlotIsAvailable;
+  const normalizedCustomerPhone = customerPhone.replace(/\D/g, '');
+  const hasCustomerData = customerName.trim().length >= 3 && normalizedCustomerPhone.length >= 10;
+  const canPrebook = selectedServices.length > 0 && selectedDate && selectedTime && selectedSlotIsAvailable && hasCustomerData;
   const prebookingFolio = useMemo(() => createPrebookingFolio({
     date: selectedDate,
     time: selectedTime,
@@ -220,6 +225,8 @@ const BookingMvp = () => {
     'Hola AQUABRILLO, quiero preagendar mi servicio.',
     '',
     `Folio temporal: ${prebookingFolio}`,
+    `Nombre: ${customerName.trim() || '[Escribir nombre]'}`,
+    `Telefono: ${customerPhone.trim() || '[Escribir telefono]'}`,
     `Vehiculo: ${vehicle.label}`,
     `Servicios: ${selectedServiceItems.map((item) => item.label).join(', ') || 'Sin seleccionar'}`,
     `Fecha: ${selectedDateLabel}`,
@@ -227,6 +234,7 @@ const BookingMvp = () => {
     `Precio estimado: ${estimate.price ? currency.format(estimate.price) : 'Por calcular'}`,
     `Duracion estimada: ${minutesToLabel(estimate.minutes)}`,
     `Direccion: ${address || '[Escribir direccion]'}`,
+    notes.trim() ? `Notas: ${notes.trim()}` : '',
     coverageContext ? `Cobertura: ${coverageContext.status} (${coverageContext.tier})` : '',
     coverageContext?.distanceKm ? `Distancia estimada a base: ${Number(coverageContext.distanceKm).toFixed(1)} km` : '',
     coverageContext?.activeZone ? `Zona seleccionada: ${coverageContext.activeZone}` : '',
@@ -292,7 +300,10 @@ const BookingMvp = () => {
       dateLabel: selectedDateLabel,
       time: selectedTime,
       estimate,
+      customerName: customerName.trim(),
+      customerPhone: customerPhone.trim(),
       address,
+      notes: notes.trim(),
       coverage: coverageContext,
       message: whatsappMessage,
     });
@@ -320,12 +331,12 @@ const BookingMvp = () => {
   };
 
   return (
-    <section id="cotizador" className="relative overflow-hidden bg-slate-950 py-20 sm:py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(34,211,238,0.12)_0%,_transparent_42%)]" />
+    <section id="cotizador" className="relative overflow-hidden bg-brand-night py-20 sm:py-24">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(240,139,29,0.13)_0%,_transparent_42%)]" />
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-10 max-w-3xl">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-cyan-300/20 bg-cyan-300/10 px-4 py-2 text-sm font-bold text-cyan-200">
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
               <Sparkles className="h-4 w-4" />
               {BOOKING_COPY.eyebrow}
             </span>
@@ -343,7 +354,7 @@ const BookingMvp = () => {
             <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/20 sm:p-6">
               <div className="grid gap-6">
                 <div>
-                  <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">
+                  <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">
                     <Car className="h-4 w-4" />
                     Tipo de vehiculo
                   </div>
@@ -355,8 +366,8 @@ const BookingMvp = () => {
                         onClick={() => setVehicleId(item.id)}
                         className={`rounded-2xl border px-3 py-3 text-left text-sm font-bold transition ${
                           vehicleId === item.id
-                            ? 'border-cyan-300/50 bg-cyan-300/15 text-white'
-                            : 'border-white/10 bg-slate-950/40 text-slate-300 hover:border-cyan-300/25'
+                            ? 'border-brand-orange/55 bg-brand-orange/15 text-white'
+                            : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
                         }`}
                       >
                         {item.label}
@@ -366,7 +377,7 @@ const BookingMvp = () => {
                 </div>
 
                 <div>
-                  <div className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">
+                  <div className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">
                     Servicios
                   </div>
                   <div className="grid gap-2 sm:grid-cols-2">
@@ -380,15 +391,15 @@ const BookingMvp = () => {
                           onClick={() => toggleService(item.id)}
                           className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition ${
                             checked
-                              ? 'border-cyan-300/50 bg-cyan-300/15 text-white'
-                              : 'border-white/10 bg-slate-950/40 text-slate-300 hover:border-cyan-300/25'
+                              ? 'border-brand-orange/55 bg-brand-orange/15 text-white'
+                              : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
                           }`}
                         >
                           <span>
                             <span className="block text-sm font-bold">{item.label}</span>
                             <span className="text-xs text-slate-500">{currency.format(item.price)} | {minutesToLabel(item.minutes)}</span>
                           </span>
-                          <CheckCircle2 className={`h-5 w-5 ${checked ? 'text-cyan-300' : 'text-slate-700'}`} />
+                          <CheckCircle2 className={`h-5 w-5 ${checked ? 'text-brand-orange' : 'text-slate-700'}`} />
                         </button>
                       );
                     })}
@@ -399,13 +410,13 @@ const BookingMvp = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={180}>
-            <div className="sticky top-28 rounded-3xl border border-cyan-300/15 bg-slate-900/80 p-4 shadow-2xl shadow-cyan-950/25 backdrop-blur-xl sm:p-6">
-              <div className="mb-5 rounded-2xl border border-white/10 bg-slate-950/70 p-5">
+            <div className="sticky top-28 rounded-3xl border border-brand-orange/20 bg-[#242424]/86 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
+              <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/75 p-5">
                 <div className="text-sm font-bold uppercase tracking-[0.16em] text-slate-400">Estimado</div>
                 <div className="mt-2 flex items-end justify-between gap-4">
                   <div className="text-4xl font-black text-white">{estimate.price ? currency.format(estimate.price) : '$0'}</div>
                   <div className="text-right text-sm text-slate-400">
-                    <Clock className="mb-1 ml-auto h-4 w-4 text-cyan-300" />
+                    <Clock className="mb-1 ml-auto h-4 w-4 text-brand-orange" />
                     {minutesToLabel(estimate.minutes)}
                   </div>
                 </div>
@@ -418,7 +429,7 @@ const BookingMvp = () => {
               </div>
 
               <div className="mb-5">
-                <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">
+                <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">
                   <CalendarDays className="h-4 w-4" />
                   Fecha tentativa
                 </div>
@@ -433,8 +444,8 @@ const BookingMvp = () => {
                       }}
                       className={`rounded-2xl border px-3 py-3 text-left transition ${
                         selectedDate === item.id
-                          ? 'border-cyan-300/50 bg-cyan-300/15 text-white'
-                          : 'border-white/10 bg-slate-950/40 text-slate-300 hover:border-cyan-300/25'
+                          ? 'border-brand-orange/55 bg-brand-orange/15 text-white'
+                          : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
                       }`}
                     >
                       <span className="block text-sm font-black capitalize">{item.label}</span>
@@ -445,7 +456,7 @@ const BookingMvp = () => {
               </div>
 
               <div className="mb-5">
-                <div className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">Hora tentativa</div>
+                <div className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Hora tentativa</div>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-3 xl:grid-cols-5">
                   {(selectedDate ? availableSlots : []).map((slot) => {
                     const unavailableReason = !slot.active
@@ -463,8 +474,8 @@ const BookingMvp = () => {
                         title={slot.available ? slot.notes : unavailableReason}
                         className={`min-h-[64px] rounded-2xl border px-3 py-2 text-sm font-black transition disabled:cursor-not-allowed disabled:opacity-35 ${
                           selectedTime === slot.time && slot.available
-                            ? 'border-cyan-300/50 bg-cyan-300/15 text-white'
-                            : 'border-white/10 bg-slate-950/40 text-slate-300 hover:border-cyan-300/25'
+                            ? 'border-brand-green/55 bg-brand-green/20 text-white'
+                            : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
                         }`}
                       >
                         <span className="block">{slot.time}</span>
@@ -477,22 +488,22 @@ const BookingMvp = () => {
                     );
                   })}
                   {selectedDate && availableSlots.length === 0 && (
-                    <div className="col-span-full rounded-2xl border border-white/10 bg-slate-950/40 px-4 py-3 text-sm font-bold text-slate-400">
+                    <div className="col-span-full rounded-2xl border border-white/10 bg-brand-night/55 px-4 py-3 text-sm font-bold text-slate-400">
                       No hay horarios activos para este dia.
                     </div>
                   )}
                 </div>
                 {bookingAlert && (
-                  <p className="mt-3 rounded-2xl border border-amber-300/20 bg-amber-300/10 px-4 py-3 text-xs font-bold text-amber-100" role="status" aria-live="polite">
+                  <p className="mt-3 rounded-2xl border border-brand-rust/30 bg-brand-rust/15 px-4 py-3 text-xs font-bold text-orange-100" role="status" aria-live="polite">
                     {bookingAlert}
                   </p>
                 )}
               </div>
 
-              <div className="mb-5 rounded-2xl border border-white/10 bg-slate-950/55 p-4">
+              <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/65 p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
-                  <span className="text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">Resumen</span>
-                  <span className="rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-[0.68rem] font-black text-cyan-100">
+                  <span className="text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Resumen</span>
+                  <span className="rounded-full border border-brand-orange/25 bg-brand-orange/10 px-3 py-1 text-[0.68rem] font-black text-orange-100">
                     {prebookingFolio}
                   </span>
                 </div>
@@ -515,10 +526,35 @@ const BookingMvp = () => {
                 </div>
               </div>
 
+              <div className="mb-5 grid gap-3 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Nombre</span>
+                  <input
+                    type="text"
+                    value={customerName}
+                    onChange={(event) => setCustomerName(event.target.value)}
+                    autoComplete="name"
+                    placeholder="Nombre del cliente"
+                    className="w-full rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
+                  />
+                </label>
+                <label className="block">
+                  <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Telefono</span>
+                  <input
+                    type="tel"
+                    value={customerPhone}
+                    onChange={(event) => setCustomerPhone(event.target.value)}
+                    autoComplete="tel"
+                    placeholder="10 digitos"
+                    className="w-full rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
+                  />
+                </label>
+              </div>
+
               <label className="mb-5 block">
-                <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">Direccion</span>
+                <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Direccion</span>
                 {coverageContext && (
-                  <div className="mb-3 rounded-2xl border border-cyan-300/15 bg-cyan-300/10 px-4 py-3 text-xs font-bold text-cyan-100">
+                  <div className="mb-3 rounded-2xl border border-brand-green/25 bg-brand-green/15 px-4 py-3 text-xs font-bold text-green-100">
                     Cobertura: {coverageContext.status} ({coverageContext.tier})
                     {coverageContext.distanceKm ? ` | ${Number(coverageContext.distanceKm).toFixed(1)} km de base` : ''}
                   </div>
@@ -528,7 +564,18 @@ const BookingMvp = () => {
                   onChange={(event) => setAddress(event.target.value)}
                   rows={3}
                   placeholder="Colonia, calle o referencia para confirmar cobertura"
-                  className="w-full resize-none rounded-2xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/50"
+                  className="w-full resize-none rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
+                />
+              </label>
+
+              <label className="mb-5 block">
+                <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Notas opcionales</span>
+                <textarea
+                  value={notes}
+                  onChange={(event) => setNotes(event.target.value)}
+                  rows={2}
+                  placeholder="Referencias, tipo de acceso, instrucciones especiales"
+                  className="w-full resize-none rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
                 />
               </label>
 
@@ -539,7 +586,7 @@ const BookingMvp = () => {
                 className={`flex items-center justify-center gap-3 rounded-2xl px-6 py-4 text-base font-black text-white transition ${
                   canPrebook
                     ? 'bg-[#25D366] shadow-xl shadow-[#25D366]/25 hover:bg-[#1EBE5D]'
-                    : 'pointer-events-none bg-slate-700 text-slate-400'
+                    : 'pointer-events-none bg-brand-night text-slate-500'
                 }`}
               >
                 <MessageCircle className="h-5 w-5" />
@@ -547,8 +594,8 @@ const BookingMvp = () => {
                 <ArrowRight className="h-5 w-5" />
               </a>
               {lastSavedFolio === prebookingFolio && (
-                <p className="mt-3 text-center text-xs font-bold text-cyan-100/70" role="status" aria-live="polite">
-                  Preagenda preparada localmente con folio {prebookingFolio}.
+                <p className="mt-3 text-center text-xs font-bold text-brand-orange/80" role="status" aria-live="polite">
+                  Preagenda preparada con folio {prebookingFolio}.
                 </p>
               )}
             </div>

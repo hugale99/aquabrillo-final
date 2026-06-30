@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
-import { RESERVATION_STATUSES } from '../config/booking';
+import { CalendarDays, MessageCircle, Search } from 'lucide-react';
+import { PAYMENT_STATUSES, RESERVATION_STATUSES } from '../config/booking';
 import ScrollReveal from './ui/ScrollReveal';
 
 const currency = new Intl.NumberFormat('es-MX', {
@@ -17,9 +18,145 @@ const minutesToLabel = (minutes) => {
   return `${hours} h ${rest} min`;
 };
 
-const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStatusChange }) => {
+const getTodayIso = () => {
+  const date = new Date();
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
+const normalizePhone = (value) => String(value || '').replace(/\D/g, '');
+
+const eventTypeLabels = {
+  confirmada: 'Confirmada por WhatsApp',
+  recordatorio_24h: 'Recordatorio 24h',
+  en_camino: 'Aviso en camino',
+  terminada: 'Servicio terminado',
+};
+
+const formatEventDate = (value) => {
+  if (!value) return 'Sin fecha';
+
+  return new Intl.DateTimeFormat('es-MX', {
+    day: '2-digit',
+    month: 'short',
+    hour: '2-digit',
+    minute: '2-digit',
+  }).format(new Date(value));
+};
+
+const getCustomerWhatsAppLink = (item) => {
+  const phone = normalizePhone(item.customerPhone);
+  if (phone.length < 10) return '';
+
+  const message = [
+    `Hola ${item.customerName || ''}`.trim() + ', te contactamos de AQUABRILLO para dar seguimiento a tu preagenda.',
+    '',
+    `Folio: ${item.folio}`,
+    `Servicio: ${item.services?.map((service) => service.label || service.name).join(', ') || 'Servicio AQUABRILLO'}`,
+    `Fecha y hora: ${item.dateLabel || item.date || 'Por confirmar'} ${item.time || ''}`.trim(),
+    '',
+    '¿Nos confirmas si mantenemos este horario?'
+  ].join('\n');
+
+  return `https://wa.me/52${phone.slice(-10)}?text=${encodeURIComponent(message)}`;
+};
+
+const getServiceLabel = (item) =>
+  item.services?.map((service) => service.label || service.name).filter(Boolean).join(', ') || 'Servicio AQUABRILLO';
+
+const getReservationDateTimeLabel = (item) =>
+  `${item.dateLabel || item.date || 'Por confirmar'} ${item.time || ''}`.trim();
+
+const getOperationalWhatsAppLink = (item, message) => {
+  const phone = normalizePhone(item.customerPhone);
+  if (phone.length < 10) return '';
+
+  return `https://wa.me/52${phone.slice(-10)}?text=${encodeURIComponent(message)}`;
+};
+
+const buildOperationalMessages = (item) => {
+  const customerName = item.customerName || 'cliente';
+  const serviceLabel = getServiceLabel(item);
+  const dateTimeLabel = getReservationDateTimeLabel(item);
+
+  return [
+    {
+      id: 'confirmada',
+      label: 'Confirmar cita',
+      status: 'confirmada',
+      message: [
+        `Hola ${customerName}, tu cita AQUABRILLO queda confirmada.`,
+        '',
+        `Folio: ${item.folio}`,
+        `Servicio: ${serviceLabel}`,
+        `Fecha y hora: ${dateTimeLabel}`,
+        '',
+        'Gracias por confiar en AQUABRILLO.'
+      ].join('\n')
+    },
+    {
+      id: 'recordatorio_24h',
+      label: 'Recordatorio 24h',
+      message: [
+        `Hola ${customerName}, te recordamos tu servicio AQUABRILLO programado.`,
+        '',
+        `Folio: ${item.folio}`,
+        `Servicio: ${serviceLabel}`,
+        `Fecha y hora: ${dateTimeLabel}`,
+        '',
+        'Si necesitas ajustar la direccion o el horario, puedes responder este mensaje.'
+      ].join('\n')
+    },
+    {
+      id: 'en_camino',
+      label: 'En camino',
+      status: 'en_camino',
+      message: [
+        `Hola ${customerName}, el equipo AQUABRILLO va en camino a tu servicio.`,
+        '',
+        `Folio: ${item.folio}`,
+        `Servicio: ${serviceLabel}`,
+        '',
+        'Te avisamos al llegar.'
+      ].join('\n')
+    },
+    {
+      id: 'terminada',
+      label: 'Terminado',
+      status: 'terminada',
+      message: [
+        `Hola ${customerName}, tu servicio AQUABRILLO ha finalizado.`,
+        '',
+        `Folio: ${item.folio}`,
+        `Servicio: ${serviceLabel}`,
+        '',
+        'Gracias por tu preferencia. Si todo quedo perfecto, nos encantaria volver a atenderte.'
+      ].join('\n')
+    }
+  ];
+};
+
+const quickStatusActions = [
+  { id: 'confirmada', label: 'Confirmar' },
+  { id: 'en_camino', label: 'En camino' },
+  { id: 'en_servicio', label: 'En servicio' },
+  { id: 'terminada', label: 'Terminar' },
+];
+
+const LocalBookingDashboard = ({
+  prebookings = [],
+  reservationEvents = [],
+  storageMode = 'local',
+  onStatusChange,
+  onOperationalUpdate,
+  onMessageLog,
+}) => {
   const [statusFilter, setStatusFilter] = useState('todos');
   const [dateFilter, setDateFilter] = useState('todos');
+  const [searchTerm, setSearchTerm] = useState('');
+  const todayIso = getTodayIso();
   const dateOptions = useMemo(() => (
     [...new Set(prebookings.map((item) => item.date).filter(Boolean))]
       .sort()
@@ -28,21 +165,45 @@ const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStat
   const visiblePrebookings = useMemo(() => prebookings.filter((item) => {
     const statusMatches = statusFilter === 'todos' || item.status === statusFilter;
     const dateMatches = dateFilter === 'todos' || item.date === dateFilter;
-    return statusMatches && dateMatches;
-  }), [dateFilter, prebookings, statusFilter]);
+    const normalizedSearch = searchTerm.trim().toLowerCase();
+    const searchMatches = !normalizedSearch || [
+      item.folio,
+      item.customerName,
+      item.customerPhone,
+      item.vehicle?.label,
+      item.address,
+      item.services?.map((service) => service.label || service.name).join(' '),
+    ].filter(Boolean).join(' ').toLowerCase().includes(normalizedSearch);
+
+    return statusMatches && dateMatches && searchMatches;
+  }), [dateFilter, prebookings, searchTerm, statusFilter]);
+  const todayPrebookings = useMemo(() => (
+    prebookings
+      .filter((item) => item.date === todayIso)
+      .sort((a, b) => String(a.time || '').localeCompare(String(b.time || '')))
+  ), [prebookings, todayIso]);
   const localMetrics = useMemo(() => ({
     count: prebookings.length,
     estimatedRevenue: prebookings.reduce((sum, item) => sum + (item.estimate?.price || 0), 0),
     nextPending: prebookings[0]?.folio || 'Sin folios',
     pending: prebookings.filter((item) => item.status === 'preagenda_whatsapp').length,
-  }), [prebookings]);
+    today: prebookings.filter((item) => item.date === todayIso).length,
+  }), [prebookings, todayIso]);
+  const eventsByFolio = useMemo(() => reservationEvents.reduce((grouped, event) => {
+    if (!event.folio) return grouped;
+
+    return {
+      ...grouped,
+      [event.folio]: [...(grouped[event.folio] || []), event],
+    };
+  }, {}), [reservationEvents]);
 
   return (
     <ScrollReveal delay={260}>
-      <div className="mt-6 rounded-3xl border border-white/10 bg-white/[0.03] p-4 shadow-2xl shadow-black/10 sm:p-6">
+      <div className="mt-6 rounded-3xl border border-brand-orange/15 bg-white/[0.03] p-4 shadow-2xl shadow-black/10 sm:p-6">
         <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <span className="text-sm font-bold uppercase tracking-[0.14em] text-cyan-200">Dashboard admin MVP</span>
+            <span className="text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Dashboard admin MVP</span>
             <h3 className="mt-2 text-2xl font-black text-white">Reservas y preagendas</h3>
           </div>
           <p className="max-w-xl text-sm text-slate-500">
@@ -50,29 +211,70 @@ const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStat
           </p>
         </div>
 
-        <div className="mb-5 grid gap-3 sm:grid-cols-3">
-          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+        <div className="mb-5 grid gap-3 sm:grid-cols-4">
+          <div className="rounded-2xl border border-white/10 bg-brand-night/55 p-4">
             <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Preagendas</div>
             <div className="mt-2 text-2xl font-black text-white">{localMetrics.count}</div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+          <button
+            type="button"
+            onClick={() => setDateFilter(todayIso)}
+            className="rounded-2xl border border-brand-orange/20 bg-brand-orange/10 p-4 text-left transition hover:border-brand-orange/40"
+          >
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.14em] text-slate-400">
+              <CalendarDays className="h-4 w-4 text-brand-orange" />
+              Hoy
+            </div>
+            <div className="mt-2 text-2xl font-black text-white">{localMetrics.today}</div>
+          </button>
+          <div className="rounded-2xl border border-brand-green/20 bg-brand-green/10 p-4">
             <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Estimado local</div>
             <div className="mt-2 text-2xl font-black text-white">{currency.format(localMetrics.estimatedRevenue)}</div>
           </div>
-          <div className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+          <div className="rounded-2xl border border-brand-rust/20 bg-brand-rust/10 p-4">
             <div className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Pendientes</div>
             <div className="mt-2 text-2xl font-black text-white">{localMetrics.pending}</div>
             <div className="mt-1 truncate text-xs font-bold text-slate-500">{localMetrics.nextPending}</div>
           </div>
         </div>
 
-        <div className="mb-5 flex flex-col gap-3 rounded-2xl border border-white/10 bg-slate-950/35 p-3 sm:flex-row">
+        {todayPrebookings.length > 0 && (
+          <div className="mb-5 rounded-2xl border border-brand-orange/15 bg-brand-orange/5 p-4">
+            <div className="mb-3 text-xs font-black uppercase tracking-[0.14em] text-brand-orange">Agenda de hoy</div>
+            <div className="grid gap-2 md:grid-cols-2 xl:grid-cols-3">
+              {todayPrebookings.slice(0, 6).map((item) => (
+                <div key={`today-${item.folio}`} className="rounded-xl border border-white/10 bg-brand-night/55 px-3 py-2 text-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="font-black text-white">{item.time || '--:--'}</span>
+                    <span className="truncate text-xs font-bold text-slate-400">{item.status || 'preagenda'}</span>
+                  </div>
+                  <p className="mt-1 truncate font-bold text-slate-200">{item.customerName || item.folio}</p>
+                  <p className="truncate text-xs text-slate-500">{item.services?.map((service) => service.label || service.name).join(', ')}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="mb-5 grid gap-3 rounded-2xl border border-white/10 bg-brand-night/45 p-3 md:grid-cols-[1fr_0.75fr_0.75fr]">
+          <label>
+            <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Buscar cliente</span>
+            <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-brand-night px-3 py-2 focus-within:border-brand-orange/55">
+              <Search className="h-4 w-4 text-brand-orange/75" />
+              <input
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Nombre, telefono, folio o servicio"
+                className="min-w-0 flex-1 bg-transparent text-sm font-bold text-white outline-none placeholder:text-slate-600"
+              />
+            </div>
+          </label>
           <label className="flex-1">
             <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Estado</span>
             <select
               value={statusFilter}
               onChange={(event) => setStatusFilter(event.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan-300/50"
+              className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-sm font-bold text-white outline-none focus:border-brand-orange/55"
             >
               <option value="todos">Todos</option>
               {RESERVATION_STATUSES.map((status) => (
@@ -85,9 +287,10 @@ const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStat
             <select
               value={dateFilter}
               onChange={(event) => setDateFilter(event.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm font-bold text-white outline-none focus:border-cyan-300/50"
+              className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-sm font-bold text-white outline-none focus:border-brand-orange/55"
             >
               <option value="todos">Todas</option>
+              <option value={todayIso}>Hoy</option>
               {dateOptions.map((date) => (
                 <option key={date.id} value={date.id}>{date.label}</option>
               ))}
@@ -97,40 +300,168 @@ const LocalBookingDashboard = ({ prebookings = [], storageMode = 'local', onStat
 
         <div className="grid gap-3 lg:grid-cols-3">
           {visiblePrebookings.slice(0, 6).map((item) => (
-            <div key={item.folio} className="rounded-2xl border border-white/10 bg-slate-950/45 p-4">
+            <div key={item.folio} className="rounded-2xl border border-white/10 bg-brand-night/55 p-4">
               <div className="mb-3 flex items-center justify-between gap-3">
                 <span className="truncate text-sm font-black text-white">{item.folio}</span>
-                <span className="rounded-full bg-cyan-300/10 px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-cyan-100">
+                <span className="rounded-full bg-brand-orange/12 px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-orange-100">
                   {item.status || 'preagenda'}
                 </span>
               </div>
               <div className="space-y-1 text-sm text-slate-400">
+                <p><span className="text-slate-500">Cliente:</span> {item.customerName || 'Sin nombre'}</p>
+                <p><span className="text-slate-500">Telefono:</span> {item.customerPhone || 'Sin telefono'}</p>
                 <p><span className="text-slate-500">Vehiculo:</span> {item.vehicle?.label}</p>
                 <p><span className="text-slate-500">Fecha:</span> {item.dateLabel} {item.time}</p>
-                <p><span className="text-slate-500">Servicios:</span> {item.services?.map((service) => service.label).join(', ')}</p>
+                <p><span className="text-slate-500">Servicios:</span> {item.services?.map((service) => service.label || service.name).join(', ')}</p>
                 {item.coverage && (
                   <p>
                     <span className="text-slate-500">Cobertura:</span> {item.coverage.status} {item.coverage.tier ? `(${item.coverage.tier})` : ''}
                   </p>
                 )}
+                {item.notes && <p><span className="text-slate-500">Notas:</span> {item.notes}</p>}
+                <p>
+                  <span className="text-slate-500">Pago:</span> {item.paymentStatus || 'pendiente'}
+                  {item.assignedTo ? ` | Asignado: ${item.assignedTo}` : ''}
+                </p>
                 <p className="font-bold text-white">{currency.format(item.estimate?.price || 0)} | {minutesToLabel(item.estimate?.minutes)}</p>
               </div>
+              {(() => {
+                const itemEvents = eventsByFolio[item.folio] || [];
+                const lastEvent = itemEvents[0];
+
+                return (
+                  <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.025] p-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-[0.65rem] font-black uppercase tracking-[0.12em] text-slate-500">Ultimo contacto</span>
+                      <span className="text-[0.65rem] font-bold text-slate-500">
+                        {lastEvent ? formatEventDate(lastEvent.createdAt) : 'Sin registro'}
+                      </span>
+                    </div>
+                    <p className="mt-1 text-xs font-bold text-slate-300">
+                      {lastEvent ? eventTypeLabels[lastEvent.eventType] || lastEvent.eventType : 'Aun no hay acciones de WhatsApp'}
+                    </p>
+                    {itemEvents.length > 1 && (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {itemEvents.slice(1, 4).map((event) => (
+                          <span
+                            key={event.id}
+                            className="rounded-full border border-white/10 bg-brand-night/70 px-2 py-1 text-[0.62rem] font-bold text-slate-500"
+                          >
+                            {eventTypeLabels[event.eventType] || event.eventType}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })()}
               <label className="mt-3 block">
                 <span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-slate-500">Cambiar estado</span>
                 <select
                   value={item.status || 'preagenda_whatsapp'}
                   onChange={(event) => onStatusChange?.({ folio: item.folio, status: event.target.value })}
-                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-xs font-bold text-white outline-none focus:border-cyan-300/50"
+                  className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none focus:border-brand-orange/55"
                 >
                   {RESERVATION_STATUSES.map((status) => (
                     <option key={status.id} value={status.id}>{status.label}</option>
                   ))}
                 </select>
               </label>
+              <div className="mt-2 grid grid-cols-2 gap-2">
+                {quickStatusActions.map((action) => (
+                  <button
+                    key={`${item.folio}-${action.id}`}
+                    type="button"
+                    onClick={() => onStatusChange?.({ folio: item.folio, status: action.id })}
+                    className={`rounded-xl border px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] transition ${
+                      item.status === action.id
+                        ? 'border-brand-orange/50 bg-brand-orange/20 text-orange-100'
+                        : 'border-white/10 bg-white/[0.035] text-slate-400 hover:border-brand-orange/25 hover:text-white'
+                    }`}
+                  >
+                    {action.label}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                <label className="block">
+                  <span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-slate-500">Pago</span>
+                  <select
+                    value={item.paymentStatus || 'pendiente'}
+                    onChange={(event) => onOperationalUpdate?.({
+                      folio: item.folio,
+                      updates: { paymentStatus: event.target.value },
+                    })}
+                    className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none focus:border-brand-orange/55"
+                  >
+                    {PAYMENT_STATUSES.map((status) => (
+                      <option key={status.id} value={status.id}>{status.label}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className="block">
+                  <span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-slate-500">Asignado</span>
+                  <input
+                    defaultValue={item.assignedTo || ''}
+                    onBlur={(event) => onOperationalUpdate?.({
+                      folio: item.folio,
+                      updates: { assignedTo: event.target.value.trim() },
+                    })}
+                    placeholder="Responsable"
+                    className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none placeholder:text-slate-600 focus:border-brand-orange/55"
+                  />
+                </label>
+              </div>
+              {getCustomerWhatsAppLink(item) ? (
+                <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.025] p-2">
+                  <div className="mb-2 flex items-center gap-2 px-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-slate-500">
+                    <MessageCircle className="h-3.5 w-3.5 text-[#25D366]" />
+                    WhatsApp operativo
+                  </div>
+                  <div className="grid gap-2 sm:grid-cols-2">
+                    {buildOperationalMessages(item).map((action) => {
+                      const href = getOperationalWhatsAppLink(item, action.message);
+
+                      return (
+                        <a
+                          key={`${item.folio}-${action.id}-whatsapp`}
+                          href={href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => {
+                            if (action.status) {
+                              onStatusChange?.({ folio: item.folio, status: action.status });
+                            }
+                            onMessageLog?.({
+                              folio: item.folio,
+                              eventType: action.id,
+                              channel: 'manual_whatsapp',
+                              deliveryStatus: 'manual_opened',
+                              customerPhone: item.customerPhone,
+                              message: action.message,
+                              metadata: {
+                                source: 'admin_dashboard',
+                                statusApplied: action.status || null,
+                              },
+                            });
+                          }}
+                          className="flex items-center justify-center rounded-lg bg-[#25D366] px-3 py-2 text-center text-[0.65rem] font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#1EBE5D]"
+                        >
+                          {action.label}
+                        </a>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                <div className="mt-3 rounded-xl border border-dashed border-white/10 px-4 py-3 text-center text-xs font-bold text-slate-600">
+                  Sin telefono valido para WhatsApp
+                </div>
+              )}
             </div>
           ))}
           {visiblePrebookings.length === 0 && (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-slate-950/35 p-5 text-sm font-bold text-slate-500 lg:col-span-3">
+            <div className="rounded-2xl border border-dashed border-brand-orange/20 bg-brand-night/45 p-5 text-sm font-bold text-slate-500 lg:col-span-3">
               No hay preagendas con estos filtros.
             </div>
           )}

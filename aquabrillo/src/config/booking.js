@@ -53,6 +53,13 @@ export const RESERVATION_STATUSES = [
   { id: 'cancelada', label: 'Cancelada' },
 ];
 
+export const PAYMENT_STATUSES = [
+  { id: 'pendiente', label: 'Pendiente' },
+  { id: 'anticipo', label: 'Anticipo' },
+  { id: 'pagado', label: 'Pagado' },
+  { id: 'facturar', label: 'Facturar' },
+];
+
 export const BLOCKING_RESERVATION_STATUSES = [
   'preagenda_whatsapp',
   'confirmada',
@@ -427,14 +434,14 @@ export const getCoverageContext = () => {
   }
 };
 
-export const updateLocalPrebookingStatus = ({ folio, status }) => {
+export const updateLocalPrebooking = ({ folio, updates = {} }) => {
   if (typeof window === 'undefined') return [];
 
   try {
     const current = getLocalPrebookings();
     const next = current.map((item) => (
       item.folio === folio
-        ? { ...item, status, updatedAt: new Date().toISOString() }
+        ? { ...item, ...updates, updatedAt: new Date().toISOString() }
         : item
     ));
     window.localStorage.setItem(BOOKING_DEFAULTS.storageKey, JSON.stringify(next));
@@ -443,3 +450,6 @@ export const updateLocalPrebookingStatus = ({ folio, status }) => {
     return [];
   }
 };
+
+export const updateLocalPrebookingStatus = ({ folio, status }) =>
+  updateLocalPrebooking({ folio, updates: { status } });

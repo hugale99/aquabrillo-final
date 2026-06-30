@@ -11,7 +11,8 @@
   }
   
   body {
-    @apply bg-slate-950 text-white;
+    background: #282828;
+    color: #fff;
     -webkit-font-smoothing: antialiased;
   }
 
@@ -20,10 +21,11 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-slate-950;
+    background: #282828;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-slate-700 rounded-full;
+    border-radius: 9999px;
+    background: rgba(240, 139, 29, 0.7);
   }
 }

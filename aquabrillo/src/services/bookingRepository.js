@@ -2,20 +2,29 @@ import {
   BOOKING_DEFAULTS,
   getLocalPrebookings,
   saveLocalPrebooking,
+  updateLocalPrebooking,
   updateLocalPrebookingStatus,
 } from '../config/booking';
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RESERVATIONS_TABLE = 'reservations';
+const RESERVATION_EVENTS_TABLE = 'reservation_events';
 const CREATE_RESERVATION_RPC = 'create_reservation_with_capacity';
 
 const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
+let supabaseAccessToken = '';
+
+export const setSupabaseAccessToken = (accessToken = '') => {
+  supabaseAccessToken = accessToken;
+};
 
 const toReservationPayload = (prebooking) => ({
   folio: prebooking.folio,
   status: 'preagenda_whatsapp',
   channel: 'web_whatsapp',
+  customer_name: prebooking.customerName,
+  customer_phone: prebooking.customerPhone,
   vehicle_id: prebooking.vehicle?.id,
   vehicle_label: prebooking.vehicle?.label,
   services: prebooking.services,
@@ -27,6 +36,9 @@ const toReservationPayload = (prebooking) => ({
   estimate_minutes: prebooking.estimate?.minutes ?? 0,
   address: prebooking.address,
   coverage: prebooking.coverage,
+  notes: prebooking.notes,
+  payment_status: prebooking.paymentStatus || 'pendiente',
+  assigned_to: prebooking.assignedTo || null,
   message: prebooking.message,
   source: hasSupabaseConfig ? 'supabase' : 'local',
 });
@@ -35,6 +47,8 @@ const fromReservationPayload = (reservation) => ({
   folio: reservation.folio,
   status: reservation.status,
   channel: reservation.channel,
+  customerName: reservation.customer_name,
+  customerPhone: reservation.customer_phone,
   vehicle: {
     id: reservation.vehicle_id,
     label: reservation.vehicle_label,
@@ -49,8 +63,44 @@ const fromReservationPayload = (reservation) => ({
   },
   address: reservation.address,
   coverage: reservation.coverage,
+  notes: reservation.notes,
+  paymentStatus: reservation.payment_status,
+  assignedTo: reservation.assigned_to,
   message: reservation.message,
   createdAt: reservation.created_at,
+  updatedAt: reservation.updated_at,
+});
+
+const fromReservationEventPayload = (event) => ({
+  id: event.id,
+  folio: event.reservation_folio,
+  eventType: event.event_type,
+  channel: event.channel,
+  deliveryStatus: event.delivery_status,
+  customerPhone: event.customer_phone,
+  message: event.message,
+  metadata: event.metadata ?? {},
+  createdAt: event.created_at,
+});
+
+const toReservationUpdatePayload = (updates = {}) => {
+  const payload = {
+    updated_at: new Date().toISOString(),
+  };
+
+  if (updates.status !== undefined) payload.status = updates.status;
+  if (updates.paymentStatus !== undefined) payload.payment_status = updates.paymentStatus;
+  if (updates.assignedTo !== undefined) payload.assigned_to = updates.assignedTo || null;
+  if (updates.notes !== undefined) payload.notes = updates.notes || null;
+
+  return payload;
+};
+
+const toLocalReservationUpdates = (updates = {}) => ({
+  ...(updates.status !== undefined ? { status: updates.status } : {}),
+  ...(updates.paymentStatus !== undefined ? { paymentStatus: updates.paymentStatus } : {}),
+  ...(updates.assignedTo !== undefined ? { assignedTo: updates.assignedTo } : {}),
+  ...(updates.notes !== undefined ? { notes: updates.notes } : {}),
 });
 
 const supabaseRequest = async (path, options = {}) => {
@@ -62,7 +112,7 @@ const supabaseRequest = async (path, options = {}) => {
     ...options,
     headers: {
       apikey: SUPABASE_ANON_KEY,
-      Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+      Authorization: `Bearer ${supabaseAccessToken || SUPABASE_ANON_KEY}`,
       'Content-Type': 'application/json',
       Prefer: 'return=representation',
       ...extraHeaders,
@@ -192,6 +242,38 @@ export const listReservations = async () => {
   }
 };
 
+export const listReservationEvents = async () => {
+  if (!hasSupabaseConfig) {
+    return {
+      storage: 'local',
+      events: [],
+    };
+  }
+
+  try {
+    const rows = await supabaseRequest(
+      `${RESERVATION_EVENTS_TABLE}?select=*&order=created_at.desc&limit=100`,
+      {
+        method: 'GET',
+        headers: {
+          Prefer: undefined,
+        },
+      }
+    );
+
+    return {
+      storage: 'supabase',
+      events: rows.map(fromReservationEventPayload),
+    };
+  } catch (error) {
+    return {
+      storage: 'local_fallback',
+      error,
+      events: [],
+    };
+  }
+};
+
 export const updateReservationStatus = async ({ folio, status }) => {
   const localHistory = updateLocalPrebookingStatus({ folio, status });
 
@@ -221,6 +303,84 @@ export const updateReservationStatus = async ({ folio, status }) => {
       storage: 'local_fallback',
       error,
       reservations: localHistory,
+    };
+  }
+};
+
+export const updateReservation = async ({ folio, updates }) => {
+  const localHistory = updateLocalPrebooking({
+    folio,
+    updates: toLocalReservationUpdates(updates),
+  });
+
+  if (!hasSupabaseConfig) {
+    return {
+      storage: 'local',
+      reservations: localHistory,
+    };
+  }
+
+  try {
+    await supabaseRequest(`${RESERVATIONS_TABLE}?folio=eq.${encodeURIComponent(folio)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(toReservationUpdatePayload(updates)),
+    });
+
+    const refreshed = await listReservations();
+    return {
+      storage: 'supabase',
+      reservations: refreshed.reservations,
+    };
+  } catch (error) {
+    return {
+      storage: 'local_fallback',
+      error,
+      reservations: localHistory,
+    };
+  }
+};
+
+export const logReservationEvent = async ({
+  folio,
+  eventType,
+  channel = 'manual_whatsapp',
+  deliveryStatus = 'manual_opened',
+  message = '',
+  customerPhone = '',
+  metadata = {},
+}) => {
+  const eventPayload = {
+    reservation_folio: folio,
+    event_type: eventType,
+    channel,
+    delivery_status: deliveryStatus,
+    customer_phone: customerPhone,
+    message,
+    metadata,
+  };
+
+  if (!hasSupabaseConfig) {
+    return {
+      storage: 'local',
+      event: eventPayload,
+    };
+  }
+
+  try {
+    const [event] = await supabaseRequest(RESERVATION_EVENTS_TABLE, {
+      method: 'POST',
+      body: JSON.stringify(eventPayload),
+    });
+
+    return {
+      storage: 'supabase',
+      event,
+    };
+  } catch (error) {
+    return {
+      storage: 'local_fallback',
+      error,
+      event: eventPayload,
     };
   }
 };
