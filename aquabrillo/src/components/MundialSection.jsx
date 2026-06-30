@@ -48,17 +48,28 @@ const formatScoreboardDate = (date) => {
 
 const getLiveScoreUrl = () => {
   const start = new Date();
-  start.setDate(start.getDate() - 1);
+  start.setDate(start.getDate() - 2);
 
   const end = new Date();
-  end.setDate(end.getDate() + 1);
+  end.setDate(end.getDate() + 14);
 
-  return `${LIVE_SCORE_ENDPOINT}?dates=${formatScoreboardDate(start)}-${formatScoreboardDate(end)}`;
+  return `${LIVE_SCORE_ENDPOINT}?dates=${formatScoreboardDate(start)}-${formatScoreboardDate(end)}&_=${Date.now()}`;
 };
 
 const getEspnMatchStatus = (statusName) => {
-  if (statusName === 'STATUS_FULL_TIME' || statusName === 'STATUS_FINAL') return 'Final';
-  if (statusName === 'STATUS_SCHEDULED' || statusName === 'STATUS_PRE_GAME') return 'Proximo';
+  if (
+    statusName === 'STATUS_FULL_TIME' ||
+    statusName === 'STATUS_FINAL' ||
+    statusName === 'STATUS_FINAL_PEN' ||
+    statusName === 'STATUS_FINAL_AET'
+  ) return 'Final';
+
+  if (
+    statusName === 'STATUS_SCHEDULED' ||
+    statusName === 'STATUS_PRE_GAME' ||
+    statusName === 'STATUS_NOT_STARTED'
+  ) return 'Proximo';
+
   return 'En vivo';
 };
 
@@ -92,9 +103,11 @@ const getCalendarDayKey = (dateValue) => {
   }).format(date);
 };
 
-const getDailyMatches = (matches) => {
-  const todayKey = getCalendarDayKey(new Date());
-  const todayMatches = matches.filter((match) => getCalendarDayKey(match.kickoff) === todayKey);
+const getDailyMatches = (matches, now = new Date()) => {
+  const todayKey = getCalendarDayKey(now);
+  const todayMatches = matches
+    .filter((match) => getCalendarDayKey(match.kickoff) === todayKey)
+    .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
 
   if (todayMatches.length > 0) {
     return {
@@ -104,13 +117,15 @@ const getDailyMatches = (matches) => {
     };
   }
 
-  const nextMatch = matches.find((match) => new Date(match.kickoff) >= new Date());
+  const nextMatch = matches.find((match) => new Date(match.kickoff) >= now);
   const nextDateKey = nextMatch ? getCalendarDayKey(nextMatch.kickoff) : getCalendarDayKey(matches[matches.length - 1].kickoff);
 
   return {
     label: nextMatch ? 'Siguiente jornada' : 'Ultima jornada',
     dateKey: nextDateKey,
-    matches: matches.filter((match) => getCalendarDayKey(match.kickoff) === nextDateKey)
+    matches: matches
+      .filter((match) => getCalendarDayKey(match.kickoff) === nextDateKey)
+      .sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff))
   };
 };
 
@@ -481,8 +496,7 @@ const mergeLiveMatches = (localMatches, liveScores) => {
   return [...localMatches, ...feedMatches].sort((a, b) => new Date(a.kickoff) - new Date(b.kickoff));
 };
 
-const getFeaturedMatch = (matches) => {
-  const now = new Date();
+const getFeaturedMatch = (matches, now = new Date()) => {
   const liveMatch = matches.find((match) => getMatchStatus(match) === 'En vivo');
   if (liveMatch) return liveMatch;
 
@@ -494,8 +508,8 @@ const getFeaturedMatch = (matches) => {
   return upcomingMatch ?? matches[matches.length - 1];
 };
 
-const getFeaturedMatches = (matches) => {
-  const featuredMatch = getFeaturedMatch(matches);
+const getFeaturedMatches = (matches, now = new Date()) => {
+  const featuredMatch = getFeaturedMatch(matches, now);
   const featuredKickoff = new Date(featuredMatch.kickoff).getTime();
   const sameTimeMatches = matches.filter((match) => new Date(match.kickoff).getTime() === featuredKickoff);
 
@@ -770,15 +784,21 @@ const DynamicCard = ({ dynamic }) => {
 const MundialSection = () => {
   const [isVisible, setIsVisible] = useState(false);
   const [liveScores, setLiveScores] = useState({});
+  const [currentTime, setCurrentTime] = useState(() => new Date());
   const sectionRef = useRef(null);
 
   const matchesWithLiveScores = useMemo(
     () => mergeLiveMatches(MATCHES.map((match) => applyLiveScore(match, liveScores)), liveScores),
     [liveScores]
   );
-  const featuredMatches = useMemo(() => getFeaturedMatches(matchesWithLiveScores), [matchesWithLiveScores]);
+  const featuredMatches = useMemo(() => getFeaturedMatches(matchesWithLiveScores, currentTime), [matchesWithLiveScores, currentTime]);
   const featuredMatchTime = featuredMatches[0]?.kickoff;
-  const dailyCalendar = useMemo(() => getDailyMatches(matchesWithLiveScores), [matchesWithLiveScores]);
+  const dailyCalendar = useMemo(() => getDailyMatches(matchesWithLiveScores, currentTime), [matchesWithLiveScores, currentTime]);
+
+  useEffect(() => {
+    const interval = setInterval(() => setCurrentTime(new Date()), 60000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     const updateVisibility = () => {
@@ -796,7 +816,7 @@ const MundialSection = () => {
 
     const fetchLiveScores = async () => {
       try {
-        const response = await fetch(getLiveScoreUrl());
+        const response = await fetch(getLiveScoreUrl(), { cache: 'no-store' });
         if (!response.ok) return;
 
         const payload = await response.json();
