@@ -5,14 +5,12 @@ import {
   updateLocalPrebooking,
   updateLocalPrebookingStatus,
 } from '../config/booking';
+import { HAS_SUPABASE_CONFIG, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/supabase';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const RESERVATIONS_TABLE = 'reservations';
 const RESERVATION_EVENTS_TABLE = 'reservation_events';
 const CREATE_RESERVATION_RPC = 'create_reservation_with_capacity';
 
-const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 let supabaseAccessToken = '';
 
 export const setSupabaseAccessToken = (accessToken = '') => {
@@ -40,7 +38,7 @@ const toReservationPayload = (prebooking) => ({
   payment_status: prebooking.paymentStatus || 'pendiente',
   assigned_to: prebooking.assignedTo || null,
   message: prebooking.message,
-  source: hasSupabaseConfig ? 'supabase' : 'local',
+  source: HAS_SUPABASE_CONFIG ? 'supabase' : 'local',
 });
 
 const fromReservationPayload = (reservation) => ({
@@ -165,7 +163,7 @@ const createSupabaseReservation = async (prebooking) => {
 };
 
 export const createReservation = async (prebooking) => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     const localHistory = saveLocalPrebooking(prebooking);
 
     return {
@@ -214,7 +212,7 @@ export const listLocalReservations = () => getLocalPrebookings();
 export const listReservations = async () => {
   const localReservations = getLocalPrebookings();
 
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       reservations: localReservations,
@@ -243,7 +241,7 @@ export const listReservations = async () => {
 };
 
 export const listReservationEvents = async () => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       events: [],
@@ -277,7 +275,7 @@ export const listReservationEvents = async () => {
 export const updateReservationStatus = async ({ folio, status }) => {
   const localHistory = updateLocalPrebookingStatus({ folio, status });
 
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       reservations: localHistory,
@@ -313,7 +311,7 @@ export const updateReservation = async ({ folio, updates }) => {
     updates: toLocalReservationUpdates(updates),
   });
 
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       reservations: localHistory,
@@ -359,7 +357,7 @@ export const logReservationEvent = async ({
     metadata,
   };
 
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       event: eventPayload,
@@ -386,6 +384,6 @@ export const logReservationEvent = async ({
 };
 
 export const getReservationStorageStatus = () => ({
-  mode: hasSupabaseConfig ? 'supabase' : 'local',
+  mode: HAS_SUPABASE_CONFIG ? 'supabase' : 'local',
   localStorageKey: BOOKING_DEFAULTS.storageKey,
 });

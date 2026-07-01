@@ -1,11 +1,8 @@
 import { setSupabaseAccessToken } from './bookingRepository';
 import { setSupabaseReviewAccessToken } from './reviewRepository';
+import { HAS_SUPABASE_CONFIG, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/supabase';
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const SESSION_KEY = 'aquabrillo_admin_session';
-
-const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
 const authErrorMessages = {
   'Invalid login credentials': 'Correo o contraseña incorrectos.',
@@ -14,7 +11,7 @@ const authErrorMessages = {
 };
 
 const authRequest = async (path, options = {}) => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     throw new Error('Supabase no esta configurado.');
   }
 
@@ -115,7 +112,7 @@ export const updateAdminPassword = async ({ accessToken, password }) => {
 };
 
 export const getAuthErrorMessage = (error) => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return 'Supabase no está configurado. Revisa las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.';
   }
 

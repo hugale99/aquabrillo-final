@@ -1,8 +1,7 @@
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
+import { HAS_SUPABASE_CONFIG, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/supabase';
+
 const REVIEWS_TABLE = 'customer_reviews';
 
-const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 let supabaseReviewAccessToken = '';
 
 export const setSupabaseReviewAccessToken = (accessToken = '') => {
@@ -10,7 +9,7 @@ export const setSupabaseReviewAccessToken = (accessToken = '') => {
 };
 
 const supabaseRequest = async (path, options = {}) => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     throw new Error('Supabase no esta configurado.');
   }
 
@@ -80,7 +79,7 @@ const toReviewPayload = (formData) => {
 export const createCustomerReview = async (formData) => {
   const payload = toReviewPayload(formData);
 
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       review: payload,
@@ -100,7 +99,7 @@ export const createCustomerReview = async (formData) => {
 };
 
 export const listApprovedReviews = async () => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       reviews: [],
@@ -129,7 +128,7 @@ export const listApprovedReviews = async () => {
 };
 
 export const listAdminReviews = async () => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       reviews: [],
@@ -155,7 +154,7 @@ export const listAdminReviews = async () => {
 };
 
 export const updateReviewStatus = async ({ id, status }) => {
-  if (!hasSupabaseConfig) {
+  if (!HAS_SUPABASE_CONFIG) {
     return {
       storage: 'local',
       review: null,
