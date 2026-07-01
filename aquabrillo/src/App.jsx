@@ -10,9 +10,9 @@ import AdminPanelPage from './components/AdminPanelPage';
 import BookingMvp from './components/BookingMvp';
 import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
+import Testimonials from './components/Testimonials';
 import ScrollReveal from './components/ui/ScrollReveal';
 import { saveCoverageContext } from './config/booking';
-import { listApprovedReviews } from './services/reviewRepository';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
 
 const WHATSAPP_LINK = getWhatsAppLink;
@@ -1984,139 +1984,6 @@ const B2BServices = () => {
         </ScrollReveal>
       </div>
     </section>
-  );
-};
-
-const Testimonials = () => {
-  const [approvedReviews, setApprovedReviews] = useState([]);
-  const testimonials = [
-    {
-      name: "Juan Manuel",
-      role: "BYD King",
-      text: "Increíble el nivel de detalle. El servicio a domicilio es un lujo que vale cada peso.",
-      rating: 5
-    },
-    {
-      name: "Ivonne B",
-      role: "JEEP Renegade",
-      text: "Profesionalismo absoluto. Llegaron puntual, trabajaron con cuidado y el resultado superó mis expectativas. Totalmente recomendable.",
-      rating: 5
-    },
-    {
-      name: "Luis Alonso",
-      role: "MG ONE",
-      text: "El recubrimiento cerámico cambió por completo la apariencia de mi auto. El brillo es espectacular y la protección se nota al instante.",
-      rating: 5,
-    },
-    {
-      name: "Anonimo",
-      role: "VW Passat",
-      text: "Satisfecho con el trabajo que realizaron en mi auto. El cambio en la pintura es impresionante, el brillo es más profundo, incluso siendo un auto color negro.",
-      rating: 5,
-    }
-  ];
-  const visibleTestimonials = [
-    ...approvedReviews.map((review) => ({
-      name: review.name,
-      role: review.vehicle || review.service || 'Cliente AQUABRILLO',
-      text: review.text,
-      rating: review.rating || 5,
-      isDynamic: true,
-    })),
-    ...testimonials,
-  ].slice(0, 6);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const loadReviews = async () => {
-      const result = await listApprovedReviews();
-      if (isMounted) setApprovedReviews(result.reviews);
-    };
-
-    loadReviews();
-
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  return (
-    <section id="testimonios" className="py-24 bg-slate-950">
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <span className="text-cyan-400 text-sm font-semibold tracking-wider uppercase mb-4 block">Testimonios</span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">Lo que dicen <span className="text-slate-400">nuestros clientes</span></h2>
-            <p className="mx-auto max-w-2xl text-sm leading-6 text-slate-500">
-              {approvedReviews.length > 0
-                ? `${approvedReviews.length} opiniones aprobadas por AQUABRILLO se muestran primero.`
-                : 'Opiniones destacadas de clientes mientras se aprueban nuevas reseñas recibidas.'}
-            </p>
-          </div>
-        </ScrollReveal>
-
-        <div className="grid md:grid-cols-3 gap-8">
-          {visibleTestimonials.map((item, index) => (
-            <TestimonialCard key={index} item={item} index={index} />
-          ))}
-        </div>
-        <ScrollReveal delay={250}>
-          <div className="mt-10 flex justify-center">
-            <button
-              type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent('aquabrillo:open-review-form'))}
-              className="inline-flex items-center gap-3 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-6 py-3 text-sm font-black uppercase tracking-[0.12em] text-orange-100 transition hover:border-brand-orange/45 hover:bg-brand-orange/15"
-            >
-              <Quote className="h-4 w-4 text-brand-orange" />
-              Dejar mi opinión
-            </button>
-          </div>
-        </ScrollReveal>
-      </div>
-    </section>
-  );
-};
-
-const TestimonialCard = ({ item, index }) => {
-  const [imgError, setImgError] = useState(false);
-  const imageSrc = item.isDynamic ? null : IMAGES.testimonios[`cliente${index + 1}`];
-
-  return (
-    <ScrollReveal delay={index * 150}>
-      <div className="relative p-8 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-500/20 transition-all duration-300 h-full flex flex-col">
-        <Quote className="w-10 h-10 text-cyan-500/20 mb-4" />
-        <p className="text-slate-300 leading-relaxed mb-6 flex-grow italic">
-          "{item.text}"
-        </p>
-        <div className="flex items-center gap-1 mb-4">
-          {[...Array(item.rating)].map((_, i) => (
-            <Star key={i} className="w-4 h-4 fill-cyan-400 text-cyan-400" />
-          ))}
-        </div>
-        <div className="flex items-center gap-4 pt-4 border-t border-white/10">
-          <div className="relative w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-cyan-500/30 to-blue-600/30 flex items-center justify-center flex-shrink-0">
-            {imageSrc && (
-              <img
-                src={imageSrc}
-                alt={`Auto de ${item.name}`}
-                className="w-full h-full object-cover"
-                loading="lazy"
-                decoding="async"
-                onError={() => setImgError(true)}
-              />
-            )}
-            <span className={`text-white font-bold text-sm ${imgError || !imageSrc ? '' : 'hidden'}`}>
-              {item.name[0]}
-            </span>
-          </div>
-          <div>
-            <h4 className="text-white font-semibold">{item.name}</h4>
-            <p className="text-slate-400 text-sm">{item.role}</p>
-          </div>
-        </div>
-      </div>
-    </ScrollReveal>
   );
 };
 
