@@ -2,15 +2,28 @@ import { useEffect, useState } from 'react';
 import { ArrowLeft, LockKeyhole, LogOut, ShieldCheck } from 'lucide-react';
 import AdminReviewsSection from './AdminReviewsSection';
 import AdminReservationsSection from './AdminReservationsSection';
-import { getAdminUser, getAuthErrorMessage, getStoredAdminSession, signInAdmin, signOutAdmin } from '../services/supabaseAuth';
+import {
+  getAdminUser,
+  getAuthErrorMessage,
+  getPasswordRecoveryToken,
+  getStoredAdminSession,
+  requestAdminPasswordReset,
+  signInAdmin,
+  signOutAdmin,
+  updateAdminPassword,
+} from '../services/supabaseAuth';
 
 const AdminPanelPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [session, setSession] = useState(() => getStoredAdminSession());
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(Boolean(session));
   const [error, setError] = useState('');
+  const [feedback, setFeedback] = useState('');
+  const [recoveryToken, setRecoveryToken] = useState(() => getPasswordRecoveryToken());
 
   useEffect(() => {
     let isMounted = true;
@@ -44,6 +57,7 @@ const AdminPanelPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setError('');
+    setFeedback('');
     setIsLoading(true);
 
     try {
@@ -52,6 +66,56 @@ const AdminPanelPage = () => {
       setPassword('');
     } catch (loginError) {
       setError(getAuthErrorMessage(loginError));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordResetRequest = async () => {
+    if (!email.trim()) {
+      setError('Escribe el correo operativo para enviar el enlace de recuperación.');
+      return;
+    }
+
+    setError('');
+    setFeedback('');
+    setIsLoading(true);
+
+    try {
+      await requestAdminPasswordReset({ email });
+      setFeedback('Enviamos un enlace de recuperación al correo operativo. Ábrelo desde este dispositivo o desde tu computadora.');
+    } catch (resetError) {
+      setError(getAuthErrorMessage(resetError));
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePasswordUpdate = async (event) => {
+    event.preventDefault();
+    setError('');
+    setFeedback('');
+
+    if (newPassword.length < 8) {
+      setError('La nueva contraseña debe tener al menos 8 caracteres.');
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      setError('Las contraseñas no coinciden.');
+      return;
+    }
+
+    setIsLoading(true);
+
+    try {
+      await updateAdminPassword({ accessToken: recoveryToken, password: newPassword });
+      setFeedback('Contraseña actualizada. Ya puedes iniciar sesión con tu nueva contraseña.');
+      setNewPassword('');
+      setConfirmPassword('');
+      setRecoveryToken('');
+    } catch (updateError) {
+      setError(getAuthErrorMessage(updateError));
     } finally {
       setIsLoading(false);
     }
@@ -87,6 +151,58 @@ const AdminPanelPage = () => {
               </p>
             </div>
 
+            {recoveryToken ? (
+              <form onSubmit={handlePasswordUpdate} className="space-y-4">
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Nueva contraseña</span>
+                  <input
+                    type="password"
+                    value={newPassword}
+                    onChange={(event) => setNewPassword(event.target.value)}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    className="w-full rounded-2xl border border-white/10 bg-brand-night px-4 py-3 text-sm font-bold text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
+                    placeholder="Mínimo 8 caracteres"
+                  />
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Confirmar contraseña</span>
+                  <input
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(event) => setConfirmPassword(event.target.value)}
+                    required
+                    minLength={8}
+                    autoComplete="new-password"
+                    className="w-full rounded-2xl border border-white/10 bg-brand-night px-4 py-3 text-sm font-bold text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
+                    placeholder="Repite la nueva contraseña"
+                  />
+                </label>
+
+                {error && (
+                  <div className="rounded-2xl border border-brand-rust/30 bg-brand-rust/10 px-4 py-3 text-sm font-bold text-orange-100">
+                    {error}
+                  </div>
+                )}
+
+                {feedback && (
+                  <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm font-bold text-green-100">
+                    {feedback}
+                  </div>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex w-full items-center justify-center gap-2 rounded-2xl bg-brand-orange px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-brand-night transition hover:bg-orange-300 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  <ShieldCheck className="h-4 w-4" />
+                  {isLoading ? 'Actualizando...' : 'Actualizar contraseña'}
+                </button>
+              </form>
+            ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <label className="block">
                 <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-slate-500">Correo</span>
@@ -120,6 +236,12 @@ const AdminPanelPage = () => {
                 </div>
               )}
 
+              {feedback && (
+                <div className="rounded-2xl border border-brand-green/30 bg-brand-green/10 px-4 py-3 text-sm font-bold text-green-100">
+                  {feedback}
+                </div>
+              )}
+
               <button
                 type="submit"
                 disabled={isLoading}
@@ -128,7 +250,16 @@ const AdminPanelPage = () => {
                 <ShieldCheck className="h-4 w-4" />
                 {isLoading ? 'Validando...' : 'Entrar al panel'}
               </button>
+              <button
+                type="button"
+                onClick={handlePasswordResetRequest}
+                disabled={isLoading}
+                className="w-full rounded-2xl border border-white/10 bg-white/[0.035] px-5 py-3 text-sm font-black uppercase tracking-[0.12em] text-slate-300 transition hover:border-brand-orange/30 hover:text-brand-orange disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                Enviar enlace de recuperación
+              </button>
             </form>
+            )}
           </div>
         </div>
       </main>

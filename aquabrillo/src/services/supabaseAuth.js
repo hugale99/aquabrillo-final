@@ -78,6 +78,42 @@ export const signInAdmin = async ({ email, password }) => {
   return session;
 };
 
+export const requestAdminPasswordReset = async ({ email }) => {
+  const redirectTo = `${window.location.origin}${window.location.pathname}?admin=password-reset`;
+
+  await authRequest(`recover?redirect_to=${encodeURIComponent(redirectTo)}`, {
+    method: 'POST',
+    body: JSON.stringify({ email: email.trim().toLowerCase() }),
+  });
+
+  return {
+    sent: true,
+  };
+};
+
+export const getPasswordRecoveryToken = () => {
+  const hashParams = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  const accessToken = hashParams.get('access_token');
+  const type = hashParams.get('type');
+
+  if (type !== 'recovery' || !accessToken) return '';
+  return accessToken;
+};
+
+export const updateAdminPassword = async ({ accessToken, password }) => {
+  await authRequest('user', {
+    method: 'PUT',
+    accessToken,
+    body: JSON.stringify({ password }),
+  });
+
+  window.history.replaceState({}, '', '#admin');
+
+  return {
+    updated: true,
+  };
+};
+
 export const getAuthErrorMessage = (error) => {
   if (!hasSupabaseConfig) {
     return 'Supabase no está configurado. Revisa las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.';
