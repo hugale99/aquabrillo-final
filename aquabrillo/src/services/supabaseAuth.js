@@ -7,6 +7,12 @@ const SESSION_KEY = 'aquabrillo_admin_session';
 
 const hasSupabaseConfig = Boolean(SUPABASE_URL && SUPABASE_ANON_KEY);
 
+const authErrorMessages = {
+  'Invalid login credentials': 'Correo o contraseña incorrectos.',
+  'Email not confirmed': 'El correo del usuario operativo todavía no está confirmado en Supabase.',
+  'User not found': 'No existe un usuario operativo con ese correo.',
+};
+
 const authRequest = async (path, options = {}) => {
   if (!hasSupabaseConfig) {
     throw new Error('Supabase no esta configurado.');
@@ -62,7 +68,7 @@ export const getStoredAdminSession = () => {
 export const signInAdmin = async ({ email, password }) => {
   const session = await authRequest('token?grant_type=password', {
     method: 'POST',
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
   });
 
   window.localStorage.setItem(SESSION_KEY, JSON.stringify(session));
@@ -70,6 +76,20 @@ export const signInAdmin = async ({ email, password }) => {
   setSupabaseReviewAccessToken(session.access_token);
 
   return session;
+};
+
+export const getAuthErrorMessage = (error) => {
+  if (!hasSupabaseConfig) {
+    return 'Supabase no está configurado. Revisa las variables VITE_SUPABASE_URL y VITE_SUPABASE_ANON_KEY.';
+  }
+
+  const message = error?.payload?.msg || error?.payload?.error_description || error?.message;
+
+  if (authErrorMessages[message]) return authErrorMessages[message];
+  if (error?.status === 400 || error?.status === 401) return 'No se pudo iniciar sesión. Verifica correo, contraseña y que el usuario esté confirmado.';
+  if (error?.status) return `No se pudo iniciar sesión. Supabase respondió con estado ${error.status}.`;
+
+  return 'No se pudo iniciar sesión. Revisa tu conexión e intenta nuevamente.';
 };
 
 export const signOutAdmin = async () => {
