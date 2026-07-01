@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
-import { CalendarDays, CheckCircle2, EyeOff, RefreshCw, Star } from 'lucide-react';
+import { CalendarDays, CheckCircle2, EyeOff, RefreshCw, Search, Star } from 'lucide-react';
 import {
   formatReviewDate,
   REVIEW_FILTER_OPTIONS,
+  REVIEW_SORT_OPTIONS,
   REVIEW_STATUS_LABELS,
   REVIEW_STATUS_STYLES,
 } from '../config/reviews';
@@ -14,16 +15,32 @@ const AdminReviewsSection = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [activeFilter, setActiveFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [sortOrder, setSortOrder] = useState('newest');
   const [updatingReviewId, setUpdatingReviewId] = useState('');
 
   const visibleReviews = useMemo(() => [...reviews]
-    .filter((review) => activeFilter === 'all' || review.status === activeFilter)
+    .filter((review) => {
+      if (activeFilter !== 'all' && review.status !== activeFilter) return false;
+
+      const normalizedSearch = searchTerm.trim().toLowerCase();
+      if (!normalizedSearch) return true;
+
+      return [
+        review.name,
+        review.vehicle,
+        review.service,
+        review.text,
+        review.status,
+      ].filter(Boolean).some((value) => String(value).toLowerCase().includes(normalizedSearch));
+    })
     .sort((a, b) => {
       const priority = { pending: 0, approved: 1, hidden: 2 };
       const priorityDiff = (priority[a.status] ?? 9) - (priority[b.status] ?? 9);
       if (priorityDiff !== 0) return priorityDiff;
-      return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
-    }), [activeFilter, reviews]);
+      const dateDiff = new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+      return sortOrder === 'oldest' ? -dateDiff : dateDiff;
+    }), [activeFilter, reviews, searchTerm, sortOrder]);
 
   const metrics = useMemo(() => ({
     total: reviews.length,
@@ -114,6 +131,34 @@ const AdminReviewsSection = () => {
           ))}
         </div>
 
+        <div className="mb-5 grid gap-3 lg:grid-cols-[1fr_220px]">
+          <label className="relative block">
+            <span className="sr-only">Buscar opinión</span>
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-brand-orange/75" />
+            <input
+              type="search"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+              placeholder="Buscar por cliente, servicio o comentario"
+              className="h-12 w-full rounded-2xl border border-white/10 bg-brand-night/55 pl-11 pr-4 text-sm font-bold text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/45"
+            />
+          </label>
+          <label className="block">
+            <span className="sr-only">Ordenar opiniones</span>
+            <select
+              value={sortOrder}
+              onChange={(event) => setSortOrder(event.target.value)}
+              className="h-12 w-full rounded-2xl border border-white/10 bg-brand-night/55 px-4 text-sm font-black uppercase tracking-[0.08em] text-slate-300 outline-none transition focus:border-brand-orange/45"
+            >
+              {REVIEW_SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+
         <div className="grid gap-3 lg:grid-cols-3">
           {loadError && (
             <div className="rounded-2xl border border-brand-rust/25 bg-brand-rust/10 p-5 text-sm font-bold text-orange-100 lg:col-span-3">
@@ -174,7 +219,7 @@ const AdminReviewsSection = () => {
           )}
           {!loadError && reviews.length > 0 && visibleReviews.length === 0 && (
             <div className="rounded-2xl border border-dashed border-brand-orange/20 bg-brand-night/45 p-5 text-sm font-bold text-slate-500 lg:col-span-3">
-              No hay opiniones en este filtro.
+              No hay opiniones que coincidan con este filtro o búsqueda.
             </div>
           )}
         </div>

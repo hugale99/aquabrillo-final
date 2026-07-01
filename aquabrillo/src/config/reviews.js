@@ -17,6 +17,11 @@ export const REVIEW_FILTER_OPTIONS = [
   { value: 'hidden', label: 'Ocultas' },
 ];
 
+export const REVIEW_SORT_OPTIONS = [
+  { value: 'newest', label: 'Más recientes' },
+  { value: 'oldest', label: 'Más antiguas' },
+];
+
 export const formatReviewDate = (dateValue) => {
   if (!dateValue) return 'Fecha no disponible';
 
