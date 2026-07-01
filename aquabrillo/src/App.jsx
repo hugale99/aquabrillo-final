@@ -2133,7 +2133,7 @@ const Footer = () => {
             Lavado y detallado premium a domicilio.
           </p>
           <a
-            href="/admin"
+            href="#admin"
             className="text-xs font-bold uppercase tracking-[0.14em] text-slate-600 transition hover:text-brand-orange"
           >
             Panel operativo
@@ -2169,8 +2169,28 @@ const FloatingWhatsApp = () => {
   );
 };
 
+const isAdminRoute = () => (
+  window.location.pathname.startsWith('/admin')
+  || window.location.hash === '#admin'
+  || window.location.search.includes('admin')
+);
+
 function App() {
-  if (window.location.pathname.startsWith('/admin')) {
+  const [showAdminPanel, setShowAdminPanel] = useState(isAdminRoute);
+
+  useEffect(() => {
+    const syncRoute = () => setShowAdminPanel(isAdminRoute());
+
+    window.addEventListener('hashchange', syncRoute);
+    window.addEventListener('popstate', syncRoute);
+
+    return () => {
+      window.removeEventListener('hashchange', syncRoute);
+      window.removeEventListener('popstate', syncRoute);
+    };
+  }, []);
+
+  if (showAdminPanel) {
     return <AdminPanelPage />;
   }
 

@@ -210,7 +210,7 @@ const Navbar = () => {
             <span className="hidden xl:inline">WhatsApp</span>
           </a>
           <a
-            href="/admin"
+            href="#admin"
             className="flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-3 text-sm font-black text-orange-100 shadow-lg shadow-black/10 transition duration-300 hover:-translate-y-0.5 hover:border-brand-orange/45 hover:bg-brand-orange/15"
           >
             <LockKeyhole className="h-4 w-4" />
@@ -270,7 +270,7 @@ const Navbar = () => {
             Agendar por WhatsApp
           </a>
           <a
-            href="/admin"
+            href="#admin"
             className="flex items-center justify-center gap-3 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-6 py-4 text-base font-black text-orange-100 transition duration-300 hover:bg-brand-orange/15"
           >
             <LockKeyhole className="h-5 w-5" />
