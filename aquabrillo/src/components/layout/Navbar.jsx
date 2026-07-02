@@ -115,9 +115,6 @@ const Navbar = () => {
               <span className="block truncate text-base font-black tracking-tight text-white sm:text-xl">
                 AQUA<span className="text-brand-orange">BRILLO</span>
               </span>
-              <span className="hidden text-[0.58rem] font-bold uppercase tracking-[0.24em] text-brand-orange/70 sm:block">
-                Detailing cockpit
-              </span>
             </div>
           </a>
 

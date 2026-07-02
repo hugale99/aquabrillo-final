@@ -193,7 +193,7 @@ const Services = () => {
     {
       icon: Droplets,
       title: "Lavado Premium a Domicilio",
-      desc: "Limpieza profunda exterior con técnicas profesionales y productos de alta gama que respetan la pintura de tu vehículo.",
+      desc: "Limpieza profunda exterior con técnicas profesionales y productos de alta gama que cuidan la pintura de tu vehículo.",
       benefit: "Brillo intenso sin rayar",
       tag: "Más solicitado",
       price: "Cotizar",
