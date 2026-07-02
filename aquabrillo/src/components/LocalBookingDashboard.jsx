@@ -164,6 +164,16 @@ const getReservationTimestamp = (item) => {
   return new Date(`${item.date}T${item.time || '00:00'}`).getTime();
 };
 
+const getStartOfWeekIso = () => {
+  const date = new Date();
+  const day = date.getDay() || 7;
+  date.setDate(date.getDate() - day + 1);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const monthDay = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${monthDay}`;
+};
+
 const getReservationStatusLabel = (statusId) =>
   RESERVATION_STATUSES.find((status) => status.id === statusId)?.label || statusId || 'Preagenda';
 
@@ -203,6 +213,7 @@ const LocalBookingDashboard = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('upcoming');
   const todayIso = getTodayIso();
+  const weekStartIso = getStartOfWeekIso();
   const dateOptions = useMemo(() => (
     [...new Set(prebookings.map((item) => item.date).filter(Boolean))]
       .sort()
@@ -257,6 +268,31 @@ const LocalBookingDashboard = ({
     pending: prebookings.filter((item) => item.status === 'preagenda_whatsapp').length,
     today: prebookings.filter((item) => item.date === todayIso).length,
   }), [prebookings, todayIso]);
+  const businessMetrics = useMemo(() => {
+    const todayReservations = prebookings.filter((item) => item.date === todayIso);
+    const weekReservations = prebookings.filter((item) => item.date >= weekStartIso);
+    const completedReservations = prebookings.filter((item) => item.status === 'terminada');
+    const totalRevenue = prebookings.reduce((sum, item) => sum + (item.estimate?.price || 0), 0);
+    const services = prebookings.flatMap((item) =>
+      item.services?.map((service) => service.label || service.name).filter(Boolean) || []
+    );
+    const serviceCounts = services.reduce((counts, service) => ({
+      ...counts,
+      [service]: (counts[service] || 0) + 1,
+    }), {});
+    const topService = Object.entries(serviceCounts).sort((a, b) => b[1] - a[1])[0];
+
+    return {
+      todayRevenue: todayReservations.reduce((sum, item) => sum + (item.estimate?.price || 0), 0),
+      weekRevenue: weekReservations.reduce((sum, item) => sum + (item.estimate?.price || 0), 0),
+      completedRevenue: completedReservations.reduce((sum, item) => sum + (item.estimate?.price || 0), 0),
+      averageTicket: prebookings.length ? totalRevenue / prebookings.length : 0,
+      topServiceLabel: topService ? `${topService[0]} (${topService[1]})` : 'Sin datos',
+      needsAttention: prebookings.filter((item) =>
+        item.status === 'preagenda_whatsapp' || !normalizePhone(item.customerPhone) || !item.assignedTo
+      ).length,
+    };
+  }, [prebookings, todayIso, weekStartIso]);
   const eventsByFolio = useMemo(() => reservationEvents.reduce((grouped, event) => {
     if (!event.folio) return grouped;
 
@@ -308,6 +344,22 @@ const LocalBookingDashboard = ({
             <div className="mt-2 text-2xl font-black text-white">{localMetrics.pending}</div>
             <div className="mt-1 truncate text-xs font-bold text-slate-500">{localMetrics.nextPending}</div>
           </div>
+        </div>
+
+        <div className="mb-5 grid gap-3 md:grid-cols-3 xl:grid-cols-6">
+          {[
+            { label: 'Ingreso hoy', value: currency.format(businessMetrics.todayRevenue), tone: 'text-brand-orange' },
+            { label: 'Ingreso semana', value: currency.format(businessMetrics.weekRevenue), tone: 'text-brand-green' },
+            { label: 'Terminados', value: currency.format(businessMetrics.completedRevenue), tone: 'text-slate-100' },
+            { label: 'Ticket promedio', value: currency.format(businessMetrics.averageTicket), tone: 'text-white' },
+            { label: 'Mas solicitado', value: businessMetrics.topServiceLabel, tone: 'text-orange-100' },
+            { label: 'Atencion', value: businessMetrics.needsAttention, tone: 'text-brand-rust' },
+          ].map((metric) => (
+            <div key={metric.label} className="rounded-2xl border border-white/10 bg-brand-night/45 p-3">
+              <div className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-slate-500">{metric.label}</div>
+              <div className={`mt-2 truncate text-lg font-black ${metric.tone}`}>{metric.value}</div>
+            </div>
+          ))}
         </div>
 
         <div className="mb-5 overflow-hidden rounded-2xl border border-brand-orange/15 bg-gradient-to-br from-brand-orange/12 via-white/[0.035] to-brand-green/10 p-4">
