@@ -23,6 +23,7 @@ import {
 } from '../config/booking';
 import { getWhatsAppLink } from '../config/site';
 import { createReservation, getReservationStorageStatus, listReservations } from '../services/bookingRepository';
+import WeatherInsight from './WeatherInsight';
 import ScrollReveal from './ui/ScrollReveal';
 
 const currency = new Intl.NumberFormat('es-MX', {
@@ -62,7 +63,7 @@ const minutesToLabel = (minutes) => {
   return `${hours} h ${rest} min`;
 };
 
-const BookingMvp = () => {
+const BookingMvp = ({ embedded = false }) => {
   const [catalog, setCatalog] = useState(getFallbackBookingCatalog);
   const [schedule, setSchedule] = useState(getFallbackBookingSchedule);
   const [catalogStatus, setCatalogStatus] = useState('fallback');
@@ -331,11 +332,22 @@ const BookingMvp = () => {
   };
 
   return (
-    <section id="cotizador" className="relative overflow-hidden bg-brand-night py-20 sm:py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(240,139,29,0.13)_0%,_transparent_42%)]" />
+    <section id={embedded ? undefined : 'cotizador'} className={`relative overflow-hidden bg-brand-night ${embedded ? 'pb-28 pt-8 sm:pb-32 sm:pt-10' : 'py-20 sm:py-24'}`}>
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,159,69,0.13)_0%,_transparent_42%)]" />
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-10 max-w-3xl">
+            <div className="mb-4 flex flex-wrap gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em]">
+              <a
+                href="#clima-agenda"
+                className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-slate-500 transition hover:border-brand-orange/30 hover:text-brand-orange"
+              >
+                Paso 1: clima
+              </a>
+              <span className="rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3 py-1.5 text-orange-100">
+                Paso 2: preagenda
+              </span>
+            </div>
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
               <Sparkles className="h-4 w-4" />
               {BOOKING_COPY.eyebrow}
@@ -410,7 +422,7 @@ const BookingMvp = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={180}>
-            <div className="sticky top-28 rounded-3xl border border-brand-orange/20 bg-[#242424]/86 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
+            <div className="sticky top-28 rounded-3xl border border-brand-orange/20 bg-[#223321]/86 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
               <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/75 p-5">
                 <div className="text-sm font-bold uppercase tracking-[0.16em] text-slate-400">Estimado</div>
                 <div className="mt-2 flex items-end justify-between gap-4">
@@ -426,6 +438,10 @@ const BookingMvp = () => {
                 <p className="mt-2 text-[0.68rem] font-bold uppercase tracking-[0.14em] text-slate-600">
                   Catalogo: {catalogStatus === 'csv' ? 'Excel / CSV activo' : 'configuracion base'} | Horarios: {scheduleStatus === 'csv' ? 'CSV activo' : 'base'} | Reservas: {reservationStatus.mode}
                 </p>
+              </div>
+
+              <div className="mb-5">
+                <WeatherInsight compact />
               </div>
 
               <div className="mb-5">
@@ -602,6 +618,33 @@ const BookingMvp = () => {
           </ScrollReveal>
         </div>
       </div>
+      {embedded && (
+        <div className="sticky bottom-0 z-30 mt-6 border-t border-white/10 bg-brand-night/92 px-4 py-3 shadow-[0_-18px_42px_rgba(0,0,0,0.35)] backdrop-blur-xl sm:px-6">
+          <div className="mx-auto flex max-w-7xl items-center justify-between gap-3">
+            <div className="min-w-0">
+              <div className="text-[0.62rem] font-black uppercase tracking-[0.14em] text-slate-500">Estimado</div>
+              <div className="flex items-baseline gap-2">
+                <span className="text-lg font-black text-white">{estimate.price ? currency.format(estimate.price) : '$0'}</span>
+                <span className="hidden text-xs font-bold text-slate-500 sm:inline">{minutesToLabel(estimate.minutes)}</span>
+              </div>
+            </div>
+            <a
+              href={canPrebook ? getWhatsAppLink(whatsappMessage) : '#cotizador'}
+              aria-disabled={!canPrebook}
+              onClick={handlePrebook}
+              className={`flex min-h-12 flex-none items-center justify-center gap-2 rounded-2xl px-4 py-3 text-xs font-black uppercase tracking-[0.08em] text-white transition sm:px-5 ${
+                canPrebook
+                  ? 'bg-[#25D366] shadow-xl shadow-[#25D366]/20 hover:bg-[#1EBE5D]'
+                  : 'pointer-events-none bg-white/[0.06] text-slate-500'
+              }`}
+            >
+              <MessageCircle className="h-4 w-4" />
+              <span className="hidden sm:inline">Preagendar por WhatsApp</span>
+              <span className="sm:hidden">Preagendar</span>
+            </a>
+          </div>
+        </div>
+      )}
     </section>
   );
 };

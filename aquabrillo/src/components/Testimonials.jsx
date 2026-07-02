@@ -128,7 +128,7 @@ const Testimonials = () => {
 
   return (
     <section id="testimonios" className="relative overflow-hidden bg-brand-night py-20 sm:py-24">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(240,139,29,0.12),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(62,122,38,0.12),_transparent_30%)]" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(255,159,69,0.12),_transparent_34%),radial-gradient(circle_at_bottom_right,_rgba(62,122,38,0.12),_transparent_30%)]" />
       <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-10 grid gap-6 lg:mb-14 lg:grid-cols-[1fr_360px] lg:items-end">

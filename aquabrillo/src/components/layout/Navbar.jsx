@@ -95,7 +95,7 @@ const Navbar = () => {
           ? 'border-brand-orange/30 bg-brand-night/92 shadow-2xl shadow-black/35 backdrop-blur-2xl'
           : 'border-white/10 bg-brand-night/54 shadow-xl shadow-black/15 backdrop-blur-xl'
       }`}>
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.08),transparent_22%,rgba(240,139,29,0.10)_52%,transparent_78%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(115deg,rgba(255,255,255,0.08),transparent_22%,rgba(255,159,69,0.10)_52%,transparent_78%)]" />
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-brand-orange/85 to-transparent" />
         <div className="pointer-events-none absolute bottom-0 left-6 right-6 h-px bg-gradient-to-r from-transparent via-brand-rust/35 to-transparent" />
         <div className="pointer-events-none absolute -left-16 top-1/2 h-24 w-24 -translate-y-1/2 rounded-full bg-brand-orange/10 blur-2xl" />
@@ -103,7 +103,7 @@ const Navbar = () => {
 
         <div className="relative flex h-[4.7rem] items-center justify-between gap-3 px-3 sm:px-4 lg:px-5">
           <a href="#inicio" onClick={() => scrollToSection('#inicio')} className="group flex min-w-0 flex-none items-center gap-2 sm:gap-3">
-            <div className="relative flex h-11 w-11 flex-none items-center justify-center rounded-[1.05rem] border border-brand-orange/30 bg-brand-night/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_36px_rgba(240,139,29,0.14)] transition duration-300 group-hover:border-brand-orange/60 group-hover:shadow-brand-orange/20 sm:h-12 sm:w-12">
+            <div className="relative flex h-11 w-11 flex-none items-center justify-center rounded-[1.05rem] border border-brand-orange/30 bg-brand-night/80 shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_16px_36px_rgba(255,159,69,0.14)] transition duration-300 group-hover:border-brand-orange/60 group-hover:shadow-brand-orange/20 sm:h-12 sm:w-12">
               <img src={IMAGES.logo} alt="AQUABRILLO" className="h-7 w-auto sm:h-8" decoding="async" onError={(e) => { e.target.style.display='none'; e.target.nextSibling.style.display='flex'; }} />
               <div className="hidden h-7 w-7 items-center justify-center rounded-xl bg-gradient-to-br from-brand-orange to-brand-rust text-white sm:h-8 sm:w-8">
                 <Droplets className="h-4 w-4" />

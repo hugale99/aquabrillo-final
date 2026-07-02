@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { CalendarDays, MessageCircle, Search } from 'lucide-react';
 import { PAYMENT_STATUSES, RESERVATION_STATUSES } from '../config/booking';
+import WeatherInsight from './WeatherInsight';
 import ScrollReveal from './ui/ScrollReveal';
 
 const currency = new Intl.NumberFormat('es-MX', {
@@ -360,6 +361,10 @@ const LocalBookingDashboard = ({
               <div className={`mt-2 truncate text-lg font-black ${metric.tone}`}>{metric.value}</div>
             </div>
           ))}
+        </div>
+
+        <div className="mb-5">
+          <WeatherInsight />
         </div>
 
         <div className="mb-5 overflow-hidden rounded-2xl border border-brand-orange/15 bg-gradient-to-br from-brand-orange/12 via-white/[0.035] to-brand-green/10 p-4">

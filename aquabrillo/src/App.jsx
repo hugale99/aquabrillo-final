@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import {
   Phone, MapPin, Instagram, Facebook, ChevronRight,
   Shield, Sparkles, Clock, Home, Award, Droplets,
-  CheckCircle2, ArrowRight, Star, Quote, Car,
-  Paintbrush, Gem, Zap, MessageCircle, LocateFixed
+  CheckCircle2, ArrowRight, Star, Quote, Car, CloudSun,
+  Paintbrush, Gem, Zap, MessageCircle, LocateFixed, X
 } from 'lucide-react';
 import Navbar from './components/layout/Navbar';
 import AdminPanelPage from './components/AdminPanelPage';
@@ -11,6 +11,7 @@ import BookingMvp from './components/BookingMvp';
 import PreferencesForm from './components/PreferencesForm';
 import MundialSection from './components/MundialSection';
 import Testimonials from './components/Testimonials';
+import WeatherInsight from './components/WeatherInsight';
 import ScrollReveal from './components/ui/ScrollReveal';
 import { saveCoverageContext } from './config/booking';
 import { getWhatsAppLink, IMAGES, SOCIAL_LINKS, WHATSAPP_CAMPAIGNS } from './config/site';
@@ -115,7 +116,7 @@ const Hero = () => {
 
         <ScrollReveal delay={400} className="w-full">
           <div className="relative">
-            <div className="relative mx-auto h-[280px] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#242424] shadow-2xl shadow-brand-orange/10 group sm:h-[360px] lg:h-[560px] xl:h-[620px]">
+            <div className="relative mx-auto h-[280px] w-full overflow-hidden rounded-[1.75rem] border border-white/10 bg-[#223321] shadow-2xl shadow-brand-orange/10 group sm:h-[360px] lg:h-[560px] xl:h-[620px]">
               {!imgError ? (
                 <img 
                   src={IMAGES.hero} 
@@ -338,6 +339,48 @@ const ServiceCard = ({ service, index }) => {
     </ScrollReveal>
   );
 };
+
+const WeatherBookingGateway = ({ onOpenBooking }) => (
+  <section id="clima-agenda" className="relative overflow-hidden bg-brand-night py-16 sm:py-20">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(34,211,238,0.10),transparent_30%),radial-gradient(circle_at_82%_40%,rgba(255,159,69,0.12),transparent_34%)]" />
+    <div className="relative z-10 mx-auto grid max-w-7xl gap-6 px-5 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:px-8">
+      <ScrollReveal>
+        <div>
+          <div className="mb-4 flex flex-wrap gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em]">
+            <span className="rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3 py-1.5 text-orange-100">
+              Paso 1: revisa clima
+            </span>
+            <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-slate-500">
+              Paso 2: preagenda
+            </span>
+          </div>
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
+            <CloudSun className="h-4 w-4" />
+            Clima y agenda
+          </span>
+          <h2 className="max-w-2xl text-3xl font-black tracking-tight text-white sm:text-4xl">
+            Decide el mejor momento para lavar o detallar tu auto
+          </h2>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
+            Revisa el clima en Santa Fe Life Style antes de preagendar. Si hay lluvia, te sugerimos confirmar cochera o espacio cubierto.
+          </p>
+          <button
+            type="button"
+            onClick={onOpenBooking}
+            className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-brand-orange px-6 py-4 text-sm font-black uppercase tracking-[0.12em] text-brand-night transition hover:bg-orange-300"
+          >
+            Abrir cotizador
+            <ArrowRight className="h-4 w-4" />
+          </button>
+        </div>
+      </ScrollReveal>
+
+      <ScrollReveal delay={120}>
+        <WeatherInsight actionLabel="Cotizar y preagendar" actionOnClick={onOpenBooking} />
+      </ScrollReveal>
+    </div>
+  </section>
+);
 
 const Benefits = () => {
   const benefits = [
@@ -935,7 +978,7 @@ const HowItWorks = () => {
       num: "04",
       icon: Home,
       title: "Vamos a tu Domicilio",
-      desc: "Llegamos a tu ubicación y transformamos tu auto en el lugar."
+      desc: "Llegamos a tu ubicacion y transformamos tu auto en el lugar."
     }
   ];
 
@@ -986,17 +1029,13 @@ const CoverageMap = () => {
     {
       id: "santa-fe",
       nombre: "Santa Fe Life Style y alrededores",
-      label: "Santa Fe Life Style y alrededores",
+      label: "Santa Fe Life Style",
       tipo: "Principal",
       descripcion: "Zona base y cobertura prioritaria de 0 a 5 km.",
       disponibilidad: "0-5 km",
       badge: "Prioritaria",
-     /* tiempo: "30-45 min",*/
-      coordenadas: { cx: 280, cy: 180, r: 35 },
-      mobilePosition: { left: "58%", top: "45%" },
-      color: "#06b6d4",
-      glowColor: "rgba(6, 182, 212, 0.4)",
-      icon: Home
+      color: "#FF9F45",
+      icon: Home,
     },
     {
       id: "xochitepec-centro",
@@ -1006,42 +1045,30 @@ const CoverageMap = () => {
       descripcion: "Cobertura principal de 5 a 10 km sujeta a agenda.",
       disponibilidad: "5-10 km",
       badge: "Principal",
-      /* tiempo: "10-15 min", */
-      coordenadas: { cx: 220, cy: 220, r: 30 },
-      mobilePosition: { left: "43%", top: "56%" },
-      color: "#3b82f6",
-      glowColor: "rgba(59, 130, 246, 0.4)",
-      icon: MapPin
+      color: "#3E7A26",
+      icon: MapPin,
     },
     {
-      id: "Zona habitacional",
+      id: "alpuyeca",
       nombre: "Alpuyeca",
       label: "Alpuyeca",
       tipo: "Urbana",
-      descripcion: "Cobertura extendida de 10 a 15 km con confirmación de ruta.",
+      descripcion: "Cobertura extendida de 10 a 15 km con confirmacion de ruta.",
       disponibilidad: "10-15 km",
       badge: "Extendida",
-      /* tiempo: "15-25 min", */
-      coordenadas: { cx: 320, cy: 140, r: 25 },
-      mobilePosition: { left: "67%", top: "29%" },
       color: "#8b5cf6",
-      glowColor: "rgba(139, 92, 246, 0.3)",
-      icon: Home
+      icon: Home,
     },
     {
       id: "benito-juarez",
       label: "Col. Benito Juarez",
-      nombre: "Col. Benito Juárez",
+      nombre: "Col. Benito Juarez",
       tipo: "Urbana",
-      descripcion: "Cobertura principal o extendida según ubicación exacta.",
+      descripcion: "Cobertura principal o extendida segun ubicacion exacta.",
       disponibilidad: "5-15 km",
       badge: "Ruta",
-      /* tiempo: "10-20 min", */
-      coordenadas: { cx: 180, cy: 200, r: 22 },
-      mobilePosition: { left: "31%", top: "50%" },
       color: "#10b981",
-      glowColor: "rgba(16, 185, 129, 0.3)",
-      icon: MapPin
+      icon: MapPin,
     },
     {
       id: "jardines",
@@ -1051,49 +1078,27 @@ const CoverageMap = () => {
       descripcion: "Residencial con acceso controlado; confirmar caseta y horario.",
       disponibilidad: "Confirmar",
       badge: "Residencial",
-      /* tiempo: "20-30 min", */
-      coordenadas: { cx: 340, cy: 240, r: 25 },
-      mobilePosition: { left: "72%", top: "63%" },
       color: "#f59e0b",
-      glowColor: "rgba(245, 158, 11, 0.3)",
-      icon: Home
+      icon: Home,
     },
     {
-      id: "CuernDistribuidores y zonas aledañas",
+      id: "cuernavaca-ruta",
       nombre: "Cuernavaca",
       label: "Cuernavaca",
-      tipo: "Expansión",
+      tipo: "Expansion",
       descripcion: "Cuernavaca se atiende como ruta programada o servicio especial.",
       disponibilidad: "Programada",
       badge: "Expansion",
-      /* tiempo: "Consultar", */
-      coordenadas: { cx: 200, cy: 280, r: 28 },
-      mobilePosition: { left: "38%", top: "75%" },
       color: "#64748b",
-      glowColor: "rgba(100, 116, 139, 0.3)",
-      icon: Clock
+      icon: Clock,
     }
   ];
-
-  const rutasPrincipales = [
-    { nombre: "Autopista México-Cuernavaca", path: "M 50,150 Q 200,120 450,180" },
-    { nombre: "Carretera Federal 95D", path: "M 80,200 Q 250,180 420,220" },
-    { nombre: "Acceso Santa Fe Life Style", path: "M 250,100 Q 280,140 280,180" }
-  ];
-
-  const referenciasLimpias = [
-    { icon: "CP", text: "Código postal base 62793" },
-    { icon: "5", text: "Cobertura prioritaria hasta 5 km" },
-    { icon: "15", text: "Cobertura extendida hasta 15 km" },
-    { icon: "CV", text: "Cuernavaca bajo ruta programada" }
-  ];
-
   const zonaActiva = zonas.find(z => z.id === activeZone);
   const coverageResult = (() => {
     if (userDistanceKm === null) {
       return {
         label: 'Verifica cobertura',
-        description: 'Usa tu ubicación o escribe tu colonia para confirmar la zona de servicio.',
+        description: 'Usa tu ubicacion o escribe tu colonia para confirmar la zona de servicio.',
         color: 'text-cyan-100',
         tier: 'Sin validar',
       };
@@ -1102,7 +1107,7 @@ const CoverageMap = () => {
     if (userDistanceKm <= serviceBase.priorityRadiusKm) {
       return {
         label: 'Cobertura prioritaria',
-        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}.`,
+        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}.`,
         color: 'text-emerald-300',
         tier: '0-5 km',
       };
@@ -1111,7 +1116,7 @@ const CoverageMap = () => {
     if (userDistanceKm <= serviceBase.mainRadiusKm) {
       return {
         label: 'Cobertura principal',
-        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Servicio sujeto a agenda disponible.`,
+        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Servicio sujeto a agenda disponible.`,
         color: 'text-cyan-200',
         tier: '5-10 km',
       };
@@ -1120,7 +1125,7 @@ const CoverageMap = () => {
     if (userDistanceKm <= serviceBase.extendedRadiusKm) {
       return {
         label: 'Cobertura extendida',
-        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Confirmamos ruta y horario por WhatsApp.`,
+        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Confirmamos ruta y horario por WhatsApp.`,
         color: 'text-amber-200',
         tier: '10-15 km',
       };
@@ -1129,7 +1134,7 @@ const CoverageMap = () => {
     if (userDistanceKm <= serviceBase.consultRadiusKm) {
       return {
         label: 'Zona bajo consulta',
-        description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Revisamos disponibilidad especial.`,
+        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Revisamos disponibilidad especial.`,
         color: 'text-orange-200',
         tier: '15-20 km',
       };
@@ -1137,13 +1142,13 @@ const CoverageMap = () => {
 
     return {
       label: 'Fuera de zona principal',
-      description: `Estás aprox. a ${userDistanceKm.toFixed(1)} km. Podemos revisar servicio programado.`,
+      description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Podemos revisar servicio programado.`,
       color: 'text-slate-300',
       tier: '+20 km',
     };
   })();
   const coverageWhatsAppMessage = coverageArea.trim()
-    ? `Hola, vivo en ${coverageArea.trim()}. ¿Tienen cobertura para un servicio AQUABRILLO cerca de ${serviceBase.shortName}, CP ${serviceBase.postalCode}?`
+    ? `Hola, vivo en ${coverageArea.trim()}. Tienen cobertura para un servicio AQUABRILLO cerca de ${serviceBase.shortName}, CP ${serviceBase.postalCode}?`
     : userDistanceKm !== null
       ? `Hola, quiero confirmar cobertura AQUABRILLO. ${coverageResult.label} (${coverageResult.tier}). Estoy aproximadamente a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}, CP ${serviceBase.postalCode}.`
     : WHATSAPP_CAMPAIGNS.coverage;
@@ -1200,383 +1205,98 @@ const CoverageMap = () => {
   };
 
   return (
-    <section id="cobertura" className="py-24 bg-slate-950 relative overflow-hidden">
-      <div className="absolute inset-0">
-        <div className="absolute top-0 left-1/3 w-96 h-96 bg-cyan-500/5 rounded-full blur-3xl" />
-        <div className="absolute bottom-0 right-1/3 w-96 h-96 bg-blue-600/5 rounded-full blur-3xl" />
-      </div>
+    <section id="cobertura" className="relative overflow-hidden bg-brand-night py-16 sm:py-20">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,159,69,0.11),transparent_32%),radial-gradient(circle_at_82%_60%,rgba(62,122,38,0.18),transparent_36%)]" />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
+      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="text-center mb-16">
-            <span className="mb-4 block text-sm font-semibold uppercase tracking-wider text-cyan-400">
-              Radar de Cobertura
-            </span>
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-              Cobertura desde <br />
-              <span className="bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                Santa Fe, CP 62793
+          <div className="mb-8 grid gap-4 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
+            <div>
+              <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-xs font-black uppercase tracking-[0.14em] text-brand-orange">
+                <LocateFixed className="h-4 w-4" />
+                Radar de cobertura
               </span>
-            </h2>
-            <p className="mx-auto max-w-2xl text-lg text-slate-400">
-              Verifica si estás dentro del radio principal de servicio y confirma disponibilidad por WhatsApp.
+              <h2 className="max-w-2xl text-3xl font-black tracking-tight text-white sm:text-4xl">
+                Servicio premium desde Santa Fe Life Style
+              </h2>
+            </div>
+            <p className="max-w-2xl text-sm font-medium leading-relaxed text-slate-400 sm:text-base lg:justify-self-end">
+              Confirma tu zona en segundos. Si estas fuera del radio principal, te ayudamos por WhatsApp con una ruta programada.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-5 lg:grid-cols-5 lg:gap-8 lg:items-start">
-          <ScrollReveal className="hidden lg:order-1 lg:col-span-3 lg:block">
-            <div className="relative overflow-hidden rounded-3xl border border-cyan-300/15 bg-slate-900/55 p-3 shadow-2xl shadow-cyan-950/20 sm:p-6">
-              <div className="mb-3 flex items-center justify-between sm:mb-4">
-                <h3 className="text-white font-semibold flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-cyan-400" />
-                  Mapa de referencia
-                </h3>
-                <span className="text-xs text-slate-500 bg-white/5 px-3 py-1 rounded-full">
-                  Xochitepec, Morelos
+        <div className="grid gap-5 lg:grid-cols-[0.92fr_1.08fr] lg:items-stretch">
+          <ScrollReveal className="order-2 lg:order-1">
+            <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/15 backdrop-blur-xl sm:p-5">
+              <div className="mb-4 flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.14em] text-brand-orange">Zona base</p>
+                  <h3 className="mt-1 text-xl font-black text-white">{serviceBase.shortName}</h3>
+                  <p className="mt-1 text-xs font-bold text-slate-500">CP {serviceBase.postalCode} - Xochitepec, Morelos</p>
+                </div>
+                <span className="rounded-full border border-brand-green/25 bg-brand-green/15 px-3 py-1 text-xs font-black text-green-100">
+                  5 / 10 / 15 km
                 </span>
               </div>
 
-              <div className="relative overflow-hidden rounded-2xl bg-gradient-to-b from-slate-800/50 to-slate-900/50">
-                <div>
-                <svg 
-                  viewBox="0 0 500 400" 
-                  className="aspect-[4/3] h-auto w-full"
-                  style={{ filter: "drop-shadow(0 0 30px rgba(6,182,212,0.1))" }}
-                >
-                  <defs>
-                    <radialGradient id="glow-cyan" cx="50%" cy="50%" r="50%">
-                      <stop offset="0%" stopColor="rgba(6,182,212,0.3)" />
-                      <stop offset="100%" stopColor="rgba(6,182,212,0)" />
-                    </radialGradient>
-                    <filter id="pulse">
-                      <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
-                      <feMerge>
-                        <feMergeNode in="coloredBlur"/>
-                        <feMergeNode in="SourceGraphic"/>
-                      </feMerge>
-                    </filter>
-                  </defs>
-
-                  <path 
-                    d="M 80,80 Q 150,60 250,70 Q 350,50 420,90 Q 460,150 450,220 Q 440,300 380,340 Q 300,370 200,360 Q 100,350 60,280 Q 40,200 60,140 Q 70,100 80,80 Z" 
-                    fill="rgba(15, 23, 42, 0.6)" 
-                    stroke="rgba(6, 182, 212, 0.2)" 
-                    strokeWidth="1"
-                  />
-
-                  {rutasPrincipales.map((ruta, i) => (
-                    <g key={i}>
-                      <path 
-                        d={ruta.path} 
-                        fill="none" 
-                        stroke="rgba(100, 116, 139, 0.3)" 
-                        strokeWidth="2" 
-                        strokeDasharray="8,4"
-                      />
-                      <path 
-                        d={ruta.path} 
-                        fill="none" 
-                        stroke="rgba(6, 182, 212, 0.15)" 
-                        strokeWidth="4"
-                      />
-                    </g>
-                  ))}
-
-                  <text x="200" y="115" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
-                    Autopista México-Cuernavaca
-                  </text>
-                  <text x="220" y="195" fill="rgba(148, 163, 184, 0.5)" fontSize="8" fontFamily="Inter">
-                    Carretera 95D
-                  </text>
-
-                  {zonas.map((zona) => (
-                    <g 
-                      key={zona.id}
-                      className="cursor-pointer transition-all duration-300"
-                      onMouseEnter={() => setActiveZone(zona.id)}
-                      onClick={() => setActiveZone(zona.id)}
-                      style={{ transformOrigin: `${zona.coordenadas.cx}px ${zona.coordenadas.cy}px` }}
-                    >
-                      <circle
-                        cx={zona.coordenadas.cx}
-                        cy={zona.coordenadas.cy}
-                        r={zona.coordenadas.r * 1.8}
-                        fill={zona.glowColor}
-                        opacity={activeZone === zona.id ? 0.6 : 0.2}
-                        className="transition-opacity duration-300"
-                      />
-                      
-                      <circle
-                        cx={zona.coordenadas.cx}
-                        cy={zona.coordenadas.cy}
-                        r={zona.coordenadas.r}
-                        fill={activeZone === zona.id ? zona.color : "rgba(30, 41, 59, 0.8)"}
-                        stroke={zona.color}
-                        strokeWidth={activeZone === zona.id ? 3 : 1.5}
-                        className="transition-all duration-300"
-                        filter={activeZone === zona.id ? "url(#pulse)" : ""}
-                      />
-                      
-                      <circle
-                        cx={zona.coordenadas.cx}
-                        cy={zona.coordenadas.cy}
-                        r={6}
-                        fill={zona.color}
-                        className="transition-all duration-300"
-                      />
-                      
-                      {zona.tipo === "Principal" && (
-                        <>
-                          <circle
-                            cx={zona.coordenadas.cx}
-                            cy={zona.coordenadas.cy}
-                            r={zona.coordenadas.r}
-                            fill="none"
-                            stroke={zona.color}
-                            strokeWidth={1}
-                            opacity={0.5}
-                          >
-                            <animate
-                              attributeName="r"
-                              values={`${zona.coordenadas.r};${zona.coordenadas.r * 1.5};${zona.coordenadas.r}`}
-                              dur="3s"
-                              repeatCount="indefinite"
-                            />
-                            <animate
-                              attributeName="opacity"
-                              values="0.5;0;0.5"
-                              dur="3s"
-                              repeatCount="indefinite"
-                            />
-                          </circle>
-                        </>
-                      )}
-
-                      <text
-                        x={zona.coordenadas.cx}
-                        y={zona.coordenadas.cy + zona.coordenadas.r + 15}
-                        textAnchor="middle"
-                        fill={activeZone === zona.id ? "#fff" : "rgba(148, 163, 184, 0.7)"}
-                        fontSize="9"
-                        fontWeight={activeZone === zona.id ? "600" : "400"}
-                        fontFamily="Inter"
-                        className="transition-all duration-300"
-                      >
-                        {zona.label || zona.nombre}
-                      </text>
-                    </g>
-                  ))}
-
-                  <g transform="translate(280, 180)">
-                    <circle r="4" fill="#ef4444">
-                      <animate
-                        attributeName="r"
-                        values="4;8;4"
-                        dur="2s"
-                        repeatCount="indefinite"
-                      />
-                      <animate
-                        attributeName="opacity"
-                        values="1;0.3;1"
-                        dur="2s"
-                        repeatCount="indefinite"
-                      />
-                    </circle>
-                    <circle r="2" fill="#ef4444" />
-                  </g>
-                </svg>
-                </div>
-
-                {zonaActiva && (
-                  <div className="absolute bottom-4 left-4 right-4 rounded-xl border border-white/10 bg-slate-900/95 p-4 backdrop-blur-xl animate-in fade-in slide-in-from-bottom-2 duration-200">
-                    <div className="flex items-center gap-2 sm:gap-3">
-                      <div 
-                        className="flex h-9 w-9 flex-none items-center justify-center rounded-lg sm:h-10 sm:w-10"
-                        style={{ backgroundColor: `${zonaActiva.color}20` }}
-                      >
-                        <zonaActiva.icon className="w-5 h-5" style={{ color: zonaActiva.color }} />
-                      </div>
-                      <div className="min-w-0 flex-grow">
-                        <h4 className="text-white font-bold text-sm">{zonaActiva.label || zonaActiva.nombre}</h4>
-                        <p className="line-clamp-2 text-xs text-slate-400">{zonaActiva.descripcion}</p>
-                      </div>
-                      <div className="flex-none text-right">
-                        <span className="text-xs text-slate-500 block">Estado</span>
-                        <span className="text-cyan-400 font-bold text-sm">{zonaActiva.badge}</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              <div className="flex flex-wrap items-center gap-4 mt-4 text-xs">
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-cyan-500" />
-                  <span className="text-slate-400">Cobertura principal</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-violet-500" />
-                  <span className="text-slate-400">Residencial</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-3 h-3 rounded-full bg-slate-500" />
-                  <span className="text-slate-400">Zona bajo consulta</span>
-                </div>
-                <div className="flex items-center gap-2 ml-auto">
-                  <div className="w-8 h-0.5 bg-slate-600 border-dashed" style={{ borderTop: "1px dashed rgba(100,116,139,0.5)" }} />
-                  <span className="text-slate-500">Ruta de acceso</span>
-                </div>
-              </div>
-            </div>
-          </ScrollReveal>
-
-          <ScrollReveal delay={200} className="order-1 lg:order-2 lg:col-span-2">
-            <div className="space-y-6">
-              <div className="rounded-2xl border border-cyan-300/15 bg-slate-900/70 p-4 shadow-2xl shadow-cyan-950/20 sm:p-6">
-                <div className="mb-4 flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-bold uppercase tracking-[0.14em] text-cyan-100/70">Zona base</p>
-                    <h3 className="mt-1 text-lg font-black text-white">{serviceBase.shortName}</h3>
-                    <p className="mt-1 text-xs text-slate-500">{serviceBase.address}</p>
-                  </div>
-                  <span className="rounded-full border border-cyan-300/15 bg-cyan-300/10 px-3 py-1 text-xs font-bold text-cyan-100">
-                    5 / 10 / 15 km
+              <div className="rounded-2xl border border-white/10 bg-brand-night/70 p-4">
+                <div className="mb-2 flex items-center justify-between gap-3">
+                  <p className={`text-sm font-black ${coverageResult.color}`}>{coverageResult.label}</p>
+                  <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[0.65rem] font-black text-slate-300">
+                    {coverageResult.tier}
                   </span>
                 </div>
+                <p className="text-sm leading-relaxed text-slate-400">{coverageResult.description}</p>
+              </div>
 
-                <div className="relative mb-4 h-44 overflow-hidden rounded-2xl border border-white/10 bg-[radial-gradient(circle_at_center,_rgba(34,211,238,0.18),_rgba(15,23,42,0.35)_38%,_rgba(15,23,42,0.92)_100%)] lg:hidden">
-                  <div className="absolute left-1/2 top-1/2 h-32 w-32 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/30 bg-cyan-300/5" />
-                  <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-cyan-300/20" />
-                  <div className="absolute left-1/2 top-1/2 flex h-12 w-12 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-[#25D366] shadow-[0_0_28px_rgba(37,211,102,0.45)]">
-                    <MapPin className="h-6 w-6 text-white" />
-                  </div>
-                  <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-slate-950/80 px-3 py-1 text-[0.68rem] font-bold text-white">
-                    Santa Fe Life Style
+              <div className="my-4 flex gap-2 overflow-x-auto pb-1 text-[0.68rem] font-black uppercase tracking-[0.08em] text-slate-300">
+                {[
+                  ['0-5 km', 'Prioritaria'],
+                  ['5-10 km', 'Principal'],
+                  ['10-15 km', 'Extendida'],
+                  ['15-20 km', 'Consulta'],
+                ].map(([range, label]) => (
+                  <span key={range} className="flex-none rounded-full border border-white/10 bg-white/[0.035] px-3 py-2">
+                    <span className="text-brand-orange">{range}</span> {label}
                   </span>
-                </div>
+                ))}
+              </div>
 
-                <div className="rounded-xl border border-white/10 bg-slate-950/55 p-4">
-                  <div className="mb-2 flex items-center justify-between gap-3">
-                    <p className={`text-sm font-black ${coverageResult.color}`}>{coverageResult.label}</p>
-                    <span className="rounded-full bg-white/5 px-2.5 py-1 text-[0.65rem] font-bold text-slate-300">
-                      {coverageResult.tier}
-                    </span>
-                  </div>
-                  <p className="mt-1 text-sm leading-relaxed text-slate-400">{coverageResult.description}</p>
-                </div>
-
-                <div className="mt-4 grid grid-cols-2 gap-2 text-[0.68rem] font-bold text-slate-300">
-                  {[
-                    ['0-5 km', 'Prioritaria'],
-                    ['5-10 km', 'Principal'],
-                    ['10-15 km', 'Extendida'],
-                    ['15-20 km', 'Consulta'],
-                  ].map(([range, label]) => (
-                    <div key={range} className="rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2">
-                      <span className="block text-cyan-100">{range}</span>
-                      <span className="text-slate-500">{label}</span>
-                    </div>
-                  ))}
-                </div>
-
+              <div className="grid gap-3 sm:grid-cols-2">
                 <button
                   type="button"
                   onClick={handleUseLocation}
                   disabled={locationStatus === 'loading'}
-                  className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl border border-cyan-300/20 bg-cyan-300/10 px-5 py-3 text-sm font-black text-cyan-100 transition hover:bg-cyan-300/15 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-brand-orange/25 bg-brand-orange/10 px-4 py-3 text-sm font-black text-orange-100 transition hover:bg-brand-orange/15 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   <LocateFixed className="h-5 w-5" />
-                  {locationStatus === 'loading' ? 'Detectando ubicación...' : 'Usar mi ubicación'}
+                  {locationStatus === 'loading' ? 'Detectando...' : 'Usar mi ubicacion'}
                 </button>
                 <a
                   href={serviceBase.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-5 py-3 text-sm font-bold text-slate-200 transition hover:border-cyan-300/20 hover:bg-cyan-300/10 hover:text-white"
+                  className="flex min-h-12 items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-sm font-black text-slate-200 transition hover:border-brand-orange/25 hover:text-brand-orange"
                 >
-                  <MapPin className="h-4 w-4 text-cyan-200" />
-                  Ver punto base en Maps
+                  <MapPin className="h-4 w-4" />
+                  Ver base en Maps
                 </a>
-                {locationStatus === 'error' && (
-                  <p className="mt-3 text-xs font-bold text-amber-200">
-                    No pudimos acceder a tu ubicación. Puedes escribir tu colonia abajo.
-                  </p>
-                )}
-                {locationStatus === 'unsupported' && (
-                  <p className="mt-3 text-xs font-bold text-amber-200">
-                    Tu navegador no permite geolocalización. Escribe tu colonia para confirmar.
-                  </p>
-                )}
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-6">
-                <h3 className="mb-4 flex items-center gap-2 text-white font-bold">
-                  <Shield className="w-5 h-5 text-cyan-400" />
-                  Zonas Cubiertas
-                </h3>
-                
-                <div className="grid gap-3 sm:grid-cols-2 lg:block lg:space-y-3">
-                  {zonas.map((zona) => (
-                    <button
-                      key={zona.id}
-                      type="button"
-                      className={`flex w-full cursor-pointer items-center gap-3 rounded-xl p-3 text-left transition-all duration-300 ${
-                        activeZone === zona.id 
-                          ? 'bg-cyan-500/10 border border-cyan-500/25 shadow-lg shadow-cyan-950/20' 
-                          : 'bg-white/5 border border-transparent hover:bg-white/[0.03]'
-                      }`}
-                      onMouseEnter={() => setActiveZone(zona.id)}
-                      onClick={() => setActiveZone(zona.id)}
-                    >
-                      <div 
-                        className="w-3 h-3 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: zona.color }}
-                      />
-                      <div className="flex-grow">
-                        <p className="text-white text-sm font-medium">{zona.label || zona.nombre}</p>
-                        <p className="text-slate-500 text-xs">{zona.tipo}</p>
-                      </div>
-                      <span className="max-w-[6.75rem] rounded-full border border-cyan-300/15 bg-cyan-300/10 px-2.5 py-1 text-center text-[0.62rem] font-bold leading-tight text-cyan-100">
-                        {zona.disponibilidad}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {zonaActiva && (
-                <div className="rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4 lg:hidden">
-                  <div className="mb-3 flex items-center gap-3">
-                    <div
-                      className="flex h-11 w-11 flex-none items-center justify-center rounded-xl"
-                      style={{ backgroundColor: `${zonaActiva.color}20` }}
-                    >
-                      <zonaActiva.icon className="h-5 w-5" style={{ color: zonaActiva.color }} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-black text-white">{zonaActiva.label || zonaActiva.nombre}</p>
-                      <p className="text-xs font-bold uppercase tracking-[0.12em] text-cyan-100/70">{zonaActiva.badge}</p>
-                    </div>
-                  </div>
-                  <p className="text-sm leading-relaxed text-slate-400">{zonaActiva.descripcion}</p>
-                </div>
+              {locationStatus === 'error' && (
+                <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
+                  No pudimos acceder a tu ubicacion. Puedes escribir tu colonia abajo.
+                </p>
+              )}
+              {locationStatus === 'unsupported' && (
+                <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
+                  Tu navegador no permite geolocalizacion. Escribe tu colonia para confirmar.
+                </p>
               )}
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 sm:p-6">
-                <h3 className="mb-4 text-sm font-bold text-white">Referencias de ruta</h3>
-                <div className="space-y-3">
-                  {referenciasLimpias.map((ref, i) => (
-                    <div key={i} className="flex items-center gap-3">
-                      <span className="flex h-8 w-8 items-center justify-center rounded-lg border border-cyan-300/15 bg-cyan-300/10 text-[0.62rem] font-black text-cyan-100">{ref.icon}</span>
-                      <span className="text-slate-400 text-sm">{ref.text}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <label className="block rounded-2xl border border-cyan-300/15 bg-cyan-300/5 p-4">
-                <span className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-cyan-100">
+              <label className="mt-4 block">
+                <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-400">
                   Tu colonia o fraccionamiento
                 </span>
                 <input
@@ -1596,7 +1316,7 @@ const CoverageMap = () => {
                     });
                   }}
                   placeholder="Ej. Santa Fe, Xochitepec Centro, Alpuyeca"
-                  className="w-full rounded-xl border border-white/10 bg-slate-950/70 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-cyan-300/50"
+                  className="w-full rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-3 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55"
                 />
               </label>
 
@@ -1605,31 +1325,65 @@ const CoverageMap = () => {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => persistCoverageContext()}
-                className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-6 py-4 font-semibold text-white transition-all duration-300 hover:scale-[1.02] hover:bg-[#1EBE5D] hover:shadow-lg hover:shadow-[#25D366]/25"
+                className="mt-4 flex min-h-14 w-full items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-6 py-4 text-sm font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#1EBE5D] hover:shadow-xl hover:shadow-[#25D366]/20"
               >
-                <MessageCircle className="w-5 h-5" />
-                Verificar mi ubicación
+                <MessageCircle className="h-5 w-5" />
+                Verificar mi ubicacion
               </a>
             </div>
           </ScrollReveal>
-        </div>
 
-        <ScrollReveal delay={300}>
-          <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-6">
-            {[
-              { valor: "62793", label: "Código postal base", icon: MapPin },
-              { valor: "5 km", label: "Prioritaria", icon: Clock },
-              { valor: "15 km", label: "Extendida", icon: Home },
-              { valor: "20 km", label: "Bajo consulta", icon: Award }
-            ].map((stat, i) => (
-              <div key={i} className="text-center p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                <stat.icon className="w-6 h-6 text-cyan-400 mx-auto mb-3" />
-                <p className="text-2xl font-bold text-white mb-1">{stat.valor}</p>
-                <p className="text-slate-500 text-sm">{stat.label}</p>
+          <ScrollReveal delay={120} className="order-1 lg:order-2">
+            <div className="relative h-full min-h-[360px] overflow-hidden rounded-3xl border border-brand-orange/15 bg-[linear-gradient(145deg,rgba(255,255,255,0.07),rgba(255,255,255,0.025))] p-4 shadow-2xl shadow-black/20 backdrop-blur-xl sm:min-h-[420px] sm:p-6">
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(255,159,69,0.16),transparent_24%),radial-gradient(circle_at_center,rgba(62,122,38,0.18),transparent_52%)]" />
+              <div className="relative flex h-[220px] items-center justify-center sm:h-[270px] lg:h-[310px]">
+                <div className="absolute h-52 w-52 rounded-full border border-brand-orange/15 sm:h-64 sm:w-64 lg:h-72 lg:w-72" />
+                <div className="absolute h-40 w-40 rounded-full border border-brand-orange/25 bg-brand-orange/5 sm:h-52 sm:w-52 lg:h-56 lg:w-56" />
+                <div className="absolute h-28 w-28 rounded-full border border-brand-green/30 bg-brand-green/10 sm:h-36 sm:w-36" />
+                <div className="absolute h-16 w-16 rounded-full border border-white/15 bg-white/[0.045]" />
+                <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-orange text-brand-night shadow-[0_0_34px_rgba(255,159,69,0.35)]">
+                  <MapPin className="h-7 w-7" />
+                </div>
+                <span className="absolute bottom-3 rounded-full border border-white/10 bg-brand-night/75 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.12em] text-white backdrop-blur-xl">
+                  Santa Fe Life Style
+                </span>
               </div>
-            ))}
-          </div>
-        </ScrollReveal>
+
+              <div className="relative rounded-2xl border border-white/10 bg-brand-night/65 p-4">
+                <div className="mb-3 flex items-center gap-3">
+                  {zonaActiva && (
+                    <div className="flex h-10 w-10 flex-none items-center justify-center rounded-xl" style={{ backgroundColor: `${zonaActiva.color}20` }}>
+                      <zonaActiva.icon className="h-5 w-5" style={{ color: zonaActiva.color }} />
+                    </div>
+                  )}
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-white">{zonaActiva?.label || zonaActiva?.nombre}</p>
+                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{zonaActiva?.badge}</p>
+                  </div>
+                </div>
+                <p className="text-sm leading-relaxed text-slate-400">{zonaActiva?.descripcion}</p>
+              </div>
+
+              <div className="relative mt-4 flex gap-2 overflow-x-auto pb-1">
+                {zonas.map((zona) => (
+                  <button
+                    key={zona.id}
+                    type="button"
+                    onMouseEnter={() => setActiveZone(zona.id)}
+                    onClick={() => setActiveZone(zona.id)}
+                    className={`flex-none rounded-full border px-3 py-2 text-[0.68rem] font-black uppercase tracking-[0.08em] transition ${
+                      activeZone === zona.id
+                        ? 'border-brand-orange/45 bg-brand-orange/15 text-orange-100'
+                        : 'border-white/10 bg-white/[0.035] text-slate-400 hover:border-brand-orange/25 hover:text-white'
+                    }`}
+                  >
+                    {zona.label || zona.nombre}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </ScrollReveal>
+        </div>
       </div>
     </section>
   );
@@ -2175,8 +1929,73 @@ const isAdminRoute = () => (
   || window.location.search.includes('admin')
 );
 
+const BookingModal = ({ isOpen, onClose }) => {
+  useEffect(() => {
+    if (!isOpen) return undefined;
+
+    const originalOverflow = document.body.style.overflow;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') onClose();
+    };
+
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isOpen, onClose]);
+
+  return (
+    <div
+      className={`fixed inset-0 z-[90] items-end justify-center bg-black/70 p-0 backdrop-blur-md sm:items-center sm:p-5 ${
+        isOpen ? 'flex' : 'hidden'
+      }`}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Cotizador AQUABRILLO"
+      aria-hidden={!isOpen}
+    >
+      <button
+        type="button"
+        aria-label="Cerrar cotizador"
+        onClick={onClose}
+        className="absolute inset-0 cursor-default"
+      />
+      <div className="relative z-10 flex max-h-[92svh] w-full max-w-7xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-brand-night shadow-2xl shadow-black/40 sm:max-h-[90vh] sm:rounded-3xl">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.035] px-4 py-3 sm:px-5">
+          <div>
+            <div className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-brand-orange">Cotizador AQUABRILLO</div>
+            <div className="text-sm font-bold text-slate-400">Tu avance se conserva al cerrar esta ventana</div>
+          </div>
+          <button
+            type="button"
+            aria-label="Cerrar cotizador"
+            onClick={onClose}
+            className="flex h-11 flex-none items-center justify-center gap-2 rounded-2xl border border-white/10 bg-brand-night/80 px-3 text-slate-300 transition hover:border-brand-orange/35 hover:text-brand-orange"
+          >
+            <X className="h-5 w-5" />
+            <span className="hidden text-xs font-black uppercase tracking-[0.12em] sm:inline">Cerrar</span>
+          </button>
+        </div>
+        <div className="overflow-y-auto">
+          <BookingMvp embedded />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 function App() {
   const [showAdminPanel, setShowAdminPanel] = useState(isAdminRoute);
+  const [isBookingOpen, setIsBookingOpen] = useState(false);
+  const closeBooking = () => {
+    setIsBookingOpen(false);
+    if (window.location.hash === '#cotizador') {
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}`);
+    }
+  };
 
   useEffect(() => {
     const syncRoute = () => setShowAdminPanel(isAdminRoute());
@@ -2188,6 +2007,32 @@ function App() {
       window.removeEventListener('hashchange', syncRoute);
       window.removeEventListener('popstate', syncRoute);
     };
+  }, []);
+
+  useEffect(() => {
+    const openBookingFromHash = () => {
+      if (window.location.hash === '#cotizador') {
+        setIsBookingOpen(true);
+      }
+    };
+
+    window.addEventListener('hashchange', openBookingFromHash);
+    openBookingFromHash();
+
+    return () => window.removeEventListener('hashchange', openBookingFromHash);
+  }, []);
+
+  useEffect(() => {
+    const openBookingFromLink = (event) => {
+      const link = event.target.closest?.('a[href="#cotizador"]');
+      if (!link) return;
+
+      event.preventDefault();
+      setIsBookingOpen(true);
+    };
+
+    document.addEventListener('click', openBookingFromLink);
+    return () => document.removeEventListener('click', openBookingFromLink);
   }, []);
 
   if (showAdminPanel) {
@@ -2202,7 +2047,8 @@ function App() {
       <MundialSection />
       <Credibility />
       <Services />
-      <BookingMvp />
+      <WeatherBookingGateway onOpenBooking={() => setIsBookingOpen(true)} />
+      <section id="cotizador" className="h-px bg-brand-night" aria-hidden="true" />
       <Benefits />
       <ResultsCarousel />
       <CeramicCoating />
@@ -2213,6 +2059,7 @@ function App() {
       <FinalCTA />
       <Footer />
       <FloatingWhatsApp />
+      <BookingModal isOpen={isBookingOpen} onClose={closeBooking} />
     </div>
   );
 }

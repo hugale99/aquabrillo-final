@@ -11,7 +11,7 @@
   }
   
   body {
-    background: #282828;
+    background: #1B2E1A;
     color: #fff;
     -webkit-font-smoothing: antialiased;
   }
@@ -21,11 +21,11 @@
   }
 
   ::-webkit-scrollbar-track {
-    background: #282828;
+    background: #1B2E1A;
   }
 
   ::-webkit-scrollbar-thumb {
     border-radius: 9999px;
-    background: rgba(240, 139, 29, 0.7);
+    background: rgba(255, 159, 69, 0.72);
   }
 }

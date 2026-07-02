@@ -8,8 +8,8 @@ export default {
     extend: {
       colors: {
         brand: {
-          night: '#282828',
-          orange: '#F08B1D',
+          night: '#1B2E1A',
+          orange: '#FF9F45',
           green: '#3E7A26',
           rust: '#C94722',
         },
