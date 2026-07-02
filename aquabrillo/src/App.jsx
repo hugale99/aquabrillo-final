@@ -1334,8 +1334,8 @@ const CoverageMap = () => {
           </ScrollReveal>
 
           <ScrollReveal delay={120} className="order-2">
-            <div className="relative h-full overflow-hidden rounded-3xl border border-brand-orange/15 bg-white/[0.035] p-3 shadow-2xl shadow-black/20 backdrop-blur-xl sm:p-5">
-              <div className="mb-3 flex items-center justify-between gap-3">
+            <div className="relative h-full overflow-hidden rounded-2xl border border-brand-orange/15 bg-white/[0.035] p-2 shadow-xl shadow-black/15 backdrop-blur-xl sm:rounded-3xl sm:p-5 sm:shadow-2xl sm:shadow-black/20">
+              <div className="mb-2 flex items-center justify-between gap-3 sm:mb-3">
                 <div>
                   <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange">Zona base</p>
                   <p className="text-sm font-black text-white sm:text-base">Santa Fe Life Style</p>
@@ -1345,42 +1345,42 @@ const CoverageMap = () => {
                 </span>
               </div>
 
-              <div className="relative h-[185px] overflow-hidden rounded-2xl border border-white/10 bg-[#d7decf] shadow-inner sm:h-[260px] lg:h-[335px]">
+              <div className="relative h-[112px] overflow-hidden rounded-xl border border-white/10 bg-[#d7decf] shadow-inner sm:h-[240px] sm:rounded-2xl lg:h-[335px]">
                 <div className="absolute inset-0 opacity-80 [background-image:linear-gradient(28deg,transparent_0_22%,rgba(255,255,255,0.75)_22%_24%,transparent_24%_100%),linear-gradient(118deg,transparent_0_38%,rgba(255,255,255,0.65)_38%_40%,transparent_40%_100%),linear-gradient(164deg,transparent_0_55%,rgba(255,255,255,0.55)_55%_57%,transparent_57%_100%)]" />
-                <div className="absolute inset-x-0 top-[34%] h-5 rotate-[-9deg] bg-white/70 shadow-sm" />
-                <div className="absolute -left-8 top-[58%] h-4 w-[120%] rotate-[17deg] bg-white/65 shadow-sm" />
-                <div className="absolute left-[58%] top-[-20%] h-[150%] w-4 rotate-[26deg] bg-white/60 shadow-sm" />
-                <div className="absolute left-[14%] top-[18%] rounded-full bg-brand-green/10 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-brand-green">
+                <div className="absolute inset-x-0 top-[34%] h-3 rotate-[-9deg] bg-white/70 shadow-sm sm:h-5" />
+                <div className="absolute -left-8 top-[58%] h-3 w-[120%] rotate-[17deg] bg-white/65 shadow-sm sm:h-4" />
+                <div className="absolute left-[58%] top-[-20%] h-[150%] w-3 rotate-[26deg] bg-white/60 shadow-sm sm:w-4" />
+                <div className="absolute left-[10%] top-[12%] hidden rounded-full bg-brand-green/10 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-brand-green sm:block">
                   Xochitepec
                 </div>
-                <div className="absolute right-[8%] top-[13%] rounded-full bg-white/70 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-slate-500">
+                <div className="absolute right-[8%] top-[13%] hidden rounded-full bg-white/70 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-slate-500 sm:block">
                   Morelos
                 </div>
-                <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-orange/35 bg-brand-orange/15 sm:h-40 sm:w-40 lg:h-52 lg:w-52" />
-                <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-green/40 bg-brand-green/15 sm:h-24 sm:w-24" />
+                <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-orange/35 bg-brand-orange/15 sm:h-40 sm:w-40 lg:h-52 lg:w-52" />
+                <div className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-green/40 bg-brand-green/15 sm:h-24 sm:w-24" />
                 <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-[72%] flex-col items-center">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-orange text-brand-night shadow-xl shadow-brand-orange/30 sm:h-12 sm:w-12">
-                    <MapPin className="h-5 w-5 sm:h-6 sm:w-6" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange text-brand-night shadow-xl shadow-brand-orange/30 sm:h-12 sm:w-12">
+                    <MapPin className="h-4 w-4 sm:h-6 sm:w-6" />
                   </div>
-                  <span className="mt-2 whitespace-nowrap rounded-full border border-white/70 bg-brand-night/85 px-3 py-1 text-[0.62rem] font-black uppercase tracking-[0.08em] text-white shadow-xl backdrop-blur-sm">
+                  <span className="mt-1 whitespace-nowrap rounded-full border border-white/70 bg-brand-night/85 px-2 py-0.5 text-[0.52rem] font-black uppercase tracking-[0.06em] text-white shadow-xl backdrop-blur-sm sm:mt-2 sm:px-3 sm:py-1 sm:text-[0.62rem] sm:tracking-[0.08em]">
                     Santa Fe Life Style
                   </span>
                 </div>
-                <div className="absolute bottom-3 left-3 rounded-xl border border-white/70 bg-white/80 px-3 py-2 shadow-lg backdrop-blur-sm">
+                <div className="absolute bottom-2 left-2 rounded-lg border border-white/70 bg-white/80 px-2 py-1 shadow-lg backdrop-blur-sm sm:bottom-3 sm:left-3 sm:rounded-xl sm:px-3 sm:py-2">
                   <p className="text-[0.58rem] font-black uppercase tracking-[0.1em] text-slate-500">Cobertura</p>
-                  <p className="text-xs font-black text-brand-night">5 km principal</p>
+                  <p className="text-[0.65rem] font-black text-brand-night sm:text-xs">5 km principal</p>
                 </div>
                 <a
                   href={serviceBase.mapsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="absolute bottom-3 right-3 rounded-xl bg-white/85 px-3 py-2 text-[0.62rem] font-black uppercase tracking-[0.08em] text-brand-night shadow-lg backdrop-blur-sm transition hover:bg-white"
+                  className="absolute bottom-2 right-2 rounded-lg bg-white/85 px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.06em] text-brand-night shadow-lg backdrop-blur-sm transition hover:bg-white sm:bottom-3 sm:right-3 sm:rounded-xl sm:px-3 sm:py-2 sm:text-[0.62rem] sm:tracking-[0.08em]"
                 >
                   Abrir Maps
                 </a>
               </div>
 
-              <div className="relative mt-3 rounded-2xl border border-white/10 bg-brand-night/65 p-3 sm:p-4">
+              <div className="relative mt-3 hidden rounded-2xl border border-white/10 bg-brand-night/65 p-3 sm:block sm:p-4">
                 <div className="mb-2 flex items-center gap-3 sm:mb-3">
                   {zonaActiva && (
                     <div className="flex h-9 w-9 flex-none items-center justify-center rounded-xl sm:h-10 sm:w-10" style={{ backgroundColor: `${zonaActiva.color}20` }}>
@@ -1395,7 +1395,7 @@ const CoverageMap = () => {
                 <p className="text-xs leading-relaxed text-slate-400 sm:text-sm">{zonaActiva?.descripcion}</p>
               </div>
 
-              <div className="relative mt-3 flex gap-2 overflow-x-auto pb-1 sm:mt-4">
+              <div className="relative mt-3 hidden gap-2 overflow-x-auto pb-1 sm:mt-4 sm:flex">
                 {zonas.map((zona) => (
                   <button
                     key={zona.id}
