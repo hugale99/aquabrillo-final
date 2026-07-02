@@ -43,7 +43,6 @@ const COVERAGE_BASE = {
   mainRadiusKm: 10,
   extendedRadiusKm: 15,
   consultRadiusKm: 20,
-  mapsUrl: 'https://maps.app.goo.gl/w6oiZJE98n3tHcZA7',
 };
 
 // ============================================================
