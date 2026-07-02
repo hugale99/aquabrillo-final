@@ -145,6 +145,14 @@ const quickStatusActions = [
   { id: 'terminada', label: 'Terminar' },
 ];
 
+const kanbanColumns = [
+  { id: 'preagenda_whatsapp', label: 'Preagenda', nextStatus: 'confirmada', nextLabel: 'Confirmar' },
+  { id: 'confirmada', label: 'Confirmada', nextStatus: 'en_camino', nextLabel: 'En camino' },
+  { id: 'en_camino', label: 'En camino', nextStatus: 'en_servicio', nextLabel: 'En servicio' },
+  { id: 'en_servicio', label: 'En servicio', nextStatus: 'terminada', nextLabel: 'Terminar' },
+  { id: 'terminada', label: 'Terminada' },
+];
+
 const sortOptions = [
   { id: 'upcoming', label: 'Proximas citas' },
   { id: 'newest', label: 'Mas recientes' },
@@ -257,6 +265,10 @@ const LocalBookingDashboard = ({
       [event.folio]: [...(grouped[event.folio] || []), event],
     };
   }, {}), [reservationEvents]);
+  const kanbanGroups = useMemo(() => kanbanColumns.reduce((groups, column) => ({
+    ...groups,
+    [column.id]: visiblePrebookings.filter((item) => (item.status || 'preagenda_whatsapp') === column.id),
+  }), {}), [visiblePrebookings]);
 
   return (
     <ScrollReveal delay={260}>
@@ -425,6 +437,81 @@ const LocalBookingDashboard = ({
               Sin servicios programados para hoy.
             </div>
           )}
+        </div>
+
+        <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/45 p-3">
+          <div className="mb-3 flex items-center justify-between gap-3 px-1">
+            <div>
+              <div className="text-xs font-black uppercase tracking-[0.14em] text-brand-orange">Flujo operativo</div>
+              <div className="mt-1 text-sm font-bold text-slate-400">Estado actual de las reservas visibles</div>
+            </div>
+            <span className="hidden rounded-full border border-white/10 px-3 py-1.5 text-xs font-black uppercase tracking-[0.12em] text-slate-500 sm:inline-flex">
+              Kanban
+            </span>
+          </div>
+
+          <div className="flex gap-3 overflow-x-auto pb-1">
+            {kanbanColumns.map((column) => {
+              const columnItems = kanbanGroups[column.id] || [];
+
+              return (
+                <div key={column.id} className="min-w-[16rem] flex-1 rounded-2xl border border-white/10 bg-brand-night/70 p-3 lg:min-w-0">
+                  <button
+                    type="button"
+                    onClick={() => setStatusFilter(column.id)}
+                    className="mb-3 flex w-full items-center justify-between gap-3 text-left"
+                  >
+                    <span className={`rounded-full border px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] ${getReservationStatusTone(column.id)}`}>
+                      {column.label}
+                    </span>
+                    <span className="text-lg font-black text-white">{columnItems.length}</span>
+                  </button>
+
+                  <div className="space-y-2">
+                    {columnItems.slice(0, 4).map((item) => (
+                      <div key={`${column.id}-${item.folio}`} className="rounded-xl border border-white/10 bg-white/[0.035] p-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-black text-white">{item.customerName || item.folio}</p>
+                            <p className="mt-0.5 truncate text-[0.65rem] font-bold uppercase tracking-[0.08em] text-slate-500">
+                              {item.date || 'Sin fecha'} {item.time || ''}
+                            </p>
+                          </div>
+                          <span className="text-xs font-black text-brand-orange">{currency.format(item.estimate?.price || 0)}</span>
+                        </div>
+                        <p className="mt-2 line-clamp-2 text-xs font-bold text-slate-500">{getServiceLabel(item)}</p>
+                        {column.nextStatus && (
+                          <button
+                            type="button"
+                            onClick={() => onStatusChange?.({ folio: item.folio, status: column.nextStatus })}
+                            className="mt-3 min-h-10 w-full rounded-xl border border-brand-orange/20 bg-brand-orange/10 px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-orange-100 transition hover:border-brand-orange/45 hover:bg-brand-orange/15"
+                          >
+                            {column.nextLabel}
+                          </button>
+                        )}
+                      </div>
+                    ))}
+
+                    {columnItems.length === 0 && (
+                      <div className="rounded-xl border border-dashed border-white/10 p-4 text-center text-xs font-bold text-slate-600">
+                        Sin reservas
+                      </div>
+                    )}
+
+                    {columnItems.length > 4 && (
+                      <button
+                        type="button"
+                        onClick={() => setStatusFilter(column.id)}
+                        className="w-full rounded-xl border border-white/10 px-3 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-slate-500 transition hover:border-brand-orange/30 hover:text-brand-orange"
+                      >
+                        Ver {columnItems.length - 4} mas
+                      </button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="mb-3 flex gap-2 overflow-x-auto rounded-2xl border border-white/10 bg-brand-night/45 p-2">
