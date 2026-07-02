@@ -1018,88 +1018,19 @@ const HowItWorks = () => {
 };
 
 const CoverageMap = () => {
-  const [activeZone, setActiveZone] = useState("santa-fe");
   const [coverageArea, setCoverageArea] = useState("");
   const [userDistanceKm, setUserDistanceKm] = useState(null);
   const [locationStatus, setLocationStatus] = useState('idle');
 
   const serviceBase = COVERAGE_BASE;
+  const baseZoneName = serviceBase.shortName;
 
-  const zonas = [
-    {
-      id: "santa-fe",
-      nombre: "Santa Fe Life Style y alrededores",
-      label: "Santa Fe Life Style",
-      tipo: "Principal",
-      descripcion: "Zona base y cobertura prioritaria de 0 a 5 km.",
-      disponibilidad: "0-5 km",
-      badge: "Prioritaria",
-      color: "#FF9F45",
-      icon: Home,
-    },
-    {
-      id: "xochitepec-centro",
-      nombre: "Xochitepec Centro",
-      label: "Xochitepec Centro",
-      tipo: "Principal",
-      descripcion: "Cobertura principal de 5 a 10 km sujeta a agenda.",
-      disponibilidad: "5-10 km",
-      badge: "Principal",
-      color: "#3E7A26",
-      icon: MapPin,
-    },
-    {
-      id: "alpuyeca",
-      nombre: "Alpuyeca",
-      label: "Alpuyeca",
-      tipo: "Urbana",
-      descripcion: "Cobertura extendida de 10 a 15 km con confirmacion de ruta.",
-      disponibilidad: "10-15 km",
-      badge: "Extendida",
-      color: "#8b5cf6",
-      icon: Home,
-    },
-    {
-      id: "benito-juarez",
-      label: "Col. Benito Juarez",
-      nombre: "Col. Benito Juarez",
-      tipo: "Urbana",
-      descripcion: "Cobertura principal o extendida segun ubicacion exacta.",
-      disponibilidad: "5-15 km",
-      badge: "Ruta",
-      color: "#10b981",
-      icon: MapPin,
-    },
-    {
-      id: "jardines",
-      nombre: "Fracc. Jardines",
-      label: "Fracc. Jardines",
-      tipo: "Residencial",
-      descripcion: "Residencial con acceso controlado; confirmar caseta y horario.",
-      disponibilidad: "Confirmar",
-      badge: "Residencial",
-      color: "#f59e0b",
-      icon: Home,
-    },
-    {
-      id: "cuernavaca-ruta",
-      nombre: "Cuernavaca",
-      label: "Cuernavaca",
-      tipo: "Expansion",
-      descripcion: "Cuernavaca se atiende como ruta programada o servicio especial.",
-      disponibilidad: "Programada",
-      badge: "Expansion",
-      color: "#64748b",
-      icon: Clock,
-    }
-  ];
-  const zonaActiva = zonas.find(z => z.id === activeZone);
   const coverageResult = (() => {
     if (userDistanceKm === null) {
       return {
         label: 'Verifica cobertura',
-        description: 'Usa tu ubicacion o escribe tu colonia para confirmar la zona de servicio.',
-        color: 'text-cyan-100',
+        description: 'Usa tu ubicacion o escribe tu colonia para confirmar el servicio.',
+        color: 'text-orange-100',
         tier: 'Sin validar',
       };
     }
@@ -1107,8 +1038,8 @@ const CoverageMap = () => {
     if (userDistanceKm <= serviceBase.priorityRadiusKm) {
       return {
         label: 'Cobertura prioritaria',
-        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}.`,
-        color: 'text-emerald-300',
+        description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km de ${baseZoneName}.`,
+        color: 'text-green-100',
         tier: '0-5 km',
       };
     }
@@ -1117,7 +1048,7 @@ const CoverageMap = () => {
       return {
         label: 'Cobertura principal',
         description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Servicio sujeto a agenda disponible.`,
-        color: 'text-cyan-200',
+        color: 'text-cyan-100',
         tier: '5-10 km',
       };
     }
@@ -1126,7 +1057,7 @@ const CoverageMap = () => {
       return {
         label: 'Cobertura extendida',
         description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Confirmamos ruta y horario por WhatsApp.`,
-        color: 'text-amber-200',
+        color: 'text-amber-100',
         tier: '10-15 km',
       };
     }
@@ -1135,7 +1066,7 @@ const CoverageMap = () => {
       return {
         label: 'Zona bajo consulta',
         description: `Estas aprox. a ${userDistanceKm.toFixed(1)} km. Revisamos disponibilidad especial.`,
-        color: 'text-orange-200',
+        color: 'text-orange-100',
         tier: '15-20 km',
       };
     }
@@ -1147,20 +1078,21 @@ const CoverageMap = () => {
       tier: '+20 km',
     };
   })();
+
   const coverageWhatsAppMessage = coverageArea.trim()
-    ? `Hola, vivo en ${coverageArea.trim()}. Tienen cobertura para un servicio AQUABRILLO cerca de ${serviceBase.shortName}, CP ${serviceBase.postalCode}?`
+    ? `Hola, vivo en ${coverageArea.trim()}. Tienen cobertura para un servicio AQUABRILLO cerca de ${baseZoneName}, CP ${serviceBase.postalCode}?`
     : userDistanceKm !== null
-      ? `Hola, quiero confirmar cobertura AQUABRILLO. ${coverageResult.label} (${coverageResult.tier}). Estoy aproximadamente a ${userDistanceKm.toFixed(1)} km de ${serviceBase.shortName}, CP ${serviceBase.postalCode}.`
-    : WHATSAPP_CAMPAIGNS.coverage;
+      ? `Hola, quiero confirmar cobertura AQUABRILLO. ${coverageResult.label} (${coverageResult.tier}). Estoy aproximadamente a ${userDistanceKm.toFixed(1)} km de ${baseZoneName}, CP ${serviceBase.postalCode}.`
+      : WHATSAPP_CAMPAIGNS.coverage;
 
   const persistCoverageContext = (overrides = {}) => saveCoverageContext({
     area: coverageArea.trim(),
-    baseName: serviceBase.shortName,
+    baseName: baseZoneName,
     postalCode: serviceBase.postalCode,
     status: coverageResult.label,
     tier: coverageResult.tier,
     distanceKm: userDistanceKm,
-    activeZone: zonaActiva?.label || zonaActiva?.nombre || '',
+    activeZone: baseZoneName,
     ...overrides,
   });
 
@@ -1193,6 +1125,7 @@ const CoverageMap = () => {
           status: nextResult.label,
           tier: nextResult.tier,
           distanceKm: distance,
+          activeZone: baseZoneName,
         });
       },
       () => setLocationStatus('error'),
@@ -1205,225 +1138,131 @@ const CoverageMap = () => {
   };
 
   return (
-    <section id="cobertura" className="relative overflow-hidden bg-brand-night py-12 sm:py-16 lg:py-20">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,159,69,0.11),transparent_32%),radial-gradient(circle_at_82%_60%,rgba(62,122,38,0.18),transparent_36%)]" />
+    <section id="cobertura" className="relative overflow-hidden bg-brand-night py-10 sm:py-14 lg:py-18">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(255,159,69,0.10),transparent_30%),radial-gradient(circle_at_82%_70%,rgba(62,122,38,0.16),transparent_34%)]" />
 
-      <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
+      <div className="relative z-10 mx-auto max-w-4xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-6 grid gap-3 sm:mb-8 lg:grid-cols-[0.8fr_1.2fr] lg:items-end">
-            <div>
-              <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange sm:px-4 sm:py-2 sm:text-xs">
-                <LocateFixed className="h-4 w-4" />
-                Mapa de cobertura
-              </span>
-              <h2 className="max-w-2xl text-2xl font-black tracking-tight text-white sm:text-4xl">
-                Servicio premium desde Santa Fe Life Style
-              </h2>
-            </div>
-            <p className="max-w-2xl text-sm font-medium leading-relaxed text-slate-400 lg:justify-self-end">
-              Confirma tu zona en segundos. Si estas fuera del radio principal, te ayudamos por WhatsApp con una ruta programada.
+          <div className="mb-5">
+            <span className="mb-3 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-3 py-1.5 text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange">
+              <MapPin className="h-4 w-4" />
+              Zona base AQUABRILLO
+            </span>
+            <h2 className="text-2xl font-black tracking-tight text-white sm:text-4xl">
+              Cobertura desde Santa Fe Life Style
+            </h2>
+            <p className="mt-2 text-sm font-medium leading-relaxed text-slate-400 sm:text-base">
+              Confirma si tu ubicacion queda dentro de nuestra zona de servicio.
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-          <ScrollReveal className="order-1">
-            <div className="flex h-full flex-col rounded-3xl border border-white/10 bg-white/[0.035] p-3 shadow-2xl shadow-black/15 backdrop-blur-xl sm:p-5">
-              <div className="mb-3 flex items-start justify-between gap-3 sm:mb-4">
-                <div>
-                  <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange sm:text-xs sm:tracking-[0.14em]">Zona base</p>
-                  <h3 className="mt-1 text-lg font-black text-white sm:text-xl">{serviceBase.shortName}</h3>
-                  <p className="mt-1 text-xs font-bold text-slate-500">CP {serviceBase.postalCode} - Xochitepec, Morelos</p>
-                </div>
-                <span className="flex-none rounded-full border border-brand-green/25 bg-brand-green/15 px-2.5 py-1 text-[0.65rem] font-black text-green-100 sm:px-3 sm:text-xs">
-                  5 / 10 / 15 km
-                </span>
+        <ScrollReveal delay={120}>
+          <div className="overflow-hidden rounded-3xl border border-white/10 bg-white/[0.035] p-3 shadow-2xl shadow-black/15 backdrop-blur-xl sm:p-5">
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange">Base</p>
+                <p className="truncate text-base font-black text-white sm:text-lg">{baseZoneName}</p>
+                <p className="text-xs font-bold text-slate-500">CP {serviceBase.postalCode} - Xochitepec, Morelos</p>
               </div>
-
-              <div className="rounded-2xl border border-white/10 bg-brand-night/70 p-3 sm:p-4">
-                <div className="mb-2 flex items-center justify-between gap-3">
-                  <p className={`text-sm font-black ${coverageResult.color}`}>{coverageResult.label}</p>
-                  <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[0.65rem] font-black text-slate-300">
-                    {coverageResult.tier}
-                  </span>
-                </div>
-                <p className="text-sm leading-relaxed text-slate-400">{coverageResult.description}</p>
-              </div>
-
-              <div className="my-3 flex gap-2 overflow-x-auto pb-1 text-[0.62rem] font-black uppercase tracking-[0.06em] text-slate-300 sm:my-4 sm:text-[0.68rem] sm:tracking-[0.08em]">
-                {[
-                  ['0-5 km', 'Prioritaria'],
-                  ['5-10 km', 'Principal'],
-                  ['10-15 km', 'Extendida'],
-                  ['15-20 km', 'Consulta'],
-                ].map(([range, label]) => (
-                  <span key={range} className="flex-none rounded-full border border-white/10 bg-white/[0.035] px-2.5 py-1.5 sm:px-3 sm:py-2">
-                    <span className="text-brand-orange">{range}</span> {label}
-                  </span>
-                ))}
-              </div>
-
-              <div className="grid gap-3 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={handleUseLocation}
-                  disabled={locationStatus === 'loading'}
-                  className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-brand-orange/25 bg-brand-orange/10 px-3 py-2 text-xs font-black text-orange-100 transition hover:bg-brand-orange/15 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-11 sm:text-sm"
-                >
-                  <LocateFixed className="h-4 w-4" />
-                  {locationStatus === 'loading' ? 'Detectando...' : 'Usar mi ubicacion'}
-                </button>
-                <a
-                  href={serviceBase.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex min-h-10 items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.035] px-3 py-2 text-xs font-black text-slate-200 transition hover:border-brand-orange/25 hover:text-brand-orange sm:min-h-11 sm:text-sm"
-                >
-                  <MapPin className="h-4 w-4" />
-                  Ver base en Maps
-                </a>
-              </div>
-
-              {locationStatus === 'error' && (
-                <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
-                  No pudimos acceder a tu ubicacion. Puedes escribir tu colonia abajo.
-                </p>
-              )}
-              {locationStatus === 'unsupported' && (
-                <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
-                  Tu navegador no permite geolocalizacion. Escribe tu colonia para confirmar.
-                </p>
-              )}
-
-              <label className="mt-3 block sm:mt-4">
-                <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-400">
-                  Tu colonia o fraccionamiento
-                </span>
-                <input
-                  type="text"
-                  value={coverageArea}
-                  onChange={(event) => {
-                    const nextArea = event.target.value;
-                    setCoverageArea(nextArea);
-                    saveCoverageContext({
-                      area: nextArea.trim(),
-                      baseName: serviceBase.shortName,
-                      postalCode: serviceBase.postalCode,
-                      status: coverageResult.label,
-                      tier: coverageResult.tier,
-                      distanceKm: userDistanceKm,
-                      activeZone: zonaActiva?.label || zonaActiva?.nombre || '',
-                    });
-                  }}
-                  placeholder="Ej. Santa Fe, Xochitepec Centro, Alpuyeca"
-                  className="w-full rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55 sm:py-3"
-                />
-              </label>
-
-              <a
-                href={WHATSAPP_LINK(coverageWhatsAppMessage)}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => persistCoverageContext()}
-                className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#1EBE5D] hover:shadow-xl hover:shadow-[#25D366]/20 sm:mt-4 sm:min-h-12 sm:text-sm"
-              >
-                <MessageCircle className="h-5 w-5" />
-                Verificar mi ubicacion
-              </a>
+              <span className="flex-none rounded-full border border-brand-green/25 bg-brand-green/15 px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.08em] text-green-100 sm:text-xs">
+                Zona base
+              </span>
             </div>
-          </ScrollReveal>
 
-          <ScrollReveal delay={120} className="order-2">
-            <div className="relative h-full overflow-hidden rounded-2xl border border-brand-orange/15 bg-white/[0.035] p-2 shadow-xl shadow-black/15 backdrop-blur-xl sm:rounded-3xl sm:p-5 sm:shadow-2xl sm:shadow-black/20">
-              <div className="mb-2 flex items-center justify-between gap-3 sm:mb-3">
-                <div>
-                  <p className="text-[0.68rem] font-black uppercase tracking-[0.12em] text-brand-orange">Zona base</p>
-                  <p className="text-sm font-black text-white sm:text-base">Santa Fe Life Style</p>
+            <div className="relative h-[128px] overflow-hidden rounded-2xl border border-white/10 bg-[#d7decf] shadow-inner sm:h-[240px] lg:h-[300px]">
+              <div className="absolute inset-0 opacity-90 [background-image:linear-gradient(28deg,transparent_0_22%,rgba(255,255,255,0.78)_22%_24%,transparent_24%_100%),linear-gradient(118deg,transparent_0_38%,rgba(255,255,255,0.68)_38%_40%,transparent_40%_100%),linear-gradient(164deg,transparent_0_55%,rgba(255,255,255,0.58)_55%_57%,transparent_57%_100%)]" />
+              <div className="absolute inset-x-[-10%] top-[36%] h-3 rotate-[-9deg] bg-white/75 shadow-sm sm:h-5" />
+              <div className="absolute -left-8 top-[62%] h-3 w-[120%] rotate-[17deg] bg-white/68 shadow-sm sm:h-4" />
+              <div className="absolute left-[58%] top-[-20%] h-[150%] w-3 rotate-[26deg] bg-white/62 shadow-sm sm:w-4" />
+              <div className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-orange/35 bg-brand-orange/15 sm:h-44 sm:w-44 lg:h-56 lg:w-56" />
+              <div className="absolute left-1/2 top-1/2 h-12 w-12 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-green/40 bg-brand-green/15 sm:h-28 sm:w-28" />
+              <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-[72%] flex-col items-center">
+                <div className="flex h-9 w-9 items-center justify-center rounded-full bg-brand-orange text-brand-night shadow-xl shadow-brand-orange/30 sm:h-12 sm:w-12">
+                  <MapPin className="h-5 w-5 sm:h-6 sm:w-6" />
                 </div>
-                <span className="rounded-full border border-white/10 bg-brand-night/70 px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.08em] text-slate-300">
-                  CP 62793
+                <span className="mt-1 whitespace-nowrap rounded-full border border-white/70 bg-brand-night/85 px-2.5 py-1 text-[0.58rem] font-black uppercase tracking-[0.06em] text-white shadow-xl backdrop-blur-sm sm:mt-2 sm:px-3 sm:text-[0.68rem]">
+                  Santa Fe Life Style
                 </span>
               </div>
-
-              <div className="relative h-[112px] overflow-hidden rounded-xl border border-white/10 bg-[#d7decf] shadow-inner sm:h-[240px] sm:rounded-2xl lg:h-[335px]">
-                <div className="absolute inset-0 opacity-80 [background-image:linear-gradient(28deg,transparent_0_22%,rgba(255,255,255,0.75)_22%_24%,transparent_24%_100%),linear-gradient(118deg,transparent_0_38%,rgba(255,255,255,0.65)_38%_40%,transparent_40%_100%),linear-gradient(164deg,transparent_0_55%,rgba(255,255,255,0.55)_55%_57%,transparent_57%_100%)]" />
-                <div className="absolute inset-x-0 top-[34%] h-3 rotate-[-9deg] bg-white/70 shadow-sm sm:h-5" />
-                <div className="absolute -left-8 top-[58%] h-3 w-[120%] rotate-[17deg] bg-white/65 shadow-sm sm:h-4" />
-                <div className="absolute left-[58%] top-[-20%] h-[150%] w-3 rotate-[26deg] bg-white/60 shadow-sm sm:w-4" />
-                <div className="absolute left-[10%] top-[12%] hidden rounded-full bg-brand-green/10 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-brand-green sm:block">
-                  Xochitepec
-                </div>
-                <div className="absolute right-[8%] top-[13%] hidden rounded-full bg-white/70 px-2 py-1 text-[0.58rem] font-black uppercase tracking-[0.08em] text-slate-500 sm:block">
-                  Morelos
-                </div>
-                <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-orange/35 bg-brand-orange/15 sm:h-40 sm:w-40 lg:h-52 lg:w-52" />
-                <div className="absolute left-1/2 top-1/2 h-11 w-11 -translate-x-1/2 -translate-y-1/2 rounded-full border border-brand-green/40 bg-brand-green/15 sm:h-24 sm:w-24" />
-                <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-[72%] flex-col items-center">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-orange text-brand-night shadow-xl shadow-brand-orange/30 sm:h-12 sm:w-12">
-                    <MapPin className="h-4 w-4 sm:h-6 sm:w-6" />
-                  </div>
-                  <span className="mt-1 whitespace-nowrap rounded-full border border-white/70 bg-brand-night/85 px-2 py-0.5 text-[0.52rem] font-black uppercase tracking-[0.06em] text-white shadow-xl backdrop-blur-sm sm:mt-2 sm:px-3 sm:py-1 sm:text-[0.62rem] sm:tracking-[0.08em]">
-                    Santa Fe Life Style
-                  </span>
-                </div>
-                <div className="absolute bottom-2 left-2 rounded-lg border border-white/70 bg-white/80 px-2 py-1 shadow-lg backdrop-blur-sm sm:bottom-3 sm:left-3 sm:rounded-xl sm:px-3 sm:py-2">
-                  <p className="text-[0.58rem] font-black uppercase tracking-[0.1em] text-slate-500">Cobertura</p>
-                  <p className="text-[0.65rem] font-black text-brand-night sm:text-xs">5 km principal</p>
-                </div>
-                <a
-                  href={serviceBase.mapsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="absolute bottom-2 right-2 rounded-lg bg-white/85 px-2 py-1 text-[0.55rem] font-black uppercase tracking-[0.06em] text-brand-night shadow-lg backdrop-blur-sm transition hover:bg-white sm:bottom-3 sm:right-3 sm:rounded-xl sm:px-3 sm:py-2 sm:text-[0.62rem] sm:tracking-[0.08em]"
-                >
-                  Abrir Maps
-                </a>
-              </div>
-
-              <div className="relative mt-3 hidden rounded-2xl border border-white/10 bg-brand-night/65 p-3 sm:block sm:p-4">
-                <div className="mb-2 flex items-center gap-3 sm:mb-3">
-                  {zonaActiva && (
-                    <div className="flex h-9 w-9 flex-none items-center justify-center rounded-xl sm:h-10 sm:w-10" style={{ backgroundColor: `${zonaActiva.color}20` }}>
-                      <zonaActiva.icon className="h-4 w-4 sm:h-5 sm:w-5" style={{ color: zonaActiva.color }} />
-                    </div>
-                  )}
-                  <div className="min-w-0">
-                    <p className="truncate text-sm font-black text-white">{zonaActiva?.label || zonaActiva?.nombre}</p>
-                    <p className="text-xs font-bold uppercase tracking-[0.12em] text-slate-500">{zonaActiva?.badge}</p>
-                  </div>
-                </div>
-                <p className="text-xs leading-relaxed text-slate-400 sm:text-sm">{zonaActiva?.descripcion}</p>
-              </div>
-
-              <div className="relative mt-3 hidden gap-2 overflow-x-auto pb-1 sm:mt-4 sm:flex">
-                {zonas.map((zona) => (
-                  <button
-                    key={zona.id}
-                    type="button"
-                    onMouseEnter={() => setActiveZone(zona.id)}
-                    onClick={() => setActiveZone(zona.id)}
-                    className={`flex-none rounded-full border px-2.5 py-1.5 text-[0.6rem] font-black uppercase tracking-[0.06em] transition sm:px-3 sm:py-2 sm:text-[0.68rem] sm:tracking-[0.08em] ${
-                      activeZone === zona.id
-                        ? 'border-brand-orange/45 bg-brand-orange/15 text-orange-100'
-                        : 'border-white/10 bg-white/[0.035] text-slate-400 hover:border-brand-orange/25 hover:text-white'
-                    }`}
-                  >
-                    {zona.label || zona.nombre}
-                  </button>
-                ))}
+              <div className="absolute bottom-2 left-2 rounded-lg border border-white/70 bg-white/82 px-2 py-1 shadow-lg backdrop-blur-sm sm:bottom-3 sm:left-3 sm:rounded-xl sm:px-3 sm:py-2">
+                <p className="text-[0.55rem] font-black uppercase tracking-[0.1em] text-slate-500 sm:text-[0.62rem]">Cobertura</p>
+                <p className="text-[0.65rem] font-black text-brand-night sm:text-xs">5 / 10 / 15 km</p>
               </div>
             </div>
-          </ScrollReveal>
-        </div>
+
+            <div className="mt-3 rounded-2xl border border-white/10 bg-brand-night/70 p-3 sm:p-4">
+              <div className="mb-2 flex items-center justify-between gap-3">
+                <p className={`text-sm font-black ${coverageResult.color}`}>{coverageResult.label}</p>
+                <span className="rounded-full bg-white/[0.06] px-2.5 py-1 text-[0.65rem] font-black text-slate-300">
+                  {coverageResult.tier}
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed text-slate-400">{coverageResult.description}</p>
+            </div>
+
+            <button
+              type="button"
+              onClick={handleUseLocation}
+              disabled={locationStatus === 'loading'}
+              className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-brand-orange/25 bg-brand-orange/10 px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-orange-100 transition hover:bg-brand-orange/15 disabled:cursor-not-allowed disabled:opacity-60 sm:min-h-12 sm:text-sm"
+            >
+              <LocateFixed className="h-4 w-4" />
+              {locationStatus === 'loading' ? 'Detectando ubicacion...' : 'Usar mi ubicacion'}
+            </button>
+
+            {locationStatus === 'error' && (
+              <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
+                No pudimos acceder a tu ubicacion. Puedes escribir tu colonia abajo.
+              </p>
+            )}
+            {locationStatus === 'unsupported' && (
+              <p className="mt-3 rounded-2xl border border-brand-rust/25 bg-brand-rust/10 px-4 py-3 text-xs font-bold text-orange-100">
+                Tu navegador no permite geolocalizacion. Escribe tu colonia para confirmar.
+              </p>
+            )}
+
+            <label className="mt-3 block">
+              <span className="mb-2 block text-xs font-black uppercase tracking-[0.14em] text-slate-400">
+                Tu colonia o fraccionamiento
+              </span>
+              <input
+                type="text"
+                value={coverageArea}
+                onChange={(event) => {
+                  const nextArea = event.target.value;
+                  setCoverageArea(nextArea);
+                  saveCoverageContext({
+                    area: nextArea.trim(),
+                    baseName: baseZoneName,
+                    postalCode: serviceBase.postalCode,
+                    status: coverageResult.label,
+                    tier: coverageResult.tier,
+                    distanceKm: userDistanceKm,
+                    activeZone: baseZoneName,
+                  });
+                }}
+                placeholder="Ej. Santa Fe Life Style, Xochitepec"
+                className="w-full rounded-2xl border border-white/10 bg-brand-night/75 px-4 py-2.5 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-brand-orange/55 sm:py-3"
+              />
+            </label>
+
+            <a
+              href={WHATSAPP_LINK(coverageWhatsAppMessage)}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => persistCoverageContext()}
+              className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#1EBE5D] hover:shadow-xl hover:shadow-[#25D366]/20 sm:min-h-12 sm:text-sm"
+            >
+              <MessageCircle className="h-5 w-5" />
+              Verificar por WhatsApp
+            </a>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );
 };
-
-// ============================================================
-// SECCION B2B - SERVICIOS PARA AGENCIAS Y EXPOSICIONES
-// ============================================================
-
 const B2BServices = () => {
   const [activeService, setActiveService] = useState(null);
 
