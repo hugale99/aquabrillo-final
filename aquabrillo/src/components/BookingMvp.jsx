@@ -332,28 +332,28 @@ const BookingMvp = ({ embedded = false }) => {
   };
 
   return (
-    <section id={embedded ? undefined : 'cotizador'} className={`relative overflow-hidden bg-brand-night ${embedded ? 'pb-28 pt-8 sm:pb-32 sm:pt-10' : 'py-20 sm:py-24'}`}>
+    <section id={embedded ? undefined : 'cotizador'} className={`relative overflow-hidden bg-brand-night ${embedded ? 'pb-24 pt-4 sm:pb-28 sm:pt-6' : 'py-20 sm:py-24'}`}>
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_rgba(255,159,69,0.13)_0%,_transparent_42%)]" />
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
-          <div className="mb-10 max-w-3xl">
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
+          <div className={`${embedded ? 'mb-5' : 'mb-10'} max-w-3xl`}>
+            <span className={`${embedded ? 'mb-3 px-3 py-1.5 text-xs' : 'mb-4 px-4 py-2 text-sm'} inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 font-bold text-brand-orange`}>
               <Sparkles className="h-4 w-4" />
               {BOOKING_COPY.eyebrow}
             </span>
-            <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl lg:text-5xl">
+            <h2 className={`${embedded ? 'text-2xl sm:text-3xl lg:text-4xl' : 'text-3xl sm:text-4xl lg:text-5xl'} font-black tracking-tight text-white`}>
               {BOOKING_COPY.title}
             </h2>
-            <p className="mt-4 text-base leading-relaxed text-slate-400 sm:text-lg">
+            <p className={`${embedded ? 'mt-2 text-sm sm:text-base' : 'mt-4 text-base sm:text-lg'} leading-relaxed text-slate-400`}>
               {BOOKING_COPY.description}
             </p>
           </div>
         </ScrollReveal>
 
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <div className={`${embedded ? 'gap-4' : 'gap-6'} grid lg:grid-cols-[1.05fr_0.95fr]`}>
           <ScrollReveal delay={100}>
-            <div className="rounded-3xl border border-white/10 bg-white/[0.035] p-4 shadow-2xl shadow-black/20 sm:p-6">
-              <div className="grid gap-6">
+            <div className={`${embedded ? 'rounded-[1.6rem] p-3 sm:p-5' : 'rounded-3xl p-4 sm:p-6'} border border-white/10 bg-white/[0.035] shadow-2xl shadow-black/20`}>
+              <div className={`${embedded ? 'gap-4' : 'gap-6'} grid`}>
                 <div>
                   <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">
                     <Car className="h-4 w-4" />
@@ -365,7 +365,7 @@ const BookingMvp = ({ embedded = false }) => {
                         key={item.id}
                         type="button"
                         onClick={() => setVehicleId(item.id)}
-                        className={`rounded-2xl border px-3 py-3 text-left text-sm font-bold transition ${
+                        className={`rounded-2xl border px-3 py-3 text-left text-sm font-bold transition ${embedded ? 'min-h-[54px]' : ''} ${
                           vehicleId === item.id
                             ? 'border-brand-orange/55 bg-brand-orange/15 text-white'
                             : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
@@ -390,7 +390,7 @@ const BookingMvp = ({ embedded = false }) => {
                           key={item.id}
                           type="button"
                           onClick={() => toggleService(item.id)}
-                          className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition ${
+                          className={`flex items-center justify-between gap-3 rounded-2xl border px-4 py-3 text-left transition ${embedded ? 'min-h-[68px]' : ''} ${
                             checked
                               ? 'border-brand-orange/55 bg-brand-orange/15 text-white'
                               : 'border-white/10 bg-brand-night/55 text-slate-300 hover:border-brand-orange/30'
@@ -411,11 +411,11 @@ const BookingMvp = ({ embedded = false }) => {
           </ScrollReveal>
 
           <ScrollReveal delay={180}>
-            <div className="sticky top-28 rounded-3xl border border-brand-orange/20 bg-[#223321]/86 p-4 shadow-2xl shadow-black/30 backdrop-blur-xl sm:p-6">
-              <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/75 p-5">
+            <div className={`${embedded ? 'lg:sticky lg:top-4 rounded-[1.6rem] p-3 sm:p-5' : 'sticky top-28 rounded-3xl p-4 sm:p-6'} border border-brand-orange/20 bg-[#223321]/86 shadow-2xl shadow-black/30 backdrop-blur-xl`}>
+              <div className="mb-4 rounded-2xl border border-white/10 bg-brand-night/75 p-4 sm:p-5">
                 <div className="text-sm font-bold uppercase tracking-[0.16em] text-slate-400">Estimado</div>
                 <div className="mt-2 flex items-end justify-between gap-4">
-                  <div className="text-4xl font-black text-white">{estimate.price ? currency.format(estimate.price) : '$0'}</div>
+                  <div className="text-3xl font-black text-white sm:text-4xl">{estimate.price ? currency.format(estimate.price) : '$0'}</div>
                   <div className="text-right text-sm text-slate-400">
                     <Clock className="mb-1 ml-auto h-4 w-4 text-brand-orange" />
                     {minutesToLabel(estimate.minutes)}
@@ -429,11 +429,11 @@ const BookingMvp = ({ embedded = false }) => {
                 </p>
               </div>
 
-              <div className="mb-5">
+              <div className="mb-4">
                 <WeatherInsight compact />
               </div>
 
-              <div className="mb-5">
+              <div className="mb-4">
                 <div className="mb-3 flex items-center gap-2 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">
                   <CalendarDays className="h-4 w-4" />
                   Fecha tentativa
@@ -460,7 +460,7 @@ const BookingMvp = ({ embedded = false }) => {
                 </div>
               </div>
 
-              <div className="mb-5">
+              <div className="mb-4">
                 <div className="mb-3 text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Hora tentativa</div>
                 <div className="grid grid-cols-3 gap-2 sm:grid-cols-5 lg:grid-cols-3 xl:grid-cols-5">
                   {(selectedDate ? availableSlots : []).map((slot) => {
@@ -505,7 +505,7 @@ const BookingMvp = ({ embedded = false }) => {
                 )}
               </div>
 
-              <div className="mb-5 rounded-2xl border border-white/10 bg-brand-night/65 p-4">
+              <div className="mb-4 rounded-2xl border border-white/10 bg-brand-night/65 p-4">
                 <div className="mb-3 flex items-center justify-between gap-3">
                   <span className="text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Resumen</span>
                   <span className="rounded-full border border-brand-orange/25 bg-brand-orange/10 px-3 py-1 text-[0.68rem] font-black text-orange-100">
@@ -531,7 +531,7 @@ const BookingMvp = ({ embedded = false }) => {
                 </div>
               </div>
 
-              <div className="mb-5 grid gap-3 sm:grid-cols-2">
+              <div className="mb-4 grid gap-3 sm:grid-cols-2">
                 <label className="block">
                   <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Nombre</span>
                   <input
@@ -556,7 +556,7 @@ const BookingMvp = ({ embedded = false }) => {
                 </label>
               </div>
 
-              <label className="mb-5 block">
+              <label className="mb-4 block">
                 <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Direccion</span>
                 {coverageContext && (
                   <div className="mb-3 rounded-2xl border border-brand-green/25 bg-brand-green/15 px-4 py-3 text-xs font-bold text-green-100">
@@ -573,7 +573,7 @@ const BookingMvp = ({ embedded = false }) => {
                 />
               </label>
 
-              <label className="mb-5 block">
+              <label className="mb-4 block">
                 <span className="mb-2 block text-sm font-bold uppercase tracking-[0.14em] text-brand-orange">Notas opcionales</span>
                 <textarea
                   value={notes}

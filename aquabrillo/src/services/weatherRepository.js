@@ -43,6 +43,21 @@ const getWeatherRisk = (weather) => {
   };
 };
 
+const getRainChance = (weather) => {
+  const main = String(weather?.weather?.[0]?.main || '').toLowerCase();
+  const rainMm = weather?.rain?.['1h'] || weather?.rain?.['3h'] || 0;
+  const humidity = weather?.main?.humidity || 0;
+  const cloudiness = weather?.clouds?.all || 0;
+
+  if (main.includes('thunderstorm')) return 95;
+  if (main.includes('rain') || main.includes('drizzle') || rainMm > 0) return 85;
+  if (cloudiness >= 80 && humidity >= 80) return 55;
+  if (cloudiness >= 60 && humidity >= 70) return 35;
+  if (cloudiness >= 40 || humidity >= 75) return 20;
+
+  return 10;
+};
+
 export const getWeatherStatus = () => ({
   configured: HAS_OPENWEATHER_CONFIG,
   location: WEATHER_LOCATION,
@@ -98,6 +113,7 @@ export const fetchCurrentWeather = async () => {
     temperature: Math.round(payload.main?.temp || 0),
     feelsLike: Math.round(payload.main?.feels_like || 0),
     humidity: payload.main?.humidity || 0,
+    rainChance: getRainChance(payload),
     windSpeed: payload.wind?.speed || 0,
     description: payload.weather?.[0]?.description || 'Clima actual',
     icon: payload.weather?.[0]?.icon || '',

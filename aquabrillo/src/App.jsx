@@ -340,20 +340,20 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const WeatherBookingGateway = ({ onOpenBooking }) => (
-  <section id="clima-agenda" className="relative overflow-hidden bg-brand-night py-12 sm:py-16">
-    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(34,211,238,0.10),transparent_30%),radial-gradient(circle_at_82%_40%,rgba(255,159,69,0.12),transparent_34%)]" />
-    <div className="relative z-10 mx-auto grid max-w-6xl gap-5 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:px-8">
+  <section id="clima-agenda" className="relative overflow-hidden bg-brand-night py-14 sm:py-18">
+    <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(255,159,69,0.12),transparent_30%),radial-gradient(circle_at_86%_42%,rgba(62,122,38,0.16),transparent_34%)]" />
+    <div className="relative z-10 mx-auto grid max-w-6xl gap-5 px-5 sm:px-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-center lg:px-8">
       <ScrollReveal>
         <div>
           <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-brand-orange">
             <CloudSun className="h-4 w-4" />
-            Clima y agenda
+            Clima y agenda inteligente
           </span>
           <h2 className="max-w-2xl text-2xl font-black tracking-tight text-white sm:text-4xl">
-            Decide el mejor momento para lavar o detallar tu auto
+            Tu servicio empieza con una lectura inteligente del clima
           </h2>
           <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
-            Revisa el clima en Santa Fe Life Style antes de preagendar. Si hay lluvia, te sugerimos confirmar cochera o espacio cubierto.
+            Consulta el estado actual en Santa Fe Life Style y preagenda cuando el clima juegue a favor del brillo.
           </p>
         </div>
       </ScrollReveal>
@@ -1816,11 +1816,11 @@ const BookingModal = ({ isOpen, onClose }) => {
         onClick={onClose}
         className="absolute inset-0 cursor-default"
       />
-      <div className="relative z-10 flex max-h-[92svh] w-full max-w-7xl flex-col overflow-hidden rounded-t-3xl border border-white/10 bg-brand-night shadow-2xl shadow-black/40 sm:max-h-[90vh] sm:rounded-3xl">
-        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-white/[0.035] px-4 py-3 sm:px-5">
+      <div className="relative z-10 flex h-[94svh] w-full max-w-7xl flex-col overflow-hidden rounded-t-[2rem] border border-white/10 bg-brand-night shadow-2xl shadow-black/40 sm:h-auto sm:max-h-[90vh] sm:rounded-[2rem]">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-[linear-gradient(135deg,rgba(255,159,69,0.11),rgba(27,46,26,0.92))] px-4 py-3 sm:px-5">
           <div>
             <div className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-brand-orange">Cotizador AQUABRILLO</div>
-            <div className="text-sm font-bold text-slate-400">Tu avance se conserva al cerrar esta ventana</div>
+            <div className="text-sm font-bold text-slate-300">Precio estimado y preagenda en minutos</div>
           </div>
           <button
             type="button"
@@ -1832,7 +1832,7 @@ const BookingModal = ({ isOpen, onClose }) => {
             <span className="hidden text-xs font-black uppercase tracking-[0.12em] sm:inline">Cerrar</span>
           </button>
         </div>
-        <div className="overflow-y-auto">
+        <div className="min-h-0 flex-1 overflow-y-auto">
           <BookingMvp embedded />
         </div>
       </div>
