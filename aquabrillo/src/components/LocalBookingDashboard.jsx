@@ -191,6 +191,27 @@ const getReservationStatusTone = (statusId) => {
   return tones[statusId] || 'border-white/10 bg-white/[0.06] text-slate-300';
 };
 
+const getPaymentStatusLabel = (statusId) =>
+  PAYMENT_STATUSES.find((status) => status.id === statusId)?.label || statusId || 'Pendiente';
+
+const getPaymentStatusTone = (statusId = 'pendiente') => {
+  const tones = {
+    pendiente: 'border-brand-rust/30 bg-brand-rust/14 text-red-100',
+    anticipo: 'border-brand-orange/30 bg-brand-orange/14 text-orange-100',
+    pagado: 'border-brand-green/30 bg-brand-green/14 text-green-100',
+    facturar: 'border-sky-400/30 bg-sky-400/14 text-sky-100',
+  };
+
+  return tones[statusId] || 'border-white/10 bg-white/[0.06] text-slate-300';
+};
+
+const getReservationAttentionFlags = (item) => [
+  !normalizePhone(item.customerPhone) ? 'Sin telefono valido' : '',
+  !item.assignedTo ? 'Sin responsable' : '',
+  (item.paymentStatus || 'pendiente') === 'pendiente' ? 'Pago pendiente' : '',
+  !item.address ? 'Sin direccion' : '',
+].filter(Boolean);
+
 const getDateDisplayLabel = (value) => {
   if (!value) return 'Hoy';
 
@@ -674,32 +695,81 @@ const LocalBookingDashboard = ({
         </div>
 
         <div className="grid gap-3 lg:grid-cols-3">
-          {visiblePrebookings.slice(0, 6).map((item) => (
-            <div key={item.folio} className="rounded-2xl border border-white/10 bg-brand-night/55 p-4">
-              <div className="mb-3 flex items-center justify-between gap-3">
-                <span className="truncate text-sm font-black text-white">{item.folio}</span>
-                <span className="rounded-full bg-brand-orange/12 px-2.5 py-1 text-[0.65rem] font-black uppercase tracking-[0.12em] text-orange-100">
-                  {item.status || 'preagenda'}
+          {visiblePrebookings.slice(0, 6).map((item) => {
+            const attentionFlags = getReservationAttentionFlags(item);
+            const statusId = item.status || 'preagenda_whatsapp';
+            const paymentStatusId = item.paymentStatus || 'pendiente';
+
+            return (
+            <div key={item.folio} className="rounded-[1.35rem] border border-white/10 bg-[linear-gradient(145deg,rgba(27,46,26,0.82),rgba(40,40,40,0.66))] p-3 shadow-xl shadow-black/10 sm:p-4">
+              <div className="mb-3 flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <span className="truncate text-[0.68rem] font-black uppercase tracking-[0.14em] text-brand-orange">{item.folio}</span>
+                    {attentionFlags.length > 0 && (
+                      <span className="rounded-full border border-brand-rust/25 bg-brand-rust/12 px-2 py-0.5 text-[0.58rem] font-black uppercase tracking-[0.1em] text-red-100">
+                        Atencion
+                      </span>
+                    )}
+                  </div>
+                  <h4 className="mt-1 truncate text-lg font-black text-white">{item.customerName || 'Cliente sin nombre'}</h4>
+                  <p className="mt-0.5 text-xs font-bold text-slate-500">{item.customerPhone || 'Sin telefono'}</p>
+                </div>
+                <div className="text-right">
+                  <div className="text-2xl font-black text-white">{item.time || '--:--'}</div>
+                  <div className="mt-0.5 text-[0.65rem] font-bold capitalize text-slate-500">{item.dateLabel || item.date || 'Sin fecha'}</div>
+                </div>
+              </div>
+
+              <div className="mb-3 flex flex-wrap gap-2">
+                <span className={`rounded-full border px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] ${getReservationStatusTone(statusId)}`}>
+                  {getReservationStatusLabel(statusId)}
                 </span>
-              </div>
-              <div className="space-y-1 text-sm text-slate-400">
-                <p><span className="text-slate-500">Cliente:</span> {item.customerName || 'Sin nombre'}</p>
-                <p><span className="text-slate-500">Telefono:</span> {item.customerPhone || 'Sin telefono'}</p>
-                <p><span className="text-slate-500">Vehiculo:</span> {item.vehicle?.label}</p>
-                <p><span className="text-slate-500">Fecha:</span> {item.dateLabel} {item.time}</p>
-                <p><span className="text-slate-500">Servicios:</span> {item.services?.map((service) => service.label || service.name).join(', ')}</p>
-                {item.coverage && (
-                  <p>
-                    <span className="text-slate-500">Cobertura:</span> {item.coverage.status} {item.coverage.tier ? `(${item.coverage.tier})` : ''}
-                  </p>
+                <span className={`rounded-full border px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] ${getPaymentStatusTone(paymentStatusId)}`}>
+                  {getPaymentStatusLabel(paymentStatusId)}
+                </span>
+                {item.assignedTo && (
+                  <span className="rounded-full border border-white/10 bg-white/[0.045] px-2.5 py-1 text-[0.62rem] font-black uppercase tracking-[0.1em] text-slate-300">
+                    {item.assignedTo}
+                  </span>
                 )}
-                {item.notes && <p><span className="text-slate-500">Notas:</span> {item.notes}</p>}
-                <p>
-                  <span className="text-slate-500">Pago:</span> {item.paymentStatus || 'pendiente'}
-                  {item.assignedTo ? ` | Asignado: ${item.assignedTo}` : ''}
-                </p>
-                <p className="font-bold text-white">{currency.format(item.estimate?.price || 0)} | {minutesToLabel(item.estimate?.minutes)}</p>
               </div>
+
+              <div className="rounded-2xl border border-white/10 bg-brand-night/45 p-3">
+                <div className="flex items-start justify-between gap-3">
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-white">{item.vehicle?.label || 'Vehiculo por confirmar'}</p>
+                    <p className="mt-1 line-clamp-2 text-xs font-bold leading-relaxed text-slate-500">
+                      {getServiceLabel(item)}
+                    </p>
+                  </div>
+                  <div className="flex-none text-right">
+                    <p className="text-base font-black text-brand-orange">{currency.format(item.estimate?.price || 0)}</p>
+                    <p className="mt-0.5 text-[0.65rem] font-bold text-slate-500">{minutesToLabel(item.estimate?.minutes)}</p>
+                  </div>
+                </div>
+                {(item.address || item.coverage || item.notes) && (
+                  <div className="mt-3 border-t border-white/10 pt-3 text-xs font-bold leading-relaxed text-slate-400">
+                    {item.address && <p className="line-clamp-2"><span className="text-slate-600">Direccion:</span> {item.address}</p>}
+                    {item.coverage && (
+                      <p className="mt-1">
+                        <span className="text-slate-600">Cobertura:</span> {item.coverage.status} {item.coverage.tier ? `(${item.coverage.tier})` : ''}
+                      </p>
+                    )}
+                    {item.notes && <p className="mt-1 line-clamp-2"><span className="text-slate-600">Notas:</span> {item.notes}</p>}
+                  </div>
+                )}
+              </div>
+
+              {attentionFlags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {attentionFlags.map((flag) => (
+                    <span key={`${item.folio}-${flag}`} className="rounded-full border border-brand-rust/25 bg-brand-rust/10 px-2 py-1 text-[0.62rem] font-bold text-red-100">
+                      {flag}
+                    </span>
+                  ))}
+                </div>
+              )}
               {(() => {
                 const itemEvents = eventsByFolio[item.folio] || [];
                 const lastEvent = itemEvents[0];
@@ -834,7 +904,8 @@ const LocalBookingDashboard = ({
                 </div>
               )}
             </div>
-          ))}
+            );
+          })}
           {visiblePrebookings.length === 0 && (
             <div className="rounded-2xl border border-dashed border-brand-orange/20 bg-brand-night/45 p-5 text-sm font-bold text-slate-500 lg:col-span-3">
               No hay preagendas con estos filtros.
