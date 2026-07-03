@@ -49,31 +49,41 @@ export const getWeatherStatus = () => ({
 });
 
 export const fetchCurrentWeather = async () => {
-  if (!HAS_OPENWEATHER_CONFIG) {
-    return {
-      configured: false,
-      location: WEATHER_LOCATION,
-      risk: {
-        level: 'base',
-        label: 'Clima no configurado',
-        recommendation: 'Agrega VITE_OPENWEATHER_API_KEY para activar clima en tiempo real.',
-      },
-    };
-  }
-
   const now = Date.now();
   if (cachedWeather && now - cachedWeather.cachedAt < WEATHER_CACHE_MS) {
     return cachedWeather.data;
   }
 
-  const params = new URLSearchParams({
+  const locationParams = new URLSearchParams({
+    lat: String(WEATHER_LOCATION.lat),
+    lon: String(WEATHER_LOCATION.lon),
+  });
+
+  const directParams = new URLSearchParams({
     lat: String(WEATHER_LOCATION.lat),
     lon: String(WEATHER_LOCATION.lon),
     appid: OPENWEATHER_API_KEY,
     units: 'metric',
     lang: 'es',
   });
-  const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?${params.toString()}`);
+
+  const response = await fetch(
+    HAS_OPENWEATHER_CONFIG
+      ? `https://api.openweathermap.org/data/2.5/weather?${directParams.toString()}`
+      : `/api/weather?${locationParams.toString()}`
+  );
+
+  if (!response.ok && !HAS_OPENWEATHER_CONFIG && response.status === 500) {
+    return {
+      configured: false,
+      location: WEATHER_LOCATION,
+      risk: {
+        level: 'base',
+        label: 'Clima no configurado',
+        recommendation: 'Agrega OPENWEATHER_API_KEY o VITE_OPENWEATHER_API_KEY en Vercel y redeploy.',
+      },
+    };
+  }
 
   if (!response.ok) {
     const error = new Error(`OpenWeather request failed: ${response.status}`);
