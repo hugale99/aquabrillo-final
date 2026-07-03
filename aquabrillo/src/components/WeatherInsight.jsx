@@ -65,11 +65,11 @@ const WeatherInsight = ({ actionHref = '', actionLabel = '', actionOnClick, comp
   const riskClass = riskStyles[weather.risk?.level] || riskStyles.base;
 
   return (
-    <div className={`rounded-2xl border ${riskClass} ${compact ? 'p-3' : 'p-4'}`}>
+    <div className={`rounded-2xl border ${riskClass} ${compact ? 'p-3' : 'p-3.5 sm:p-4'}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-start gap-3">
-          <div className="flex h-10 w-10 flex-none items-center justify-center rounded-xl border border-white/10 bg-brand-night/65">
-            <CloudSun className="h-5 w-5 text-brand-orange" />
+          <div className="flex h-9 w-9 flex-none items-center justify-center rounded-xl border border-white/10 bg-brand-night/65 sm:h-10 sm:w-10">
+            <CloudSun className="h-4 w-4 text-brand-orange sm:h-5 sm:w-5" />
           </div>
           <div>
             <div className="text-[0.68rem] font-black uppercase tracking-[0.14em] text-slate-500">Clima operativo</div>
@@ -82,7 +82,7 @@ const WeatherInsight = ({ actionHref = '', actionLabel = '', actionOnClick, comp
       </div>
 
       {weather.configured && weather.temperature !== undefined ? (
-        <div className="mt-3 grid grid-cols-3 gap-2 text-xs font-bold text-slate-300">
+        <div className="mt-3 grid grid-cols-3 gap-1.5 text-[0.68rem] font-bold text-slate-300 sm:gap-2 sm:text-xs">
           <div className="rounded-xl border border-white/10 bg-brand-night/45 p-2">
             <span className="block text-slate-500">Temp.</span>
             <span className="mt-1 block text-base font-black text-white">{weather.temperature} C</span>
@@ -108,7 +108,7 @@ const WeatherInsight = ({ actionHref = '', actionLabel = '', actionOnClick, comp
           onClick={actionOnClick || (() => {
             window.location.href = actionHref;
           })}
-          className="mt-4 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-3 text-center text-xs font-black uppercase tracking-[0.1em] text-white transition hover:bg-[#1EBE5D]"
+          className="mt-3 flex min-h-11 w-full items-center justify-center gap-2 rounded-xl bg-[#25D366] px-4 py-2.5 text-center text-xs font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#1EBE5D] sm:mt-4 sm:min-h-12 sm:text-sm"
         >
           {actionLabel}
           <ArrowRight className="h-4 w-4" />

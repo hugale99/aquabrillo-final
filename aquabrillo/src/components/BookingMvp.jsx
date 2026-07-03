@@ -337,17 +337,6 @@ const BookingMvp = ({ embedded = false }) => {
       <div className="relative z-10 mx-auto max-w-7xl px-5 sm:px-6 lg:px-8">
         <ScrollReveal>
           <div className="mb-10 max-w-3xl">
-            <div className="mb-4 flex flex-wrap gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em]">
-              <a
-                href="#clima-agenda"
-                className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-slate-500 transition hover:border-brand-orange/30 hover:text-brand-orange"
-              >
-                Paso 1: clima
-              </a>
-              <span className="rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3 py-1.5 text-orange-100">
-                Paso 2: preagenda
-              </span>
-            </div>
             <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
               <Sparkles className="h-4 w-4" />
               {BOOKING_COPY.eyebrow}

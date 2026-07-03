@@ -340,42 +340,26 @@ const ServiceCard = ({ service, index }) => {
 };
 
 const WeatherBookingGateway = ({ onOpenBooking }) => (
-  <section id="clima-agenda" className="relative overflow-hidden bg-brand-night py-16 sm:py-20">
+  <section id="clima-agenda" className="relative overflow-hidden bg-brand-night py-12 sm:py-16">
     <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_20%,rgba(34,211,238,0.10),transparent_30%),radial-gradient(circle_at_82%_40%,rgba(255,159,69,0.12),transparent_34%)]" />
-    <div className="relative z-10 mx-auto grid max-w-7xl gap-6 px-5 sm:px-6 lg:grid-cols-[0.85fr_1.15fr] lg:items-center lg:px-8">
+    <div className="relative z-10 mx-auto grid max-w-6xl gap-5 px-5 sm:px-6 lg:grid-cols-[0.8fr_1.2fr] lg:items-center lg:px-8">
       <ScrollReveal>
         <div>
-          <div className="mb-4 flex flex-wrap gap-2 text-[0.68rem] font-black uppercase tracking-[0.12em]">
-            <span className="rounded-full border border-brand-orange/35 bg-brand-orange/15 px-3 py-1.5 text-orange-100">
-              Paso 1: revisa clima
-            </span>
-            <span className="rounded-full border border-white/10 bg-white/[0.035] px-3 py-1.5 text-slate-500">
-              Paso 2: preagenda
-            </span>
-          </div>
-          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-sm font-bold text-brand-orange">
+          <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-brand-orange/25 bg-brand-orange/10 px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-brand-orange">
             <CloudSun className="h-4 w-4" />
             Clima y agenda
           </span>
-          <h2 className="max-w-2xl text-3xl font-black tracking-tight text-white sm:text-4xl">
+          <h2 className="max-w-2xl text-2xl font-black tracking-tight text-white sm:text-4xl">
             Decide el mejor momento para lavar o detallar tu auto
           </h2>
-          <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-400">
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-slate-400 sm:text-base">
             Revisa el clima en Santa Fe Life Style antes de preagendar. Si hay lluvia, te sugerimos confirmar cochera o espacio cubierto.
           </p>
-          <button
-            type="button"
-            onClick={onOpenBooking}
-            className="mt-6 inline-flex items-center gap-3 rounded-2xl bg-brand-orange px-6 py-4 text-sm font-black uppercase tracking-[0.12em] text-brand-night transition hover:bg-orange-300"
-          >
-            Abrir cotizador
-            <ArrowRight className="h-4 w-4" />
-          </button>
         </div>
       </ScrollReveal>
 
       <ScrollReveal delay={120}>
-        <WeatherInsight actionLabel="Cotizar y preagendar" actionOnClick={onOpenBooking} />
+        <WeatherInsight actionLabel="Cotizar y Preagendar" actionOnClick={onOpenBooking} />
       </ScrollReveal>
     </div>
   </section>
