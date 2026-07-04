@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { LockKeyhole, RefreshCw } from 'lucide-react';
 import {
+  createReservationPayment,
   getReservationStorageStatus,
   listReservationEvents,
+  listReservationPayments,
   listReservations,
   logReservationEvent,
   updateReservation,
@@ -14,21 +16,25 @@ const AdminReservationsSection = ({ defaultOpen = false, canCollapse = true }) =
   const [isOpen, setIsOpen] = useState(defaultOpen);
   const [reservations, setReservations] = useState([]);
   const [reservationEvents, setReservationEvents] = useState([]);
+  const [reservationPayments, setReservationPayments] = useState([]);
   const [storageMode, setStorageMode] = useState(getReservationStorageStatus().mode);
 
   const refreshReservations = async () => {
-    const [result, eventsResult] = await Promise.all([
+    const [result, eventsResult, paymentsResult] = await Promise.all([
       listReservations(),
       listReservationEvents(),
+      listReservationPayments(),
     ]);
 
     setReservations(result.reservations);
     setReservationEvents(eventsResult.events);
+    setReservationPayments(paymentsResult.payments);
     setStorageMode(result.storage);
     window.dispatchEvent(new CustomEvent('aquabrillo:reservations-updated', {
       detail: {
         reservations: result.reservations,
         events: eventsResult.events,
+        payments: paymentsResult.payments,
         storage: result.storage,
       },
     }));
@@ -58,6 +64,20 @@ const AdminReservationsSection = ({ defaultOpen = false, canCollapse = true }) =
     }));
   };
 
+  const handlePaymentCreate = async (payment) => {
+    const result = await createReservationPayment(payment);
+    setReservations(result.reservations);
+    setReservationPayments(result.payments);
+    setStorageMode(result.storage);
+    window.dispatchEvent(new CustomEvent('aquabrillo:reservations-updated', {
+      detail: {
+        reservations: result.reservations,
+        payments: result.payments,
+        storage: result.storage,
+      },
+    }));
+  };
+
   const handleMessageLog = async (event) => {
     await logReservationEvent(event);
     const eventsResult = await listReservationEvents();
@@ -70,6 +90,9 @@ const AdminReservationsSection = ({ defaultOpen = false, canCollapse = true }) =
         setReservations(event.detail.reservations);
         if (Array.isArray(event.detail?.events)) {
           setReservationEvents(event.detail.events);
+        }
+        if (Array.isArray(event.detail?.payments)) {
+          setReservationPayments(event.detail.payments);
         }
         setStorageMode(event.detail.storage || getReservationStorageStatus().mode);
       } else {
@@ -128,9 +151,11 @@ const AdminReservationsSection = ({ defaultOpen = false, canCollapse = true }) =
             <LocalBookingDashboard
               prebookings={reservations}
               reservationEvents={reservationEvents}
+              reservationPayments={reservationPayments}
               storageMode={storageMode}
               onStatusChange={handleStatusChange}
               onOperationalUpdate={handleOperationalUpdate}
+              onPaymentCreate={handlePaymentCreate}
               onMessageLog={handleMessageLog}
             />
           </div>

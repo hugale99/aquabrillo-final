@@ -1,6 +1,8 @@
 import {
   BOOKING_DEFAULTS,
+  getLocalReservationPayments,
   getLocalPrebookings,
+  saveLocalReservationPayment,
   saveLocalPrebooking,
   updateLocalPrebooking,
   updateLocalPrebookingStatus,
@@ -9,6 +11,7 @@ import { HAS_SUPABASE_CONFIG, SUPABASE_ANON_KEY, SUPABASE_URL } from '../config/
 
 const RESERVATIONS_TABLE = 'reservations';
 const RESERVATION_EVENTS_TABLE = 'reservation_events';
+const RESERVATION_PAYMENTS_TABLE = 'reservation_payments';
 const CREATE_RESERVATION_RPC = 'create_reservation_with_capacity';
 
 let supabaseAccessToken = '';
@@ -79,6 +82,28 @@ const fromReservationEventPayload = (event) => ({
   message: event.message,
   metadata: event.metadata ?? {},
   createdAt: event.created_at,
+});
+
+const fromReservationPaymentPayload = (payment) => ({
+  id: payment.id,
+  folio: payment.reservation_folio,
+  amount: Number(payment.amount_mxn || 0),
+  method: payment.method,
+  reference: payment.reference,
+  notes: payment.notes,
+  createdBy: payment.created_by,
+  paidAt: payment.paid_at,
+  createdAt: payment.created_at,
+});
+
+const toReservationPaymentPayload = (payment) => ({
+  reservation_folio: payment.folio,
+  amount_mxn: Number(payment.amount || 0),
+  method: payment.method || 'efectivo',
+  reference: payment.reference || null,
+  notes: payment.notes || null,
+  created_by: payment.createdBy || null,
+  paid_at: payment.paidAt || new Date().toISOString(),
 });
 
 const toReservationUpdatePayload = (updates = {}) => {
@@ -272,6 +297,40 @@ export const listReservationEvents = async () => {
   }
 };
 
+export const listReservationPayments = async () => {
+  const localPayments = getLocalReservationPayments();
+
+  if (!HAS_SUPABASE_CONFIG) {
+    return {
+      storage: 'local',
+      payments: localPayments,
+    };
+  }
+
+  try {
+    const rows = await supabaseRequest(
+      `${RESERVATION_PAYMENTS_TABLE}?select=*&order=paid_at.desc&limit=200`,
+      {
+        method: 'GET',
+        headers: {
+          Prefer: undefined,
+        },
+      }
+    );
+
+    return {
+      storage: 'supabase',
+      payments: rows.map(fromReservationPaymentPayload),
+    };
+  } catch (error) {
+    return {
+      storage: 'local_fallback',
+      error,
+      payments: localPayments,
+    };
+  }
+};
+
 export const updateReservationStatus = async ({ folio, status }) => {
   const localHistory = updateLocalPrebookingStatus({ folio, status });
 
@@ -334,6 +393,90 @@ export const updateReservation = async ({ folio, updates }) => {
       storage: 'local_fallback',
       error,
       reservations: localHistory,
+    };
+  }
+};
+
+export const createReservationPayment = async ({ folio, amount, method, reference = '', notes = '', createdBy = '', estimatePrice = 0 }) => {
+  const normalizedAmount = Number(amount || 0);
+  const localPayments = saveLocalReservationPayment({
+    folio,
+    amount: normalizedAmount,
+    method,
+    reference,
+    notes,
+    createdBy,
+  });
+  const folioPaymentsTotal = localPayments
+    .filter((payment) => payment.folio === folio)
+    .reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+  const nextPaymentStatus = folioPaymentsTotal >= Number(estimatePrice || 0) && Number(estimatePrice || 0) > 0
+    ? 'pagado'
+    : normalizedAmount > 0
+      ? 'anticipo'
+      : 'pendiente';
+
+  if (!HAS_SUPABASE_CONFIG) {
+    const reservations = updateLocalPrebooking({
+      folio,
+      updates: { paymentStatus: nextPaymentStatus },
+    });
+
+    return {
+      storage: 'local',
+      payments: localPayments,
+      reservations,
+    };
+  }
+
+  try {
+    await supabaseRequest(RESERVATION_PAYMENTS_TABLE, {
+      method: 'POST',
+      body: JSON.stringify(toReservationPaymentPayload({
+        folio,
+        amount: normalizedAmount,
+        method,
+        reference,
+        notes,
+        createdBy,
+      })),
+    });
+
+    await supabaseRequest(`${RESERVATIONS_TABLE}?folio=eq.${encodeURIComponent(folio)}`, {
+      method: 'PATCH',
+      body: JSON.stringify(toReservationUpdatePayload({ paymentStatus: nextPaymentStatus })),
+    });
+
+    const [refreshedReservations, refreshedPayments] = await Promise.all([
+      listReservations(),
+      listReservationPayments(),
+    ]);
+
+    return {
+      storage: 'supabase',
+      payments: refreshedPayments.payments,
+      reservations: refreshedReservations.reservations,
+    };
+  } catch (error) {
+    try {
+      await supabaseRequest(`${RESERVATIONS_TABLE}?folio=eq.${encodeURIComponent(folio)}`, {
+        method: 'PATCH',
+        body: JSON.stringify(toReservationUpdatePayload({ paymentStatus: nextPaymentStatus })),
+      });
+    } catch {
+      updateLocalPrebooking({
+        folio,
+        updates: { paymentStatus: nextPaymentStatus },
+      });
+    }
+
+    const refreshedReservations = await listReservations();
+
+    return {
+      storage: 'local_fallback',
+      error,
+      payments: localPayments,
+      reservations: refreshedReservations.reservations,
     };
   }
 };

@@ -16,6 +16,7 @@ export const BOOKING_DEFAULTS = {
   businessEndHour: '18:30',
   storageKey: 'aquabrillo_prebookings',
   coverageStorageKey: 'aquabrillo_coverage_context',
+  paymentsStorageKey: 'aquabrillo_reservation_payments',
   maxLocalHistory: 25,
   premiumWashSlotCapacity: 2,
 };
@@ -453,3 +454,33 @@ export const updateLocalPrebooking = ({ folio, updates = {} }) => {
 
 export const updateLocalPrebookingStatus = ({ folio, status }) =>
   updateLocalPrebooking({ folio, updates: { status } });
+
+export const getLocalReservationPayments = () => {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const current = JSON.parse(window.localStorage.getItem(BOOKING_DEFAULTS.paymentsStorageKey) || '[]');
+    return Array.isArray(current) ? current : [];
+  } catch {
+    return [];
+  }
+};
+
+export const saveLocalReservationPayment = (payment) => {
+  if (typeof window === 'undefined') return [];
+
+  try {
+    const current = getLocalReservationPayments();
+    const nextPayment = {
+      id: payment.id || `local-payment-${Date.now()}`,
+      ...payment,
+      paidAt: payment.paidAt || new Date().toISOString(),
+      createdAt: payment.createdAt || new Date().toISOString(),
+    };
+    const next = [nextPayment, ...current].slice(0, 100);
+    window.localStorage.setItem(BOOKING_DEFAULTS.paymentsStorageKey, JSON.stringify(next));
+    return next;
+  } catch {
+    return [];
+  }
+};

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { CalendarDays, MessageCircle, Search } from 'lucide-react';
+import { CalendarDays, CreditCard, MessageCircle, Search } from 'lucide-react';
 import { PAYMENT_STATUSES, RESERVATION_STATUSES } from '../config/booking';
 import WeatherInsight from './WeatherInsight';
 import ScrollReveal from './ui/ScrollReveal';
@@ -160,6 +160,13 @@ const sortOptions = [
   { id: 'highest_amount', label: 'Mayor monto' },
 ];
 
+const paymentMethods = [
+  { id: 'efectivo', label: 'Efectivo' },
+  { id: 'transferencia', label: 'Transferencia' },
+  { id: 'tarjeta', label: 'Tarjeta' },
+  { id: 'link_pago', label: 'Link de pago' },
+];
+
 const getReservationTimestamp = (item) => {
   if (!item?.date) return Number.MAX_SAFE_INTEGER;
   return new Date(`${item.date}T${item.time || '00:00'}`).getTime();
@@ -225,15 +232,20 @@ const getDateDisplayLabel = (value) => {
 const LocalBookingDashboard = ({
   prebookings = [],
   reservationEvents = [],
+  reservationPayments = [],
   storageMode = 'local',
   onStatusChange,
   onOperationalUpdate,
+  onPaymentCreate,
   onMessageLog,
 }) => {
   const [statusFilter, setStatusFilter] = useState('todos');
   const [dateFilter, setDateFilter] = useState('todos');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortOrder, setSortOrder] = useState('upcoming');
+  const [paymentDrafts, setPaymentDrafts] = useState({});
+  const [stripeCheckoutLoading, setStripeCheckoutLoading] = useState({});
+  const [stripeCheckoutError, setStripeCheckoutError] = useState('');
   const todayIso = getTodayIso();
   const weekStartIso = getStartOfWeekIso();
   const dateOptions = useMemo(() => (
@@ -323,10 +335,102 @@ const LocalBookingDashboard = ({
       [event.folio]: [...(grouped[event.folio] || []), event],
     };
   }, {}), [reservationEvents]);
+  const paymentsByFolio = useMemo(() => reservationPayments.reduce((grouped, payment) => {
+    if (!payment.folio) return grouped;
+
+    return {
+      ...grouped,
+      [payment.folio]: [...(grouped[payment.folio] || []), payment],
+    };
+  }, {}), [reservationPayments]);
+  const paymentMetrics = useMemo(() => {
+    const totalPaid = reservationPayments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+    const estimatedTotal = prebookings.reduce((sum, item) => sum + (item.estimate?.price || 0), 0);
+    const pendingTotal = prebookings.reduce((sum, item) => {
+      const paid = (paymentsByFolio[item.folio] || []).reduce((paymentSum, payment) => paymentSum + Number(payment.amount || 0), 0);
+      return sum + Math.max((item.estimate?.price || 0) - paid, 0);
+    }, 0);
+
+    return {
+      totalPaid,
+      pendingTotal,
+      paymentCount: reservationPayments.length,
+      collectionRate: estimatedTotal ? Math.round((totalPaid / estimatedTotal) * 100) : 0,
+    };
+  }, [paymentsByFolio, prebookings, reservationPayments]);
   const kanbanGroups = useMemo(() => kanbanColumns.reduce((groups, column) => ({
     ...groups,
     [column.id]: visiblePrebookings.filter((item) => (item.status || 'preagenda_whatsapp') === column.id),
   }), {}), [visiblePrebookings]);
+
+  const updatePaymentDraft = (folio, updates) => {
+    setPaymentDrafts((current) => ({
+      ...current,
+      [folio]: {
+        amount: '',
+        method: 'efectivo',
+        reference: '',
+        ...current[folio],
+        ...updates,
+      },
+    }));
+  };
+
+  const submitPayment = (item) => {
+    const draft = paymentDrafts[item.folio] || {};
+    const amount = Number(draft.amount || 0);
+
+    if (!amount || amount <= 0) return;
+
+    onPaymentCreate?.({
+      folio: item.folio,
+      amount,
+      method: draft.method || 'efectivo',
+      reference: draft.reference || '',
+      estimatePrice: item.estimate?.price || 0,
+    });
+
+    setPaymentDrafts((current) => ({
+      ...current,
+      [item.folio]: {
+        amount: '',
+        method: draft.method || 'efectivo',
+        reference: '',
+      },
+    }));
+  };
+
+  const startStripeCheckout = async ({ item, amountMxn }) => {
+    setStripeCheckoutError('');
+    setStripeCheckoutLoading((current) => ({ ...current, [item.folio]: true }));
+
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          folio: item.folio,
+          amountMxn,
+          customerName: item.customerName,
+          customerPhone: item.customerPhone,
+          serviceLabel: getServiceLabel(item),
+        }),
+      });
+      const payload = await response.json();
+
+      if (!response.ok || !payload.url) {
+        throw new Error(payload.message || 'No se pudo crear el cobro con Stripe.');
+      }
+
+      window.open(payload.url, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      setStripeCheckoutError(error?.message || 'No se pudo crear el cobro con Stripe.');
+    } finally {
+      setStripeCheckoutLoading((current) => ({ ...current, [item.folio]: false }));
+    }
+  };
 
   return (
     <ScrollReveal delay={260}>
@@ -380,6 +484,23 @@ const LocalBookingDashboard = ({
             <div key={metric.label} className="rounded-2xl border border-white/10 bg-brand-night/45 p-3">
               <div className="text-[0.65rem] font-black uppercase tracking-[0.14em] text-slate-500">{metric.label}</div>
               <div className={`mt-2 truncate text-lg font-black ${metric.tone}`}>{metric.value}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mb-5 grid gap-3 md:grid-cols-4">
+          {[
+            { label: 'Cobrado', value: currency.format(paymentMetrics.totalPaid), tone: 'text-brand-green' },
+            { label: 'Por cobrar', value: currency.format(paymentMetrics.pendingTotal), tone: 'text-brand-rust' },
+            { label: 'Pagos registrados', value: paymentMetrics.paymentCount, tone: 'text-white' },
+            { label: 'Avance cobranza', value: `${paymentMetrics.collectionRate}%`, tone: 'text-brand-orange' },
+          ].map((metric) => (
+            <div key={metric.label} className="rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(255,255,255,0.045),rgba(27,46,26,0.55))] p-4">
+              <div className="flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-[0.14em] text-slate-500">
+                <CreditCard className="h-3.5 w-3.5 text-brand-orange" />
+                {metric.label}
+              </div>
+              <div className={`mt-2 text-xl font-black ${metric.tone}`}>{metric.value}</div>
             </div>
           ))}
         </div>
@@ -699,6 +820,10 @@ const LocalBookingDashboard = ({
             const attentionFlags = getReservationAttentionFlags(item);
             const statusId = item.status || 'preagenda_whatsapp';
             const paymentStatusId = item.paymentStatus || 'pendiente';
+            const itemPayments = paymentsByFolio[item.folio] || [];
+            const paidTotal = itemPayments.reduce((sum, payment) => sum + Number(payment.amount || 0), 0);
+            const balance = Math.max((item.estimate?.price || 0) - paidTotal, 0);
+            const paymentDraft = paymentDrafts[item.folio] || { amount: '', method: 'efectivo', reference: '' };
 
             return (
             <div key={item.folio} className="rounded-[1.35rem] border border-white/10 bg-[linear-gradient(145deg,rgba(27,46,26,0.82),rgba(40,40,40,0.66))] p-3 shadow-xl shadow-black/10 sm:p-4">
@@ -800,6 +925,81 @@ const LocalBookingDashboard = ({
                   </div>
                 );
               })()}
+
+              <div className="mt-3 rounded-xl border border-brand-green/20 bg-brand-green/10 p-3">
+                <div className="mb-3 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2 text-[0.65rem] font-black uppercase tracking-[0.12em] text-green-100">
+                    <CreditCard className="h-3.5 w-3.5 text-brand-green" />
+                    Pagos
+                  </div>
+                  <div className="text-right text-[0.65rem] font-bold text-slate-400">
+                    <span className="text-green-100">{currency.format(paidTotal)}</span>
+                    <span className="mx-1 text-slate-600">/</span>
+                    saldo {currency.format(balance)}
+                  </div>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-[0.8fr_1fr]">
+                  <input
+                    type="number"
+                    min="0"
+                    inputMode="decimal"
+                    value={paymentDraft.amount}
+                    onChange={(event) => updatePaymentDraft(item.folio, { amount: event.target.value })}
+                    placeholder="Monto recibido"
+                    className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none placeholder:text-slate-600 focus:border-brand-green/55"
+                  />
+                  <select
+                    value={paymentDraft.method}
+                    onChange={(event) => updatePaymentDraft(item.folio, { method: event.target.value })}
+                    className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none focus:border-brand-green/55"
+                  >
+                    {paymentMethods.map((method) => (
+                      <option key={method.id} value={method.id}>{method.label}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="mt-2 grid gap-2 sm:grid-cols-[1fr_auto]">
+                  <input
+                    type="text"
+                    value={paymentDraft.reference}
+                    onChange={(event) => updatePaymentDraft(item.folio, { reference: event.target.value })}
+                    placeholder="Referencia o comprobante"
+                    className="w-full rounded-xl border border-white/10 bg-brand-night px-3 py-2 text-xs font-bold text-white outline-none placeholder:text-slate-600 focus:border-brand-green/55"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => submitPayment(item)}
+                    disabled={!Number(paymentDraft.amount || 0)}
+                    className="rounded-xl bg-brand-green px-4 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-white transition hover:bg-[#4f9234] disabled:cursor-not-allowed disabled:bg-white/[0.06] disabled:text-slate-600"
+                  >
+                    Registrar
+                  </button>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => startStripeCheckout({ item, amountMxn: balance || item.estimate?.price || 0 })}
+                  disabled={stripeCheckoutLoading[item.folio] || !(balance || item.estimate?.price)}
+                  className="mt-2 flex min-h-10 w-full items-center justify-center gap-2 rounded-xl border border-white/10 bg-white/[0.055] px-4 py-2 text-[0.65rem] font-black uppercase tracking-[0.08em] text-white transition hover:border-brand-orange/35 hover:bg-brand-orange/10 disabled:cursor-not-allowed disabled:text-slate-600"
+                >
+                  <CreditCard className="h-3.5 w-3.5 text-brand-orange" />
+                  {stripeCheckoutLoading[item.folio] ? 'Creando cobro...' : `Cobrar Stripe ${currency.format(balance || item.estimate?.price || 0)}`}
+                </button>
+                {stripeCheckoutError && (
+                  <p className="mt-2 rounded-xl border border-brand-rust/25 bg-brand-rust/10 px-3 py-2 text-xs font-bold text-red-100" role="status">
+                    {stripeCheckoutError}
+                  </p>
+                )}
+                {itemPayments.length > 0 && (
+                  <div className="mt-2 flex flex-wrap gap-1.5">
+                    {itemPayments.slice(0, 3).map((payment) => (
+                      <span key={payment.id} className="rounded-full border border-white/10 bg-brand-night/55 px-2 py-1 text-[0.62rem] font-bold text-slate-300">
+                        {currency.format(payment.amount)} | {payment.method}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <label className="mt-3 block">
                 <span className="mb-1 block text-[0.65rem] font-bold uppercase tracking-[0.14em] text-slate-500">Cambiar estado</span>
                 <select
